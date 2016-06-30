@@ -3,3 +3,5 @@
 Connectors/MongoDBConnector/bin/*
 
 RemoteSystemsTempFiles/*
+
+*.class

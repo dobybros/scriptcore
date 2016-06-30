@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="groovy"/>
 	<classpathentry kind="src" path="conf"/>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/mongodbconnector.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/scriptcore.jar"/>
