@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project name="scriptcore" default="compile" basedir=".">
+	<description>
+		AcuLearn
+    </description>
+
+	<target name="init" description="Initialize the target...">
+		<property environment="env" />
+		<property name="name" value="ScriptCore" />
+		<property name="version" value="v0.1" />
+		<property name="year" value="2016" />
+		<echo message="Building ${ant.project.name} ${version}...." />
+		<property name="build.compiler" value="modern" />
+		<property name="debug" value="false" />
+		<property name="optimize" value="on" />
+		<property name="deprecation" value="on" />
+		<property name="encoding" value="utf-8" />
+		<property name="deployment.dir" location="../Deployment" />
+		<property name="dist.dir" location="${basedir}/deploy" />
+		<property name="lib.dir" value="${basedir}/../libs" />
+		<property name="src.dir" value="${basedir}/../src" />
+		<property name="source.dir" value="${dist.dir}/src" />
+		<property name="classes.dir" value="${dist.dir}/classes" />
+		<property name="build.dir" value="${dist.dir}/classes" />
+		<property name="jar.name" value="scriptcore.jar" />
+
+		<filter token="year" value="${year}" />
+		<filter token="version" value="${version}" />
+		<filter token="date" value="${TODAY}" />
+		<filter token="log" value="true" />
+		<filter token="verbose" value="true" />
+
+		<!-- run classpath -->
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}" includes="**/*.jar" />
+			<pathelement location="${build.dir}" />
+		</path>
+	</target>
+
+
+	<!--Prepare the build directory.-->
+	<target name="prepare" depends="init">
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="compile" depends="prepare" description="compile project, generate build directory">
+		<echo message="build source..." />
+		<mkdir dir="${source.dir}"/>
+		<copy todir="${source.dir}" failonerror="false">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${classes.dir}" />
+		
+		<echo message="Unzip ${classes.dir} to ${lib.dir}" />
+		<unzip dest="${classes.dir}">
+		    <fileset dir="${lib.dir}">
+		        <include name="*.jar"/>
+		    </fileset>
+		</unzip>
+
+		<javac includeantruntime="false" srcdir="${source.dir}" destdir="${classes.dir}" deprecation="${deprecation}" optimize="${optimize}" debug="${debug}" encoding="${encoding}" source="1.8" target="1.8" compiler="javac1.8">
+			<exclude name="**/Test*" />
+		</javac>
+
+		<jar basedir="${classes.dir}" destfile="${dist.dir}/${jar.name}">
+		</jar>
+
+		<delete dir="${source.dir}" failonerror="false" />
+		<delete dir="${classes.dir}" failonerror="false" />
+	</target>
+
+</project>
