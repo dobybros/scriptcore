@@ -1,10 +1,10 @@
 package db
 
+import connectors.mongodb.annotations.DBDocument
 import connectors.mongodb.annotations.DocumentField
-import connectors.mongodb.annotations.MongoDocument
 import connectors.mongodb.codec.BaseObject
 
-@MongoDocument
+@DBDocument
 class MediaResource extends BaseObject{
 	@DocumentField(key = "rid")
 	private String resourceId;

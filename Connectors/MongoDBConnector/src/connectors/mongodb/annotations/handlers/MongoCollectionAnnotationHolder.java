@@ -12,9 +12,9 @@ import org.apache.commons.lang.StringUtils;
 
 import connectors.mongodb.MongoClientHelper;
 import connectors.mongodb.MongoCollectionHelper;
-import connectors.mongodb.annotations.MongoCollection;
-import connectors.mongodb.annotations.MongoDatabase;
-import connectors.mongodb.annotations.MongoDocument;
+import connectors.mongodb.annotations.DBCollection;
+import connectors.mongodb.annotations.Database;
+import connectors.mongodb.annotations.DBDocument;
 import script.groovy.annotation.Bean;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.ClassAnnotationHandler;
@@ -24,7 +24,7 @@ import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	private static final String TAG = MongoCollectionAnnotationHolder.class.getSimpleName();
 
-	private Map<Class<?>, MongoCollection> collectionClassMap = new LinkedHashMap<>();
+	private Map<Class<?>, DBCollection> collectionClassMap = new LinkedHashMap<>();
 	
 	private static MongoCollectionAnnotationHolder instance;
 	public MongoCollectionAnnotationHolder() {
@@ -40,7 +40,7 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	
 	@Override
 	public Class<? extends Annotation> handleAnnotationClass() {
-		return MongoCollection.class;
+		return DBCollection.class;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 		if(annotatedClassMap != null) {
 			Collection<Class<?>> values = annotatedClassMap.values();
 			for(Class<?> groovyClass : values) {
-				MongoCollection mongoCollection = groovyClass.getAnnotation(MongoCollection.class);
+				DBCollection mongoCollection = groovyClass.getAnnotation(DBCollection.class);
 				if(mongoCollection != null) {
 					collectionClassMap.put(groovyClass, mongoCollection);
 				}
@@ -57,7 +57,7 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 		}
 	}
 
-	public Map<Class<?>, MongoCollection> getCollectionClassMap() {
+	public Map<Class<?>, DBCollection> getCollectionClassMap() {
 		return collectionClassMap;
 	}
 

@@ -18,7 +18,7 @@
            http://www.springframework.org/schema/task/spring-task.xsd">
            
     <bean id="mongoClientHelper" class="connectors.mongodb.MongoClientHelper">
-    	<property name="hosts" value="mongodb://localhost:7900"></property>
+    	<property name="hosts" value="${database.host}"></property>
     </bean>
     
     <bean id="mongoDatabaseAnnotationHolder" class="connectors.mongodb.annotations.handlers.MongoDatabaseAnnotationHolder"></bean>

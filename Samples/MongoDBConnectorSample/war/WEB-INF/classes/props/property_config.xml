@@ -11,7 +11,6 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
 		<property name="locations">
 			<list>
-				<value>classpath:props/database.properties</value>
 				<value>classpath:props/server_params.properties</value>
 			</list>
 		</property>

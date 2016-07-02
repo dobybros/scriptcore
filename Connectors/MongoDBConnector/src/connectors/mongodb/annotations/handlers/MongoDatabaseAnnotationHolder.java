@@ -7,12 +7,12 @@ import java.util.Map;
 
 import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
-import connectors.mongodb.annotations.MongoDatabase;
+import connectors.mongodb.annotations.Database;
 
 public class MongoDatabaseAnnotationHolder extends ClassAnnotationHandler {
 	private static final String TAG = MongoDatabaseAnnotationHolder.class.getSimpleName();
 
-	private Map<Class<?>, MongoDatabase> dbClassMap = new LinkedHashMap<>();
+	private Map<Class<?>, Database> dbClassMap = new LinkedHashMap<>();
 	
 	private static MongoDatabaseAnnotationHolder instance;
 	public MongoDatabaseAnnotationHolder() {
@@ -28,7 +28,7 @@ public class MongoDatabaseAnnotationHolder extends ClassAnnotationHandler {
 	
 	@Override
 	public Class<? extends Annotation> handleAnnotationClass() {
-		return MongoDatabase.class;
+		return Database.class;
 	}
 
 	@Override
@@ -37,13 +37,13 @@ public class MongoDatabaseAnnotationHolder extends ClassAnnotationHandler {
 		if(annotatedClassMap != null) {
 			Collection<Class<?>> values = annotatedClassMap.values();
 			for(Class<?> groovyClass : values) {
-				MongoDatabase mongoDatabase = groovyClass.getAnnotation(MongoDatabase.class);
+				Database mongoDatabase = groovyClass.getAnnotation(Database.class);
 				dbClassMap.put(groovyClass, mongoDatabase);
 			}
 		}
 	}
 
-	public Map<Class<?>, MongoDatabase> getDbClassMap() {
+	public Map<Class<?>, Database> getDbClassMap() {
 		return dbClassMap;
 	}
 
