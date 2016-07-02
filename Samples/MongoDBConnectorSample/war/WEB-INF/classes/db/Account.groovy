@@ -1,12 +1,10 @@
 package db
 
-import java.util.List;
-
+import connectors.mongodb.annotations.DBDocument
 import connectors.mongodb.annotations.DocumentField
-import connectors.mongodb.annotations.MongoDocument
 import connectors.mongodb.codec.BaseObject
 
-@MongoDocument
+@DBDocument
 class Account extends BaseObject{
 	@DocumentField(key = "acc")
 	private String loginAccount;

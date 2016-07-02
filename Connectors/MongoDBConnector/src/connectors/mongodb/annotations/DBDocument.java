@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.TYPE})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface MongoDocument {
+public @interface DBDocument {
 	public Class<?> collectionClass() default Object.class;
 	public String[] filters() default "";
 }

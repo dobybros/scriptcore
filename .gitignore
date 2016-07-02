@@ -5,3 +5,5 @@ Connectors/MongoDBConnector/bin/*
 RemoteSystemsTempFiles/*
 
 *.class
+
+Connectors/MongoDBConnector/buildlib/deploy/*

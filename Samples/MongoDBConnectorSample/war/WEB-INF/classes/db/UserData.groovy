@@ -1,12 +1,10 @@
 package db
 
-import java.lang.annotation.Documented;
-
+import connectors.mongodb.annotations.DBDocument
 import connectors.mongodb.annotations.DocumentField
-import connectors.mongodb.annotations.MongoDocument
 import connectors.mongodb.codec.DataObject
 
-@MongoDocument(collectionClass = UserCollection.class, filters = ["type", "user"])
+@DBDocument(collectionClass = UserCollection.class, filters = ["type", "user"])
 class UserData extends DataObject{
 	@DocumentField(key = "name")
 	private String name;

@@ -1,9 +1,9 @@
 package db
 
 import connectors.mongodb.MongoDatabaseHelper
-import connectors.mongodb.annotations.MongoDatabase
+import connectors.mongodb.annotations.Database
 
-@MongoDatabase(name = "userdb")
+@Database(name = "userdb")
 class UserDatabase extends MongoDatabaseHelper {
 	
 }

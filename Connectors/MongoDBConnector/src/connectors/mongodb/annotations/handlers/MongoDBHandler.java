@@ -21,9 +21,9 @@ import com.mongodb.MongoClient;
 
 import connectors.mongodb.MongoClientHelper;
 import connectors.mongodb.annotations.DocumentField;
-import connectors.mongodb.annotations.MongoCollection;
-import connectors.mongodb.annotations.MongoDatabase;
-import connectors.mongodb.annotations.MongoDocument;
+import connectors.mongodb.annotations.DBCollection;
+import connectors.mongodb.annotations.Database;
+import connectors.mongodb.annotations.DBDocument;
 import connectors.mongodb.codec.BaseObjectCodecProvider;
 import connectors.mongodb.codec.DataObject;
 import connectors.mongodb.codec.DataObjectCodecProvider;
@@ -123,9 +123,9 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 			return;
 		}
 		
-		Map<Class<?>, MongoDatabase> databaseMap = databaseHolder.getDbClassMap();
-		Map<Class<?>, MongoCollection> collectionMap = collectionHolder.getCollectionClassMap();
-		Map<Class<?>, MongoDocument> documentMap = documentHolder.getDocumentClassMap();
+		Map<Class<?>, Database> databaseMap = databaseHolder.getDbClassMap();
+		Map<Class<?>, DBCollection> collectionMap = collectionHolder.getCollectionClassMap();
+		Map<Class<?>, DBDocument> documentMap = documentHolder.getDocumentClassMap();
 		if((databaseMap == null || databaseMap.isEmpty()) || (collectionMap == null || collectionMap.isEmpty()) || (documentMap == null || documentMap.isEmpty())) {
 			LoggerEx.info(TAG, "Information is insufficient, databaseHolder = " + databaseMap + ", collectionMap = " + collectionMap + ", documentMap = " + documentMap);
 			return;
@@ -144,7 +144,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		
 		Collection<Class<?>> databaseClasses = databaseMap.keySet();
 		for(Class<?> databaseClass : databaseClasses) {
-			MongoDatabase mongoDatabase = databaseMap.get(databaseClass);
+			Database mongoDatabase = databaseMap.get(databaseClass);
 			if(mongoDatabase != null) {
 				String dbName = mongoDatabase.name();
 				if(dbName != null) {
@@ -155,7 +155,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		}
 		Collection<Class<?>> collectionClasses = collectionMap.keySet();
 		for(Class<?> collectionClass : collectionClasses) {
-			MongoCollection mongoCollection = collectionMap.get(collectionClass);
+			DBCollection mongoCollection = collectionMap.get(collectionClass);
 			if(mongoCollection != null) {
 				String collectionName = mongoCollection.name();
 				Class<?> databaseClass = mongoCollection.databaseClass();
@@ -174,7 +174,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		}
 		Collection<Class<?>> documentClasses = documentMap.keySet();
 		for(Class<?> documentClass : documentClasses) {
-			MongoDocument mongoDocument = documentMap.get(documentClass);
+			DBDocument mongoDocument = documentMap.get(documentClass);
 			if(mongoDocument != null) {
 				String[] filters = mongoDocument.filters();
 				Class<?> collectionClass = mongoDocument.collectionClass();
