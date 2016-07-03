@@ -1,6 +1,7 @@
 package connectors.mongodb.codec;
 
 public abstract class DataObject {
+	public static final String FIELD_ID = "_id";
 	private String id;
 
 	public String getId() {

@@ -169,6 +169,8 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 					Object value = null;
 					boolean toEnd = false;
 					while(true) {
+						if(tree == null)
+							break;
 						Set<String> keys = tree.getChildrens();
 						if(keys.isEmpty() || toEnd)
 							break;
@@ -188,7 +190,8 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 							}
 						}
 					}
-					documentClass = (Class<?>) tree.getParameter(MongoDBHandler.CLASS);
+					if(tree != null)
+						documentClass = (Class<?>) tree.getParameter(MongoDBHandler.CLASS);
 					System.out.println(documentClass + " " + value);
 					if(documentClass != null) {
 						return convert(document, documentClass);
@@ -329,7 +332,6 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
     	            if (skipField(encoderContext, entry.getKey())) {
     	                continue;
     	            }
-    	            writer.writeName(entry.getKey());
     	            Field field = entry.getValue();
     	            Object value = null;
 					try {
@@ -340,7 +342,10 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 							| IllegalAccessException e) {
 						e.printStackTrace();
 					}
-    	            writeValue(writer, encoderContext, value);
+					if(value != null) {
+						writer.writeName(entry.getKey());
+						writeValue(writer, encoderContext, value);
+					}
     	        }
     		}
     	}
