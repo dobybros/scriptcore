@@ -52,10 +52,11 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 
 import chat.logs.LoggerEx;
+import chat.utils.ClassFieldsHolder;
+import chat.utils.ClassFieldsHolder.FieldEx;
 import chat.utils.HashTree;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
 import connectors.mongodb.annotations.handlers.MongoDBHandler.CollectionHolder;
-import connectors.mongodb.annotations.handlers.MongoDBHandler.FieldHolder;
 
 /**
  * A Codec for Document instances.
@@ -209,14 +210,14 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 			if(id != null) {
 				dataObj.setId(id.toString());
 			}
-			FieldHolder holder = MongoDBHandler.getInstance().getDocumentMap().get(documentClass);
+			ClassFieldsHolder holder = MongoDBHandler.getInstance().getDocumentMap().get(documentClass);
 			if(holder != null) {
-				HashMap<String, Field> fieldMap = holder.getFieldMap();
+				HashMap<String, FieldEx> fieldMap = holder.getFieldMap();
 				if(fieldMap != null) {
 					Set<String> keys = fieldMap.keySet();
 					for(String key : keys) {
 						Object value = document.get(key);
-						Field field = fieldMap.get(key);
+						Field field = fieldMap.get(key).getField();
 						if(value instanceof Document) {
 							if(DataObject.class.isAssignableFrom(field.getType())) {
 								DataObject valueObj = DataObjectCodec.convert((Document) value, field.getType());
@@ -323,16 +324,16 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 
         beforeFields(writer, encoderContext, map);
 
-        HashMap<Class<?>, FieldHolder> documentMap = MongoDBHandler.getInstance().getDocumentMap();
-    	FieldHolder fieldHolder = documentMap.get(map.getClass());
+        HashMap<Class<?>, ClassFieldsHolder> documentMap = MongoDBHandler.getInstance().getDocumentMap();
+    	ClassFieldsHolder fieldHolder = documentMap.get(map.getClass());
     	if(fieldHolder != null) {
-    		HashMap<String, Field> fields = fieldHolder.getFieldMap();
+    		HashMap<String, FieldEx> fields = fieldHolder.getFieldMap();
     		if(fields != null) {
-    			for (final Map.Entry<String, Field> entry : fields.entrySet()) {
+    			for (final Map.Entry<String, FieldEx> entry : fields.entrySet()) {
     	            if (skipField(encoderContext, entry.getKey())) {
     	                continue;
     	            }
-    	            Field field = entry.getValue();
+    	            Field field = entry.getValue().getField();
     	            Object value = null;
 					try {
 						if(!field.isAccessible()) 

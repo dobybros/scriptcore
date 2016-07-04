@@ -9,21 +9,22 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.types.Binary;
 
 import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
+import chat.utils.ClassFieldsHolder;
+import chat.utils.ClassFieldsHolder.FieldIdentifier;
 import chat.utils.HashTree;
 
 import com.mongodb.MongoClient;
 
 import connectors.mongodb.MongoClientHelper;
-import connectors.mongodb.annotations.DocumentField;
 import connectors.mongodb.annotations.DBCollection;
-import connectors.mongodb.annotations.Database;
 import connectors.mongodb.annotations.DBDocument;
+import connectors.mongodb.annotations.Database;
+import connectors.mongodb.annotations.DocumentField;
 import connectors.mongodb.codec.BaseObjectCodecProvider;
 import connectors.mongodb.codec.DataObject;
 import connectors.mongodb.codec.DataObjectCodecProvider;
@@ -35,7 +36,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 
 	private HashMap<Class<?>, com.mongodb.client.MongoDatabase> databaseMap = new HashMap<>();
 	private HashMap<Class<?>, CollectionHolder> collectionMap = new HashMap<>();
-	private HashMap<Class<?>, FieldHolder> documentMap = new HashMap<>();
+	private HashMap<Class<?>, ClassFieldsHolder> documentMap = new HashMap<>();
 	
 	private static MongoDBHandler instance;
 	
@@ -57,53 +58,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 			this.filters = filters;
 		}
 	}
-	
-	public static class FieldHolder {
-		private HashMap<String, Field> fieldMap = new HashMap<>();
-		
-		public FieldHolder(Class<?> documentClass) {
-			Class<?> i = documentClass;
-		    while (i != null && !i.equals(Object.class)) {
-		    	Field[] fields = i.getDeclaredFields();
-		    	for(Field field : fields) {
-					DocumentField documentField = field.getAnnotation(DocumentField.class);
-					if(documentField != null) {
-						String key = documentField.key();
-						if(StringUtils.isNotBlank(key)) {
-							fieldMap.put(key, field);
-						}
-					}
-				}
-		        i = i.getSuperclass();
-		    }
-		}
-		
-		public void assignField(Object obj, String fieldKey, Object value) {
-			Field field = fieldMap.get(fieldKey);
-			assignField(obj, field, value);
-		}
-		public void assignField(Object obj, Field field, Object value) {
-			if(field == null || value == null || obj == null)
-				return;
-			try {
-				if(!field.isAccessible())
-					field.setAccessible(true);
-				if(value instanceof Binary && field.getType().equals(byte[].class)) {
-					field.set(obj, ((Binary)value).getData());
-				} else {
-					field.set(obj, value);
-				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-				LoggerEx.error(TAG, "Assign value " + value + " to field " + field + " for object " + obj);
-			}
-		}
 
-		public HashMap<String, Field> getFieldMap() {
-			return fieldMap;
-		}
-	}
-	
 	private MongoDBHandler() {
 		instance = this;
 	}
@@ -140,7 +95,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		
 		HashMap<Class<?>, com.mongodb.client.MongoDatabase> newDatabaseMap = new HashMap<>();
 		HashMap<Class<?>, CollectionHolder> newCollectionMap = new HashMap<>();
-		HashMap<Class<?>, FieldHolder> newDocumentMap = new HashMap<>();
+		HashMap<Class<?>, ClassFieldsHolder> newDocumentMap = new HashMap<>();
 		
 		Collection<Class<?>> databaseClasses = databaseMap.keySet();
 		for(Class<?> databaseClass : databaseClasses) {
@@ -201,11 +156,11 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 					}
 					tree.setParameter(CLASS, documentClass);
 					tree.setParameter(VALUE, value);
-					FieldHolder fieldHolder = new FieldHolder(documentClass);
+					ClassFieldsHolder fieldHolder = new ClassFieldsHolder(documentClass, new MyFieldIdentifier());
 //					tree.setParameter(FIELDS, fieldHolder);
 					newDocumentMap.put(documentClass, fieldHolder);
 				} else {
-					FieldHolder fieldHolder = new FieldHolder(documentClass);
+					ClassFieldsHolder fieldHolder = new ClassFieldsHolder(documentClass, new MyFieldIdentifier());
 					newDocumentMap.put(documentClass, fieldHolder);
 				}
 			}
@@ -217,6 +172,16 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		}
 	}
 
+	public class MyFieldIdentifier extends FieldIdentifier {
+		@Override
+		public String getFieldKey(Field field) {
+			DocumentField documentField = field.getAnnotation(DocumentField.class);
+			if(documentField != null) 
+				return documentField.key();
+			return null;
+		}
+	}
+	
 	@Override
 	public Class<? extends Annotation> handleAnnotationClass() {
 		return null;
@@ -238,11 +203,11 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		this.mongoClientHelper = mongoClientHelper;
 	}
 
-	public HashMap<Class<?>, FieldHolder> getDocumentMap() {
+	public HashMap<Class<?>, ClassFieldsHolder> getDocumentMap() {
 		return documentMap;
 	}
 
-	public void setDocumentMap(HashMap<Class<?>, FieldHolder> documentMap) {
+	public void setDocumentMap(HashMap<Class<?>, ClassFieldsHolder> documentMap) {
 		this.documentMap = documentMap;
 	}
 }

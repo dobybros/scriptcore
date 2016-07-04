@@ -30,11 +30,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bson.BsonBinarySubType;
-import org.bson.BsonDocument;
-import org.bson.BsonDocumentWriter;
 import org.bson.BsonReader;
 import org.bson.BsonType;
-import org.bson.BsonValue;
 import org.bson.BsonWriter;
 import org.bson.Document;
 import org.bson.Transformer;
@@ -42,20 +39,17 @@ import org.bson.assertions.Assertions;
 import org.bson.codecs.BsonTypeClassMap;
 import org.bson.codecs.BsonValueCodecProvider;
 import org.bson.codecs.Codec;
-import org.bson.codecs.CollectibleCodec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.DocumentCodec;
 import org.bson.codecs.DocumentCodecProvider;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.ValueCodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.types.ObjectId;
 
 import chat.logs.LoggerEx;
-import chat.utils.HashTree;
+import chat.utils.ClassFieldsHolder;
+import chat.utils.ClassFieldsHolder.FieldEx;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
-import connectors.mongodb.annotations.handlers.MongoDBHandler.CollectionHolder;
-import connectors.mongodb.annotations.handlers.MongoDBHandler.FieldHolder;
 
 /**
  * A Codec for Document instances.
@@ -167,14 +161,14 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     static BaseObject convert(Document document, Class<?> documentClass) {
     	try {
     		BaseObject dataObj = (BaseObject) documentClass.newInstance();
-			FieldHolder holder = MongoDBHandler.getInstance().getDocumentMap().get(documentClass);
+			ClassFieldsHolder holder = MongoDBHandler.getInstance().getDocumentMap().get(documentClass);
 			if(holder != null) {
-				HashMap<String, Field> fieldMap = holder.getFieldMap();
+				HashMap<String, FieldEx> fieldMap = holder.getFieldMap();
 				if(fieldMap != null) {
 					Set<String> keys = fieldMap.keySet();
 					for(String key : keys) {
 						Object value = document.get(key);
-						Field field = fieldMap.get(key);
+						Field field = fieldMap.get(key).getField();
 						if(BaseObject.class.isAssignableFrom(field.getType()) && value.getClass().equals(Document.class)) {
 							BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
 							holder.assignField(dataObj, key, valueObj);
@@ -246,14 +240,14 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     private void writeBaseObject(final BsonWriter writer, final BaseObject map, final EncoderContext encoderContext) {
         writer.writeStartDocument();
 
-        HashMap<Class<?>, FieldHolder> documentMap = MongoDBHandler.getInstance().getDocumentMap();
-    	FieldHolder fieldHolder = documentMap.get(map.getClass());
+        HashMap<Class<?>, ClassFieldsHolder> documentMap = MongoDBHandler.getInstance().getDocumentMap();
+    	ClassFieldsHolder fieldHolder = documentMap.get(map.getClass());
     	if(fieldHolder != null) {
-    		HashMap<String, Field> fields = fieldHolder.getFieldMap();
+    		HashMap<String, FieldEx> fields = fieldHolder.getFieldMap();
     		if(fields != null) {
-    			for (final Map.Entry<String, Field> entry : fields.entrySet()) {
+    			for (final Map.Entry<String, FieldEx> entry : fields.entrySet()) {
     	            writer.writeName(entry.getKey());
-    	            Field field = entry.getValue();
+    	            Field field = entry.getValue().getField();
     	            Object value = null;
 					try {
 						if(!field.isAccessible()) 

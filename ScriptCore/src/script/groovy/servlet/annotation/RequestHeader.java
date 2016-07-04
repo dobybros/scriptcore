@@ -13,5 +13,5 @@ import script.groovy.servlets.GroovyServletManager;
 @Documented
 public @interface RequestHeader {
 	public String key() default "";
-	public boolean required() default true;
+	public boolean required() default false;
 }

@@ -87,9 +87,9 @@ public class RequestURIWrapper implements GroovyObjectListener{
 			String value = null;
 			if(!StringUtils.isBlank(key)) {
 				value = requestHolder.getParam(key, requestParam.required());
-				if(value == null) {
-					value = requestParam.defaultValue();
-				}
+//				if(value == null) {
+//					value = requestParam.defaultValue();
+//				}
 			}
 			Class<?> typeClass = param.getType();
 			if(value != null) {
