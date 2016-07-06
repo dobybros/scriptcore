@@ -1,0 +1,33 @@
+
+<project name="acucom" default="office" basedir=".">
+	<description>
+		AcuLearn
+    </description>
+	<target name="dev" description="build dev">
+		<property name="affiliate" value="dev" />
+		<antcall target="run" inheritall="true" />
+	</target>
+	<target name="office" description="build office">
+			<property name="affiliate" value="office" />
+			<antcall target="run" inheritall="true" />
+	</target>
+	<target name="aplombmac" description="build aplombmac">
+		<property name="affiliate" value="aplombmac" />
+		<antcall target="run" inheritall="true" />
+	</target>
+	<target name="awstest" description="build awstest">
+		<property name="affiliate" value="awstest" />
+		<antcall target="run" inheritall="true" />
+	</target>
+	<target name="run" description="Run">
+		<property name="name" value="contactgroupbalancer" />
+		<property name="hasweb" value="false" />
+		<property name="version" value="v0.1.0.4" />
+		<property name="debug" value="false" />
+		<property name="dist.tar.gz" value="contactgroupbalancer_${affiliate}.tar.gz" />
+		<property name="core.dir" location="../TalentCore" />
+		<ant antfile="${core.dir}/buildlib/build.xml" inheritall="true">
+		</ant>
+	</target>
+
+</project>
