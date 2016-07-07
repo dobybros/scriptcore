@@ -33,7 +33,7 @@ class GroovyServletEx extends GroovyServlet {
         String returnStr = builder.toString();
 
         response.setContentType("application/json");
-        LoggerEx.debug(this.getClass().getSimpleName(), "respond " + returnStr);
+//        LoggerEx.debug(this.getClass().getSimpleName(), "respond " + returnStr);
         response.getOutputStream().write(returnStr.getBytes("utf-8"));
     }
 }

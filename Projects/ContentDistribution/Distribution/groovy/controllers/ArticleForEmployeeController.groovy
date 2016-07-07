@@ -38,7 +38,7 @@ import common.utils.Utils
 
 @ControllerMapping(interceptClass = "intercepters/EmployeeIntercepter.groovy")
 public class ArticleForEmployeeController extends GroovyServletEx {
-	public static final int ERRORCODE_ARTICLE_UPLOAD_ILLEGAL = 200;
+    public static final int ERRORCODE_ARTICLE_UPLOAD_ILLEGAL = 200;
     public static final int ERRORCODE_ARTICLE_FILE_EMPTY = 201;
     public static final int ERRORCODE_ARTICLE_EXCEED_MAXIMUM = 202;
     public static final int ERRORCODE_ARTICLE_UPLOAD_FAILED = 203;
@@ -46,18 +46,18 @@ public class ArticleForEmployeeController extends GroovyServletEx {
 
     public static final int MAXIMUM = 1024 * 1024 * 100; //100m
 
-	private static final String TAG = ArticleForEmployeeController.class.getSimpleName();
-	@Bean
-	private GroovyObjectEx<UserService> userService;
+    private static final String TAG = ArticleForEmployeeController.class.getSimpleName();
+    @Bean
+    private GroovyObjectEx<UserService> userService;
 
-	@Bean
-	private GroovyObjectEx<ArticleService> articleService;
+    @Bean
+    private GroovyObjectEx<ArticleService> articleService;
 
     @Bean
     private GroovyObjectEx<IndexActionService> indexActionService;
 
-	@Bean(name = "localFileHandler")
-	private GroovyObjectEx<FileAdapter> fileHandler;
+    @Bean(name = "localFileHandler")
+    private GroovyObjectEx<FileAdapter> fileHandler;
 
     @RequestMapping(uri = "rest/article/{articleId}", method = GroovyServlet.DELETE)
     public void deleteArticle(
@@ -86,11 +86,11 @@ public class ArticleForEmployeeController extends GroovyServletEx {
         indexActionService.getObject().addIndexAction(indexAction);
     }
 
-	@RequestMapping(uri = "rest/articles", method = GroovyServlet.POST)
-	public void uploadArticle(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@RequestHeader(key = "User-Agent", required = false) String ua) throws CoreException{
+    @RequestMapping(uri = "rest/articles", method = GroovyServlet.POST)
+    public void uploadArticle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestHeader(key = "User-Agent", required = false) String ua) throws CoreException{
         HttpSession session = request.getSession();
         if(session != null) {
             List<String> myCompanies = session.getAttribute(UserController.SESSION_ATTRIBUTE_MYCOMPANYIDS);
@@ -113,7 +113,9 @@ public class ArticleForEmployeeController extends GroovyServletEx {
 //                if(contentType == null || !contentType.toLowerCase().contains("text/")) {
 //                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, HTML + "'s contentType is illegal, " + contentType);
 //                }
-                htmlContent = IOUtils.toString(htmlItem.getInputStream(), "utf8");
+                InputStream htmlIs = htmlItem.getInputStream();
+                htmlContent = IOUtils.toString(htmlIs, "utf8");
+                IOUtils.closeQuietly(htmlIs);
 
                 List<FileItem> jsonItems = itemMap.get(ARTICLE);
                 if(jsonItems == null || jsonItems.size() != 1) {
@@ -125,7 +127,9 @@ public class ArticleForEmployeeController extends GroovyServletEx {
 //                if(contentType == null || !contentType.toLowerCase().contains("application/json")) {
 //                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, ARTICLE + "'s contentType is illegal, " + contentType);
 //                }
-                articleJson = IOUtils.toString(jsonItem.getInputStream(), "utf8");
+                InputStream jsonIs = jsonItem.getInputStream();
+                articleJson = IOUtils.toString(jsonIs, "utf8");
+                IOUtils.closeQuietly(jsonIs);
             }
 
             if(StringUtils.isBlank(htmlContent) || StringUtils.isBlank(articleJson))
@@ -135,7 +139,7 @@ public class ArticleForEmployeeController extends GroovyServletEx {
 
             String htmlResourceId = ObjectId.get().toString();
             HashSet<String> addedFiles = new HashSet<>();
-			Article article = null;
+            Article article = null;
             try {
                 if(items != null) {
                     for(FileItem item : items) {
@@ -166,6 +170,8 @@ public class ArticleForEmployeeController extends GroovyServletEx {
                 obj.createTime = article.getCreateTime();
                 respond(response, obj);
             } catch(Throwable t) {
+                t.printStackTrace();
+                LoggerEx.error(TAG, "upload article " + htmlResourceId + " failed, " + t.getMessage());
                 //Remove obsoleted file after an error occurred.
                 for(String fileName : addedFiles) {
                     fileHandler.getObject().deleteFile(new FileAdapter.PathEx(Utils.getDocumentPath(htmlResourceId, fileName),
@@ -173,24 +179,35 @@ public class ArticleForEmployeeController extends GroovyServletEx {
                 }
                 throw t;
             }
-			if(article != null) {
-				IndexAction indexAction = new IndexAction();
-				indexAction.setUserId(userId);
-				indexAction.setAction(IndexAction.ACTION_ADD);
-				indexAction.setType(IndexAction.TYPE_ARTICLE);
-				indexAction.setTargetId(article.getId());
-				indexAction.setTargetUpdateTime(article.getUpdateTime());
-				indexActionService.getObject().addIndexAction(indexAction);
-			}
+            if(article != null) {
+                IndexAction indexAction = new IndexAction();
+                indexAction.setUserId(userId);
+                indexAction.setAction(IndexAction.ACTION_ADD);
+                indexAction.setType(IndexAction.TYPE_ARTICLE);
+                indexAction.setTargetId(article.getId());
+                indexAction.setTargetUpdateTime(article.getUpdateTime());
+                indexActionService.getObject().addIndexAction(indexAction);
+            }
         }
-	}
+    }
 
     private void saveFile(String fileName, String resourceId, FileItem fileItem, FileAdapter.MetadataEx metadata) throws CoreException {
-        saveFile(fileName, resourceId, fileItem.getInputStream(), metadata);
+        InputStream is = fileItem.getInputStream();
+        try {
+            saveFile(fileName, resourceId, is, metadata);
+        } finally {
+            if(is != null)
+                IOUtils.closeQuietly(is);
+        }
     }
 
     private void saveFile(String fileName, String resourceId, String content, FileAdapter.MetadataEx metadata) throws CoreException {
-        saveFile(fileName, resourceId, new ByteArrayInputStream(content.getBytes("utf8")), metadata);
+        InputStream is = new ByteArrayInputStream(content.getBytes("utf8"));
+        try {
+            saveFile(fileName, resourceId, is, metadata);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
     private void saveFile(String fileName, String resourceId, InputStream is, FileAdapter.MetadataEx metadata) throws CoreException {
@@ -269,8 +286,9 @@ public class ArticleForEmployeeController extends GroovyServletEx {
     }
 
     private String readContent(HttpServletRequest request) throws CoreException{
+        InputStream is = null;
         try {
-            InputStream is = new BufferedInputStream(request.getInputStream());
+            is = new BufferedInputStream(request.getInputStream());
             String contentEncoding = request.getHeader("Content-Encoding");
             if(contentEncoding != null && contentEncoding.indexOf("gzip") != -1) {
                 is = new GZIPInputStream(is);
@@ -282,31 +300,35 @@ public class ArticleForEmployeeController extends GroovyServletEx {
         } catch (IOException e) {
             e.printStackTrace();
             throw new CoreException(ERRORCODE_READCONTENT_FAILED, e.getMessage());
+        } finally {
+            if(is != null) {
+                IOUtils.closeQuietly(is);
+            }
         }
     }
 
-	private FileItem[] readFileItems(HttpServletRequest request) throws CoreException {
-		// Create a factory for disk-based file items
-		FileItemFactory factory = new DiskFileItemFactory();
+    private FileItem[] readFileItems(HttpServletRequest request) throws CoreException {
+        // Create a factory for disk-based file items
+        FileItemFactory factory = new DiskFileItemFactory();
 
-		// Create a new file upload handler
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		try {
-			List<FileItem> items = upload.parseRequest(request);
-			List<FileItem> newItems = new ArrayList<FileItem>();
-			for(FileItem fi : items) {
-				if(fi.getSize() <= 0)
-					throw new CoreException(ERRORCODE_ARTICLE_FILE_EMPTY, "File is empty.");
-				if(fi.getSize() > MAXIMUM)
-					throw new CoreException(ERRORCODE_ARTICLE_EXCEED_MAXIMUM, "FileItem has over the maximum limits : 10k.");
-				newItems.add(fi);
-			}
-			if(newItems.size() > 0)
-				return newItems.toArray(new FileItem[newItems.size()]);
-		} catch (FileUploadException e) {
-			e.printStackTrace();
-			throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_FAILED, "Upload failed, " + e.getMessage());
-		}
-		return null;
-	}
+        // Create a new file upload handler
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        try {
+            List<FileItem> items = upload.parseRequest(request);
+            List<FileItem> newItems = new ArrayList<FileItem>();
+            for(FileItem fi : items) {
+                if(fi.getSize() <= 0)
+                    throw new CoreException(ERRORCODE_ARTICLE_FILE_EMPTY, "File is empty.");
+                if(fi.getSize() > MAXIMUM)
+                    throw new CoreException(ERRORCODE_ARTICLE_EXCEED_MAXIMUM, "FileItem has over the maximum limits : 10k.");
+                newItems.add(fi);
+            }
+            if(newItems.size() > 0)
+                return newItems.toArray(new FileItem[newItems.size()]);
+        } catch (FileUploadException e) {
+            e.printStackTrace();
+            throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_FAILED, "Upload failed, " + e.getMessage());
+        }
+        return null;
+    }
 }

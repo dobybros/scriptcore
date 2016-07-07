@@ -28,4 +28,10 @@ public class ScriptController extends GroovyServletEx{
 		response.getOutputStream().write(("used: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + "M").getBytes());
 	}
 
+	@RequestMapping(uri = "rest/mem", method = GroovyServlet.GET)
+	public void mem(HttpServletRequest request,
+					HttpServletResponse response) throws CoreException{
+//		System.gc();
+		response.getOutputStream().write(("used: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + "M").getBytes());
+	}
 }
