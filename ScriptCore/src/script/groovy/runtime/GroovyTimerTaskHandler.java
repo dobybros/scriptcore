@@ -12,13 +12,13 @@ import chat.utils.ConcurrentHashSet;
 import chat.utils.TimerEx;
 import chat.utils.TimerTaskEx;
 
-public class GroovyTimerTaskHandler extends ClassAnnotationHandler {
+public class GroovyTimerTaskHandler implements ClassAnnotationHandler {
 
 	private static final String TAG = GroovyTimerTaskHandler.class.getSimpleName();
 	private ConcurrentHashSet<MyTimerTask> timerTasks;
 	
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return TimerTask.class;
 	}
 
@@ -33,7 +33,7 @@ public class GroovyTimerTaskHandler extends ClassAnnotationHandler {
 				if(timerTask != null) {
 					long period = timerTask.period();
 					if(period > 10) {
-						GroovyObjectEx<?> groovyObj = getGroovyRuntime().create(groovyClass);
+						GroovyObjectEx<?> groovyObj = GroovyRuntime.getInstance().create(groovyClass);
 						MyTimerTask task = new MyTimerTask(period, groovyObj);
 						newTimerTasks.add(task);
 					} else {

@@ -35,7 +35,7 @@ public class Main {
 		groovyRuntime.setPath(path);
 
 		GroovyBeanFactory beanFactory = new GroovyBeanFactory();
-		beanFactory.setGroovyRuntime(groovyRuntime);
+//		beanFactory.setGroovyRuntime(groovyRuntime);
 		groovyRuntime.addClassAnnotationHandler(beanFactory);
 		
 		groovyRuntime.init();

@@ -50,7 +50,7 @@ public class AdminController extends GroovyServlet{
 	 * @throws CoreException
 	 */
 	@RequestMapping(uri = "info/{hello}", method = GroovyServlet.GET)
-	public void getMemoryInfo(
+	public void getMemoryInfo1(
 		HttpServletRequest request, 
 		HttpServletResponse response, 
 		RequestHolder holder,

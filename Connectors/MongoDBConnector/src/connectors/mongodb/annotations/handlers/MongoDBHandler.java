@@ -11,6 +11,7 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import script.groovy.runtime.ClassAnnotationHandler;
+import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
@@ -29,7 +30,7 @@ import connectors.mongodb.codec.BaseObjectCodecProvider;
 import connectors.mongodb.codec.DataObject;
 import connectors.mongodb.codec.DataObjectCodecProvider;
 
-public class MongoDBHandler extends ClassAnnotationHandler{
+public class MongoDBHandler implements ClassAnnotationHandler{
 	public static final String VALUE = "VALUE";
 	public static final String CLASS = "CLASS";
 	private static final String TAG = MongoDBHandler.class.getSimpleName();
@@ -183,7 +184,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 	}
 	
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return null;
 	}
 

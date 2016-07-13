@@ -13,7 +13,7 @@ import script.groovy.annotation.Bean;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 
-public class GroovyBeanFactory extends ClassAnnotationHandler {
+public class GroovyBeanFactory implements ClassAnnotationHandler {
 	private static final String TAG = GroovyBeanFactory.class.getSimpleName();
 
 	private ConcurrentHashMap<String, GroovyObjectEx> beanMap = new ConcurrentHashMap<>();
@@ -56,7 +56,7 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 		String groovyPath = GroovyRuntime.path(c);
 		GroovyObjectEx<T> goe = beanMap.get(groovyPath);
 		if(goe == null) {
-			goe = getGroovyRuntime().create(groovyPath);
+			goe = GroovyRuntime.getInstance().create(groovyPath);
 			if(beanName == null) {
 				beanName = groovyPath;
 			}
@@ -77,7 +77,7 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 	}
 
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return Bean.class;
 	}
 

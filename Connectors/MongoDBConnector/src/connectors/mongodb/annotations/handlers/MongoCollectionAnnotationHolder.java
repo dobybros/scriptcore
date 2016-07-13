@@ -21,7 +21,7 @@ import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 
-public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
+public class MongoCollectionAnnotationHolder implements ClassAnnotationHandler {
 	private static final String TAG = MongoCollectionAnnotationHolder.class.getSimpleName();
 
 	private Map<Class<?>, DBCollection> collectionClassMap = new LinkedHashMap<>();
@@ -39,7 +39,7 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	}
 	
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return DBCollection.class;
 	}
 
