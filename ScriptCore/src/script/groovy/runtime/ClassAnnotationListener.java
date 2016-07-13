@@ -5,8 +5,7 @@ import java.util.Map;
 
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 
-public interface ClassAnnotationHandler {
-	
+public interface ClassAnnotationListener {
 	public abstract Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime);
 	
 	public abstract void handleAnnotatedClasses(Map<String, Class<?>> annotatedClassMap, MyGroovyClassLoader classLoader);
