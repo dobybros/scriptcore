@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import script.groovy.runtime.ClassAnnotationHandler;
+import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.utils.ClassFieldsHolder;
 import chat.utils.ClassFieldsHolder.FieldEx;
@@ -17,7 +18,7 @@ import chat.utils.ClassFieldsHolder.FieldIdentifier;
 import connectors.solr.annotations.DocumentField;
 import connectors.solr.annotations.SolrDocument;
 
-public class SolrDocumentHandler extends ClassAnnotationHandler {
+public class SolrDocumentHandler implements ClassAnnotationHandler {
 	private static final String TAG = SolrDocumentHandler.class.getSimpleName();
 	private HashMap<Class<?>, SolrClassFieldsHolder> documentMap = new HashMap<>();
 	
@@ -35,7 +36,7 @@ public class SolrDocumentHandler extends ClassAnnotationHandler {
 	}
 	
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return SolrDocument.class;
 	}
 

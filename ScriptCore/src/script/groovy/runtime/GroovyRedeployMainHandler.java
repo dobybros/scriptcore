@@ -9,12 +9,12 @@ import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.logs.LoggerEx;
 
-public class GroovyRedeployMainHandler extends ClassAnnotationHandler {
+public class GroovyRedeployMainHandler implements ClassAnnotationHandler {
 
 	private static final String TAG = GroovyRedeployMainHandler.class.getSimpleName();
 
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return RedeployMain.class;
 	}
 
@@ -24,7 +24,7 @@ public class GroovyRedeployMainHandler extends ClassAnnotationHandler {
 		if(annotatedClassMap != null) {
 			Collection<Class<?>> values = annotatedClassMap.values();
 			for(Class<?> groovyClass : values) {
-				GroovyObjectEx<?> groovyObj = getGroovyRuntime().create(groovyClass);
+				GroovyObjectEx<?> groovyObj = GroovyRuntime.getInstance().create(groovyClass);
 				try {
 					groovyObj.invokeRootMethod("main");
 				} catch (Throwable t) {

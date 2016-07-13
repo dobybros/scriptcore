@@ -24,7 +24,7 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ChatUtils;
 import chat.utils.HashTree;
-public class GroovyServletManager extends ClassAnnotationHandler {
+public class GroovyServletManager implements ClassAnnotationHandler {
 	public static final String RESPONSETYPE_JSON = "json";
 	public static final String RESPONSETYPE_DOWNLOAD = "download";
 	
@@ -147,14 +147,14 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 	}
 
 	@Override
-	public Class<? extends Annotation> handleAnnotationClass() {
+	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return ControllerMapping.class;
 	}
 
 	@Override
 	public void handleAnnotatedClasses(Map<String, Class<?>> annotatedClassMap,
 			MyGroovyClassLoader classLoader) {
-		GroovyRuntime groovyRuntime = getGroovyRuntime();
+		GroovyRuntime groovyRuntime = GroovyRuntime.getInstance();
 		if(annotatedClassMap != null && !annotatedClassMap.isEmpty()) {
 			StringBuilder uriLogs = new StringBuilder("\r\n---------------------------------------\r\n");
 			HashTree<String, RequestURIWrapper> tree = new HashTree<String, RequestURIWrapper>();
