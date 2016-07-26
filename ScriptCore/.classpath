@@ -53,7 +53,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/websocket-server-9.3.9.v20160517.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/websocket-servlet-9.3.9.v20160517.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/aopalliance.jar"/>
-	<classpathentry kind="lib" path="libs/groovy-all-2.4.7-indy.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/groovy-all-2.4.7-indy.jar"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

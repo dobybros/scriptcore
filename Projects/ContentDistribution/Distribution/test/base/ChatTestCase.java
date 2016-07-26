@@ -20,7 +20,7 @@ public class ChatTestCase {
 	protected String tcpHost;
 	protected String cookieString="";
 	
-	protected static final String HOST = "http://localhost:3333/rest";
+	protected static final String HOST = "http://localhost:6066/rest";
 	
 	protected Document login(String account, String password) throws Exception {
 		HttpClient httpClient = new HttpClient();

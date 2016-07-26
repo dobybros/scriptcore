@@ -35,14 +35,5 @@ public class GroovyObjectFactory {
 	}
 	
 	public synchronized void init() {
-		
-	}
-
-	public GroovyRuntime getGroovyRuntime() {
-		return groovyRuntime;
-	}
-
-	public void setGroovyRuntime(GroovyRuntime groovyRuntime) {
-		this.groovyRuntime = groovyRuntime;
 	}
 }

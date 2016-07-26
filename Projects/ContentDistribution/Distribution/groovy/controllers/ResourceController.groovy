@@ -19,7 +19,7 @@ public class ResourceController extends GroovyServletEx {
 	@Bean(name = "localFileHandler")
 	private GroovyObjectEx<FileAdapter> fileHandler;
 
-	@RequestMapping(uri = "rest/resource/{resourceId}/{fileName}", method = GroovyServlet.GET)
+	@RequestMapping(uri = "rest/resource/{resourceId}/{**.fileName}", method = GroovyServlet.GET)
 	public void getResources(
 			HttpServletRequest request,
 			HttpServletResponse response,

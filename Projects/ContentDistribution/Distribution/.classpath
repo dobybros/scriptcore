@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/scriptcore_intellij.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="groovy"/>
 	<classpathentry kind="src" path="conf"/>
@@ -17,7 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-webmvc-4.0.5.RELEASE.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/mongodbconnector.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/scriptcore.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/solrconnector.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

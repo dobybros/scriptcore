@@ -16,7 +16,6 @@
 		<property name="optimize" value="on" />
 		<property name="deprecation" value="on" />
 		<property name="encoding" value="utf-8" />
-		<property name="deployment.dir" location="../Deployment" />
 		<property name="dist.dir" location="${basedir}/deploy" />
 		<property name="lib.dir" value="${basedir}/../libs" />
 		<property name="reflib.dir" value="${basedir}/../reflibs" />
