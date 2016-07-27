@@ -9,6 +9,13 @@ import groovy.json.JsonBuilder
 class Article extends DataObject{
 	public static final String FIELD_COMPANYID = "cid";
 	public static final String FIELD_USERID = "uid";
+	public static final String FIELD_CREATETIME = "ctime";
+
+	public static final int TYPE_RAW = 1;
+	public static final int TYPE_GENERATED = 10;
+
+	@DocumentField(key = "type")
+	private Integer type;
 
 	@DocumentField(key = "titl")
 	private String title;
@@ -87,6 +94,15 @@ class Article extends DataObject{
 	void setCompanyIds(List<String> companyIds) {
 		this.companyIds = companyIds
 	}
+
+	Integer getType() {
+		return type
+	}
+
+	void setType(Integer type) {
+		this.type = type
+	}
+
 	@Override
 	public String toString() {
 		return new JsonBuilder( this ).toPrettyString();

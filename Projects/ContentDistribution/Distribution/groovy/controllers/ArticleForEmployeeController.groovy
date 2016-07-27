@@ -1,6 +1,7 @@
 package controllers
 
 import groovy.json.JsonSlurper
+import groovy.text.SimpleTemplateEngine
 
 import java.util.zip.GZIPInputStream
 
@@ -53,7 +54,7 @@ public class ArticleForEmployeeController extends GroovyServletEx {
     @Bean
     private GroovyObjectEx<ArticleService> articleService;
 
-    @Bean
+//    @Bean
     private GroovyObjectEx<IndexActionService> indexActionService;
 
     @Bean(name = "localFileHandler")
@@ -77,13 +78,15 @@ public class ArticleForEmployeeController extends GroovyServletEx {
         def obj = success();
         respond(response, obj);
 
-        IndexAction indexAction = new IndexAction();
-        indexAction.setUserId(userId);
-        indexAction.setAction(IndexAction.ACTION_DELETE);
-        indexAction.setType(IndexAction.TYPE_ARTICLE);
-        indexAction.setTargetId(articleId);
+        if(indexActionService != null) {
+            IndexAction indexAction = new IndexAction();
+            indexAction.setUserId(userId);
+            indexAction.setAction(IndexAction.ACTION_DELETE);
+            indexAction.setType(IndexAction.TYPE_ARTICLE);
+            indexAction.setTargetId(articleId);
 //        indexAction.setTargetUpdateTime(article.getUpdateTime());
-        indexActionService.getObject().addIndexAction(indexAction);
+            indexActionService.getObject().addIndexAction(indexAction);
+        }
     }
 
     @RequestMapping(uri = "rest/articles", method = GroovyServlet.POST)
@@ -91,31 +94,71 @@ public class ArticleForEmployeeController extends GroovyServletEx {
             HttpServletRequest request,
             HttpServletResponse response,
             @RequestHeader(key = "User-Agent", required = false) String ua) throws CoreException{
+        String htmlResourceId = null;
         HttpSession session = request.getSession();
         if(session != null) {
             List<String> myCompanies = session.getAttribute(UserController.SESSION_ATTRIBUTE_MYCOMPANYIDS);
             String userId = session.getAttribute(UserController.SESSION_ATTRIBUTE_USERID);
             final String ARTICLE = "article";
             final String HTML = "html";
-            FileItemResource fileItemResource = readForFileItems(request, [ARTICLE, HTML]);
+            final String CONTENT = "content";
+            FileItemResource fileItemResource = readForFileItems(request, [ARTICLE, HTML, CONTENT]);
 
+            Integer type = null;
             String htmlContent = null;
             String articleJson = null;
             Map<String, List<FileItem>> itemMap = fileItemResource.getFileItemMap();
             if(itemMap != null) {
+                List<FileItem> contentItems = itemMap.get(CONTENT);
                 List<FileItem> htmlItems = itemMap.get(HTML);
-                if(htmlItems == null || htmlItems.size() != 1) {
-                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, HTML + " item doesn't be found");
+                if((htmlItems == null || htmlItems.size() != 1) && (contentItems == null || contentItems.size() != 1)) {
+                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, HTML + " and " + CONTENT + " item doesn't be found");
                 }
-
-                FileItem htmlItem = htmlItems.get(0);
-                String contentType = htmlItem.getContentType();
+                if(htmlItems != null && !htmlItems.isEmpty()) {
+                    FileItem htmlItem = htmlItems.get(0);
+                    String contentType = htmlItem.getContentType();
 //                if(contentType == null || !contentType.toLowerCase().contains("text/")) {
 //                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, HTML + "'s contentType is illegal, " + contentType);
 //                }
-                InputStream htmlIs = htmlItem.getInputStream();
-                htmlContent = IOUtils.toString(htmlIs, "utf8");
-                IOUtils.closeQuietly(htmlIs);
+                    InputStream htmlIs = htmlItem.getInputStream();
+                    htmlContent = IOUtils.toString(htmlIs, "utf8");
+                    IOUtils.closeQuietly(htmlIs);
+                    type = Article.TYPE_RAW;
+                } else if(contentItems != null && !contentItems.isEmpty()) {
+                    FileItem contentItem = contentItems.get(0);
+                    String contentType = contentItem.getContentType();
+//                if(contentType == null || !contentType.toLowerCase().contains("text/")) {
+//                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, HTML + "'s contentType is illegal, " + contentType);
+//                }
+
+                    def template = '''
+                        <html>
+                            <head>
+                                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+                                <link href="/mweb/viewer/min.css" rel="stylesheet">
+                                <script src="/mweb/viewer/min.js"></script>
+                            </head>
+                            <body>
+                                <script>
+                                    var content = ${content}
+                                </script>
+                            </body>
+                        </html>
+                    ''';
+
+                    InputStream contentIs = contentItem.getInputStream();
+                    def jsonContent = IOUtils.toString(contentIs, "utf8");
+                    IOUtils.closeQuietly(contentIs);
+
+                    def binding = [
+                            content : jsonContent,
+                    ];
+                    def engine = new SimpleTemplateEngine()
+                    htmlContent = engine.createTemplate(template).make(binding).toString();
+                    type = Article.TYPE_GENERATED;
+                }
 
                 List<FileItem> jsonItems = itemMap.get(ARTICLE);
                 if(jsonItems == null || jsonItems.size() != 1) {
@@ -123,7 +166,7 @@ public class ArticleForEmployeeController extends GroovyServletEx {
                 }
 
                 FileItem jsonItem = jsonItems.get(0);
-                contentType = jsonItem.getContentType();
+                String contentType = jsonItem.getContentType();
 //                if(contentType == null || !contentType.toLowerCase().contains("application/json")) {
 //                    throw new CoreException(ERRORCODE_ARTICLE_UPLOAD_ILLEGAL, ARTICLE + "'s contentType is illegal, " + contentType);
 //                }
@@ -137,15 +180,15 @@ public class ArticleForEmployeeController extends GroovyServletEx {
 
             FileItem[] items = fileItemResource.getOtherFileItems();
 
-            String htmlResourceId = ObjectId.get().toString();
+            htmlResourceId = ObjectId.get().toString();
             HashSet<String> addedFiles = new HashSet<>();
             Article article = null;
             try {
                 if(items != null) {
                     for(FileItem item : items) {
-                        saveFile(item.getName(), htmlResourceId, item, null);
-                        addedFiles.add(item.getName());
-                        htmlContent = htmlContent.replace("{" + item.getFieldName() + "}", item.getName());
+                        saveFile(item.getFieldName(), htmlResourceId, item, null);
+                        addedFiles.add(item.getFieldName());
+//                        htmlContent = htmlContent.replace("\${" + item.getFieldName() + "}", item.getFieldName());
                     }
                 }
                 final String INDEX = "index.html";
@@ -155,31 +198,52 @@ public class ArticleForEmployeeController extends GroovyServletEx {
                 def slurper = new JsonSlurper()
                 def json = slurper.parseText(articleJson);
 
+                String typeStr = json["type"];
+                if(typeStr != null) {
+                    try {
+                        Integer t = Integer.parseInt(typeStr);
+                        if(t != null) {
+                            switch (t) {
+                                case Article.TYPE_GENERATED:
+                                case Article.TYPE_RAW:
+                                    type = t;
+                                    break;
+                            }
+                        }
+                    } catch(Throwable t) {
+                    }
+                }
+
                 article = new Article();
+                article.setType(type);
                 article.setId(htmlResourceId);
                 article.setCompanyIds(myCompanies);
                 article.setSummary(json["summary"]);
                 article.setTitle(json["title"]);
                 article.setUserId(userId);
-                article.setUrl("/resource/" + htmlResourceId + "/" + INDEX);
+                article.setUrl("/rest/resource/" + htmlResourceId + "/" + INDEX);
                 articleService.getObject().addArticle(article);
 
                 def obj = success();
-                obj.id = article.getId();
-                obj.updateTime = article.getUpdateTime();
-                obj.createTime = article.getCreateTime();
+                def theArticle = [:];
+                theArticle.id = article.getId();
+                theArticle.updateTime = article.getUpdateTime();
+                theArticle.createTime = article.getCreateTime();
+                obj.article = theArticle;
                 respond(response, obj);
             } catch(Throwable t) {
                 t.printStackTrace();
                 LoggerEx.error(TAG, "upload article " + htmlResourceId + " failed, " + t.getMessage());
                 //Remove obsoleted file after an error occurred.
-                for(String fileName : addedFiles) {
-                    fileHandler.getObject().deleteFile(new FileAdapter.PathEx(Utils.getDocumentPath(htmlResourceId, fileName),
-                            htmlResourceId, null))
+                if(htmlResourceId != null) {
+                    for(String fileName : addedFiles) {
+                        fileHandler.getObject().deleteFile(new FileAdapter.PathEx(Utils.getDocumentPath(htmlResourceId, fileName),
+                                htmlResourceId, null))
+                    }
                 }
                 throw t;
             }
-            if(article != null) {
+            if(article != null && indexActionService != null) {
                 IndexAction indexAction = new IndexAction();
                 indexAction.setUserId(userId);
                 indexAction.setAction(IndexAction.ACTION_ADD);

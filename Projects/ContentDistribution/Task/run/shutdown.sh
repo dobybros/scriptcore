@@ -1,0 +1,3 @@
+echo shutdown web log service ...
+nohup ant -f build.xml 'stop_service'
+tail -20 ../logs/startup.log

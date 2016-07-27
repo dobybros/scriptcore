@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project name="run" default="start_service" basedir="..">
+	<description>
+		AcuLearn
+    </description>
+	<target name="params">
+		<property file="bin/run.properties"/>
+		<echo message="tmp.path = ${tmp.path}"></echo>
+		<echo message="mem.maxM = ${mem.maxM}"></echo>
+		<echo message="mem.minM =  ${mem.minM}"></echo>
+		<echo message="async.servlet.map = ${async.servlet.map}"></echo>
+		<echo message="main.class = ${main.class}"></echo>
+		<echo message="threadpool.size = ${threadpool.size}"></echo>
+		<echo message="server.port = ${server.port}"></echo>
+	</target>
+	<target name="init" description="Initialize the target...">
+		<!-- initialize the parameter-->
+		<property environment="env"/>
+		<property name="name" value="${ant.project.name}" />
+		<property name="version" value="V4.0" />
+		<property name="year" value="2011" />
+		<echo message="Building ${ant.project.name} ${version}...." />
+		<property name="build.compiler" value="modern" />
+		<property name="debug" value="true" />
+		<property name="optimize" value="on" />
+		<property name="deprecation" value="on" />
+		<property name="encoding" value="utf-8" />
+		<property name="dist.dir" location="${basedir}/dist" />
+		<property name="lib.dir" value="${basedir}/war/WEB-INF/lib" />
+		<property name="scriptcore.lib.dir" value="${basedir}/war/WEB-INF/scriptcore" />
+		<property name="conf.dir" value="${basedir}/conf" />
+		<property name="src.dir" value="${basedir}/src/java" />
+
+		<property name="build.dir" value="${basedir}/war/WEB-INF/classes" />
+		<property name="log.dir" value="${basedir}/logs" />
+		<property name="dist.tar.gz" value="${name}_${version}.tar.gz" />
+		<property name="release.jar" value="${name}_${version}.jar" />
+		<property name="hissian.jar" value="${name}${version}.jar" />
+
+		<filter token="year" value="${year}" />
+		<filter token="version" value="${version}" />
+		<filter token="date" value="${TODAY}" />
+		<filter token="log" value="true" />
+		<filter token="verbose" value="true" />
+
+
+		<!-- run classpath -->
+		<path id="run.classpath">
+			<fileset dir="${lib.dir}" includes="**/*.jar" />
+			<fileset dir="${scriptcore.lib.dir}" includes="**/*.jar" />
+			<pathelement location="${build.dir}" />
+		</path>
+	</target>
+
+	<target name="start_service" depends="params, init" description="Start schedule server.">
+		<java classname="${main.class}" fork="true">
+			<classpath refid="run.classpath"/>
+			<arg value="-p" />
+			<arg value="${server.port}" />
+			<arg value="-t" />
+			<arg value="${threadpool.size}" />
+			<arg value="-i" />
+			<arg value="${innerthreadpool.size}" />
+			
+			<jvmarg value="-Xms${mem.minM}M" />
+			<jvmarg value="-Xmx${mem.maxM}M" />
+			<jvmarg value="-DSTOP.KEY=stopserverkey"/>
+			<jvmarg value="-Djava.net.preferIPv4Stack=true"/>
+			<jvmarg value="-Dfile.encoding=UTF-8"/>
+			<jvmarg value="-Djava.io.tmpdir=${tmp.path}"/>
+			<!-- jvm optimization -->
+			<!--  一定要作为第一个参数，会使JVM启动速度变慢，但会显著提升JVM性能 --> 
+			<jvmarg value="-server"/>
+			<!--  设置每个线程的 Stack 大小 --> 
+			<jvmarg value="-Xss${jvm.stackK}k"/>
+			<!--  设置年轻代大小。此值对系统性能影响较大，Sun官方推荐配置年轻代大小为整个堆的3/8。  
+			<jvmarg value="-Xmn${jvm.newM}m"/>-->
+			<!--  设置永久区初始大小 
+			<jvmarg value="-XX:PermSize=${jvm.permM}m"/>--> 
+			<!--  设置最大永久区大小，永久保存区用于存放Class信息和元信息  
+			<jvmarg value="-XX:MaxPermSize=${jvm.maxPermM}m"/>-->
+			<!--  配置并行收集器的线程数，即同时8个线程一起进行垃圾回收。此值一般配置为与CPU数目相等。 --> 
+			<jvmarg value="-XX:ParallelGCThreads=4"/>
+			<!--  设置年轻代中Eden区与Survivor区的比值。系统默认是8，根据经验设置为6，则2个Survivor区与1个Eden区的比值为2:6，一个Survivor区占整个年轻代的1/8。  
+			<jvmarg value="-XX:SurvivorRatio=6"/>-->
+			<!--  设置年老代为并发收集。CMS（ConcMarkSweepGC）收集的目标是尽量减少应用的暂停时间，减少Full GC发生的几率，利用和应用程序线程并发的垃圾回收线程来标记清除年老代内存，适用于应用中存在比较多的长生命周期对象的情况。-->  
+			<jvmarg value="-XX:+UseConcMarkSweepGC"/>
+			<!--  该值表示编译之前必须调用方法的次数。HotSpot JVM 使用 JIT(Just-In-Time Compilation, http://en.wikipedia.org/wiki/Just-in-time_compilation) 技术将字节码编译成本地码，默认值为1000，即一个方法被调用了 1000 次之后 JVM 会编译它。降低这个值可能会使程序的性能得到提升，但会使启动速度变慢。 --> 
+			<jvmarg value="-XX:CompileThreshold=100"/>
+			<!-- 通常在64 bit机器上默认是48m，当code cache用满了后，编译优化就被禁掉了，此时会回归到解释执行，RT可想而知不会好到哪去。 Code Cache用满一方面是因为空间可能不够用，另一方面是Code Cache是不会回收的，所以会累积的越来越多（其实在不采用groovy这种动态更新/装载class的情况下的话，是不会太多的），所以解法一可以是增大code cache的size. Oracle JVM Team那边也是推荐把code cache调大的 			
+			<jvmarg value="-XX:ReservedCodeCacheSize=${jvm.codeCacheSizeM}m"/>-->
+			<!-- 启用code cache的回收机制
+			<jvmarg value="-XX:+UseCodeCacheFlushing"/> -->
+			<!-- The -XX:+CMSPermGenSweepingEnabled flag is often used to mitigate against PermGen OutOfMemory errors, however I have read elsewhere that people have found that by following the above advice they have still had these errors, but by sticking with -XX:+CMSPermGenSweepingEnabled as well as -XX:+CMSClassUnloadingEnabled their VM has stayed up longer between restarts. -->
+			<!-- JVM request to remove it. jvmarg value="-XX:+CMSPermGenSweepingEnabled"/-->
+			<!-- If you enable CMSClassUnloadingEnabled the GC will sweep PermGen, too, and remove classes which are no longer used. -->
+			<jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+		</java>
+	</target>
+
+	<target name="index" depends="init" description="Start schedule server.">
+		<java classname="main.DBIndexesMain" fork="true">
+			<classpath refid="run.classpath"/>
+			<jvmarg value="-Xms128M" />
+			<jvmarg value="-Xmx1500M" />
+			<jvmarg value="-DSTOP.KEY=stopserverkey"/>
+			<jvmarg value="-Djava.net.preferIPv4Stack=true"/>
+			<jvmarg value="-Dfile.encoding=UTF-8"/>
+		</java>
+	</target>
+</project>

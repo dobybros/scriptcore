@@ -18,6 +18,8 @@ import common.distribution.Article
 import common.distribution.ArticleService
 import common.controllers.GroovyServletEx
 
+import java.util.concurrent.atomic.AtomicLong
+
 @ControllerMapping(interceptClass = "intercepters/HttpSessionIntercepter.groovy")
 public class ArticleForUserController extends GroovyServletEx {
 	private static final String TAG = ArticleForUserController.class.getSimpleName();
@@ -36,10 +38,18 @@ public class ArticleForUserController extends GroovyServletEx {
 		HttpServletResponse response,
 		@RequestParam(key = "c") String companyId,
 		@RequestParam(key = "u") String authorUserId,
+		@RequestParam(key = "o") Integer offset,
+		@RequestParam(key = "l") Integer limit,
 		@RequestHeader(key = "User-Agent", required = false) String ua) throws CoreException{
-		List<Article> articles = articleService.getObject().queryArticles(companyId, authorUserId);
+		AtomicLong total = null;
+		if(offset == 0) {
+			total = new AtomicLong();
+		}
+		List<Article> articles = articleService.getObject().queryArticles(companyId, authorUserId, offset, limit, total);
 		def obj = success();
 		obj.articles = articles;
+		if(total != null)
+			obj.total = total.get();
 		respond(response, obj);
 	}
 

@@ -264,7 +264,7 @@ public class GroovyRuntime extends ScriptRuntime{
 
 		public Class<?> parseGroovyClass(String key, File classFile)
 				throws CoreException {
-			/*ClassHolder holder =  classCache.get(key);
+			ClassHolder holder =  classCache.get(key);
 			if(holder != null && holder.getParsedClass() != null) {
 				LoggerEx.info(TAG, "Load groovy class " + key
 						+ " from cache");
@@ -286,9 +286,9 @@ public class GroovyRuntime extends ScriptRuntime{
 						ChatErrorCodes.ERROR_GROOVY_PARSECLASS_FAILED,
 						"Parse class " + classFile + " failed, "
 								+ e.getMessage());
-			}*/
+			}
 			
-			ClassHolder holder =  classCache.get(key);
+			/*ClassHolder holder =  classCache.get(key);
 			if(holder != null && holder.getParsedClass() != null) {
 				LoggerEx.info(TAG, "Load groovy class " + key
 						+ " from cache");
@@ -338,7 +338,7 @@ public class GroovyRuntime extends ScriptRuntime{
 						ChatErrorCodes.ERROR_GROOVY_PARSECLASS_FAILED,
 						"Parse class " + classFile + " failed, "
 								+ e.getMessage());
-			}
+			}*/
 		}
 		
 		@Override
