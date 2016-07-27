@@ -1,23 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/scriptcore_intellij.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/aopalliance.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-cli-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-codec-1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-configuration-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-fileupload-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-httpclient-3.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-io-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-lang-2.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-logging-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/commons-validator-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/groovy-all-2.4.7-indy.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/javax-websocket-client-impl-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/javax-websocket-server-impl-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/javax.websocket-api-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-alpn-server-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-annotations-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-client-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-continuation-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-deploy-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-http-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-io-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-jaas-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-jmx-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-jndi-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-monitor-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-nosql-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-plus-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-proxy-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-quickstart-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-rewrite-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-schemas-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-security-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-server-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-servlet-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-servlets-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-util-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-webapp-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/jetty-xml-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/log4j-1.2.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/log4j-over-slf4j-1.7.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/logback-classic-1.1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/logback-core-1.1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/mongo-java-driver-3.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/mongodbconnector.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/noggit-0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/scriptcore.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/servlet-api-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/slf4j-api-1.7.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/solr-core-5.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/solr-solrj-5.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/solrconnector.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spatial4j-0.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/websocket-api-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/websocket-client-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/websocket-common-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/websocket-server-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/websocket-servlet-9.3.9.v20160517.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-aop-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-aspects-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-beans-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-context-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-context-support-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-core-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-expression-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-test-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-web-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/scriptcore/spring-webmvc-4.0.5.RELEASE.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="groovy"/>
 	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-aop-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-aspects-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-beans-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-context-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-context-support-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-core-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-expression-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-test-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-web-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-webmvc-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/mongodbconnector.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/solrconnector.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

@@ -26,7 +26,7 @@ public class GroovyObjectFactory {
 		String groovyPath = GroovyRuntime.path(c);
 		GroovyObjectEx<T> goe = beanMap.get(groovyPath);
 		if(goe == null) {
-			goe = groovyRuntime.create(groovyPath);
+			goe = getGroovyRuntime().create(groovyPath);
 			GroovyObjectEx<T> oldgoe = beanMap.putIfAbsent(groovyPath, goe);
 			if(oldgoe != null) 
 				goe = oldgoe;
@@ -35,5 +35,13 @@ public class GroovyObjectFactory {
 	}
 	
 	public synchronized void init() {
+	}
+
+	public GroovyRuntime getGroovyRuntime() {
+		return groovyRuntime;
+	}
+
+	public void setGroovyRuntime(GroovyRuntime groovyRuntime) {
+		this.groovyRuntime = groovyRuntime;
 	}
 }

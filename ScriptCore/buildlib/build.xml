@@ -16,7 +16,7 @@
 		<property name="optimize" value="on" />
 		<property name="deprecation" value="on" />
 		<property name="encoding" value="utf-8" />
-		<property name="dist.dir" location="${basedir}/deploy" />
+		<property name="dist.dir" location="${basedir}/deploy/lib" />
 		<property name="lib.dir" value="${basedir}/../libs" />
 		<property name="src.dir" value="${basedir}/../src" />
 		<property name="source.dir" value="${dist.dir}/src" />
@@ -95,7 +95,11 @@
 
 		<jar basedir="${classes.dir}" destfile="${dist.dir}/${jar.name}">
 		</jar>
-
+		<copy todir="${dist.dir}" failonerror="false">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
 		<delete dir="${source.dir}" failonerror="false" />
 		<delete dir="${classes.dir}" failonerror="false" />
 	</target>
@@ -108,7 +112,7 @@
 
 		<jar basedir="${classes.dir}" destfile="${dist.dir}/${jar.name}">
 		</jar>
-
+		
 		<delete dir="${source.dir}" failonerror="false" />
 		<delete dir="${classes.dir}" failonerror="false" />
 	</target>

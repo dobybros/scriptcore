@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="scriptcore">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/war/WEB-INF/scriptcore" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/war/WEB-INF/scriptcore" recursive="false" />
+  </library>
+</component>
