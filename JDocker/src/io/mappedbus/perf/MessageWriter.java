@@ -6,7 +6,7 @@ import java.io.File;
 public class MessageWriter {
 
 	public static void main(String[] args) {
-		MessageWriter writer = new MessageWriter();
+		final MessageWriter writer = new MessageWriter();
 		for(int i = 0; i < 1; i++){
 			final int count = i;
 			new Thread(new Runnable(){
