@@ -7,13 +7,20 @@ public class MessageWriter {
 
 	public static void main(String[] args) {
 		MessageWriter writer = new MessageWriter();
-		writer.run("/Users/aplombchen/Dev/github/scriptcore/test1");
+		for(int i = 0; i < 1; i++){
+			final int count = i;
+			new Thread(new Runnable(){
+				@Override
+				public void run() {
+					writer.run("/tmp/test" + count);
+				}}).start();
+		}
 	}
 
 	public void run(String fileName) {
 		try {
 			new File(fileName).delete();
-			
+			System.out.println("fileName " + fileName);
 			MappedBusWriter writer = new MappedBusWriter(fileName, 20000000000L, 12, false);
 			writer.open();
 			
@@ -24,7 +31,8 @@ public class MessageWriter {
 			}
 			
 			System.out.println("Done");
-			
+			writer.close();
+			System.out.println("Closed");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

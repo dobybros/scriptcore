@@ -30,7 +30,8 @@ public class ObjectReader {
 						throw new RuntimeException("Unknown type: " + type);
 					}
 					reader.readMessage(message);					
-					System.out.println("Read: " + message + ", hasRecovered=" + recovered);
+					System.gc();
+					System.out.println("Read: " + message + ", hasRecovered=" + recovered + " mem= " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
 				}
 			}
 		} catch(Exception e) {

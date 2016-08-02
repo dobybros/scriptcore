@@ -6,7 +6,9 @@ public class MessageReader {
 
 	public static void main(String[] args) {
 		MessageReader reader = new MessageReader();
-		reader.run("/Users/aplombchen/Dev/github/scriptcore/test1");	
+		for(int i = 0; i < 4; i++){
+			reader.run("/tmp/test" + i);
+		}
 	}
 
 	public void run(String fileName) {
