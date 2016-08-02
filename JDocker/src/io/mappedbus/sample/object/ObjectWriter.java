@@ -5,7 +5,8 @@ public class ObjectWriter {
 
 	public static void main(String[] args) {
 		ObjectWriter writer = new ObjectWriter();
-		writer.run(Integer.valueOf(args[0]));
+//		writer.run(Integer.valueOf(args[0]));
+		writer.run(1);
 	}
 
 	public void run(int source) {

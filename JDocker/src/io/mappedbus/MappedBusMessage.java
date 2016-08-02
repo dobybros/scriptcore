@@ -15,6 +15,9 @@
 */
 package io.mappedbus;
 
+import chat.utils.DataInputStreamEx;
+import chat.utils.DataOutputStreamEx;
+
 /**
  * Interface for messages that can be serialized to the bus.
  *
@@ -43,4 +46,7 @@ public interface MappedBusMessage {
 	 * @return the message type
 	 */
 	public int type();
+	
+//	public void persistent(DataOutputStreamEx os);
+//	public void resurrect(DataInputStreamEx is);
 }

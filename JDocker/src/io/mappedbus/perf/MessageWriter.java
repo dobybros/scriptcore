@@ -7,7 +7,7 @@ public class MessageWriter {
 
 	public static void main(String[] args) {
 		MessageWriter writer = new MessageWriter();
-		writer.run(args[0]);
+		writer.run("/Users/aplombchen/Dev/github/scriptcore/test1");
 	}
 
 	public void run(String fileName) {

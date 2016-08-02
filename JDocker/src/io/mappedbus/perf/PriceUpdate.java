@@ -1,4 +1,6 @@
 package io.mappedbus.perf;
+import java.io.UnsupportedEncodingException;
+
 import io.mappedbus.MemoryMappedFile;
 import io.mappedbus.MappedBusMessage;
 
@@ -12,6 +14,8 @@ public class PriceUpdate implements MappedBusMessage {
 	private int price;
 	
 	private int quantity;
+	
+	private String message;
 	
 	public PriceUpdate() {
 	}
@@ -65,6 +69,14 @@ public class PriceUpdate implements MappedBusMessage {
 		source = mem.getInt(pos);
 		price = mem.getInt(pos + 4);
 		quantity = mem.getInt(pos + 8);
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }
