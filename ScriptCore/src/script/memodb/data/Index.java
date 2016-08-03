@@ -1,6 +1,13 @@
 package script.memodb.data;
 
-public class Index extends Blob{
+/**
+ * 
+ * 
+ * @author aplombchen
+ *
+ * @param <T>
+ */
+public class Index<T> extends Blob{
 	public static final byte VALUETYPE_INT = 1;
 	public static final byte VALUETYPE_DOUBLE = 2;
 	public static final byte VALUETYPE_FLOAT = 3;
@@ -9,7 +16,16 @@ public class Index extends Blob{
 	public static final byte VALUETYPE_SHORT = 6;
 	public static final byte VALUETYPE_BYTE = 7;
 	
+	/**
+	 * Type of index value. 
+	 */
 	public byte valueType;
+	/**
+	 * Id of data this index stand for.
+	 */
 	public String id;
-	public Object value;
+	/**
+	 * Index value
+	 */
+	public T value;
 }
