@@ -20,7 +20,7 @@ public class Chunk extends Blob{
 	 * address of next chunk
 	 * if no next chunk, this field will be -1
 	 */
-	public int nextChunkAddress;
+	public long nextChunkAddress;
 	
 	/**
 	 * Data in byte array

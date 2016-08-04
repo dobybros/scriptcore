@@ -32,7 +32,7 @@ public class Keys extends Blob{
 		/**
 		 * Chunk address in Chunk file specified by chunkFileName. 
 		 */
-		public int chunkAddress;
+		public long chunkAddress;
 		/**
 		 * The count of all chunks. 
 		 */
