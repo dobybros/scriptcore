@@ -35,6 +35,10 @@ public class MDataFile<T extends MData> {
 				memFile = new MemoryMappedFile(path, length);
 				//read reserved parameters for a mdatafile. 
 				cursorAddress = memFile.getLongVolatile(RESERVED_CURSORADDRESS);
+				if(cursorAddress == 0) {
+					cursorAddress = memFile.getAddress() + MDATAFILE_RESERVED;
+					memFile.putLongVolatile(RESERVED_CURSORADDRESS, cursorAddress);
+				}
 			} catch (Throwable e) {
 				e.printStackTrace();
 				status.set(STATUS_CLOSED);
@@ -43,7 +47,18 @@ public class MDataFile<T extends MData> {
 		}
 	}
 	
-	public void add(T mdata) {
-		
+	public void add(T mdata) throws IOException {
+		mdata.persistent(memFile, cursorAddress);
+		cursorAddress += mdata.dataLength();
+		memFile.putLongVolatile(RESERVED_CURSORADDRESS, cursorAddress);
+	}
+	
+	public void read(int pos, T mdata) throws IOException {
+		long start = memFile.getAddress() + MDATAFILE_RESERVED;
+		for(int i = 0; i < pos; i++) {
+			int length = MData.readDataLength(memFile, start);
+			start += length;
+		}
+		mdata.resurrect(memFile, start);
 	}
 }

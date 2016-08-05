@@ -3,8 +3,9 @@ package script.memodb.data;
 import java.io.IOException;
 
 public abstract class MData implements MMFileSerializable {
-	public static int VERSION_DELETED = -100;
-	public static int VERSION_UPDATING = -1;
+	public static byte VERSION_DELETED = -100;
+	public static byte VERSION_UPDATING = -1;
+	public static byte VERSION_CORRUPTED = -10;
 	
 	protected static final int OFFSET_VERSION = 1;
 	public byte version;
@@ -20,11 +21,35 @@ public abstract class MData implements MMFileSerializable {
 		length = memoFile.getInt(address + OFFSET_VERSION);
 	}
 	
+	public static int readDataLength(MemoryMappedFile memoFile, long address) {
+		return memoFile.getInt(address + OFFSET_VERSION);
+	}
+	
+	public boolean isCompletedData() {
+		return version >= 0;
+	}
+	
 	@Override
 	public void persistent(MemoryMappedFile memoFile, long address) throws IOException {
-		memoFile.putByte(address, version);
+		memoFile.putByte(address, VERSION_UPDATING);
 		memoFile.putInt(address + OFFSET_VERSION, length());
 	}
 	
+	public void persistentDone(MemoryMappedFile memoFile, long address) {
+		memoFile.putByte(address, version);
+	}
+	
+	public void persistentCorrupted(MemoryMappedFile memoFile, long address) {
+		memoFile.putByte(address, VERSION_CORRUPTED);
+	}
+	
+	public void persistentDeleted(MemoryMappedFile memoFile, long address) {
+		memoFile.putByte(address, VERSION_CORRUPTED);
+	}
+	
 	protected abstract int length();
+	
+	public int dataLength() {
+		return length() + OFFSET_MDATA;
+	}
 }

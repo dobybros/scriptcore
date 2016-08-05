@@ -172,6 +172,10 @@ public class MemoryMappedFile {
 		unsafe.putLong(pos + addr, val);
 	}
 	
+	public long getAddress() {
+		return addr;
+	}
+	
 	/**
 	 * Writes a long (volatile) to the specified position.
 	 * @param pos the position in the memory mapped file

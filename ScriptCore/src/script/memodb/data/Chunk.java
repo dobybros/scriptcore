@@ -48,47 +48,21 @@ public class Chunk extends MData{
 		super.resurrect(memoFile, address);
 		int offset = OFFSET_MDATA;
 		
-		memoFile.putInt(address + offset, chunkNum);
-		offset += OFFSET_CHUNKNUM;
-		
-		memoFile.putInt(address + offset, nextChunkNum);
-		offset += OFFSET_NEXTCHUNKNUM;
-		
-		memoFile.putLong(address + offset, nextChunkAddress);
-		offset += OFFSET_NEXTCHUNKADDRESS;
-		
-		if(dataBytes != null) {
-			memoFile.putInt(address + offset, chunkLength);
+		if(isCompletedData()) {
+			chunkNum = memoFile.getInt(offset);
+			offset += OFFSET_CHUNKNUM;
+			
+			nextChunkNum = memoFile.getInt(offset);
+			offset += OFFSET_NEXTCHUNKNUM;
+			
+			nextChunkAddress = memoFile.getLong(offset);
+			offset += OFFSET_NEXTCHUNKADDRESS;
+			
+			chunkLength = memoFile.getInt(offset);
 			offset += OFFSET_CHUNKLENGTH;
 			
-			memoFile.setBytes(address + offset, dataBytes, 0, chunkLength);
-		} else if(dataInputStream != null){
-			memoFile.putInt(address + offset, chunkLength);
-			offset += OFFSET_CHUNKLENGTH;
-			
-			final int BUFSIZE = 8096;
-			byte[] buffer;
-			
-			int read = 0;
-			int totalRead = 0;
-			do {
-				int len = chunkLength - totalRead;
-				if(len > BUFSIZE) {
-					buffer = new byte[BUFSIZE];
-				} else {
-					buffer = new byte[len];
-				}
-				if(read > 0) {
-					memoFile.setBytes(address + offset, buffer, 0, read);
-					totalRead += read;
-					offset += read;
-					if(totalRead == chunkLength)
-						break;
-				}
-			} while((read = dataInputStream.read(buffer)) != -1);
-		} else {
-			memoFile.putInt(address + offset, 0);
-			offset += OFFSET_CHUNKLENGTH;
+			dataBytes = new byte[chunkLength];
+			memoFile.getBytes(offset, dataBytes, 0, chunkLength);
 		}
 	}
 	
@@ -96,22 +70,63 @@ public class Chunk extends MData{
 	public void persistent(MemoryMappedFile memoFile, long address) throws IOException {
 		super.persistent(memoFile, address);
 		int offset = OFFSET_MDATA;
-		
-		chunkNum = memoFile.getInt(offset);
-		offset += OFFSET_CHUNKNUM;
-		
-		chunkLength = memoFile.getInt(offset);
-		offset += OFFSET_CHUNKLENGTH;
-		
-		nextChunkNum = memoFile.getInt(offset);
-		offset += OFFSET_NEXTCHUNKNUM;
-		
-		nextChunkAddress = memoFile.getLong(offset);
-		offset += OFFSET_NEXTCHUNKADDRESS;
+		try {
+			memoFile.putInt(address + offset, chunkNum);
+			offset += OFFSET_CHUNKNUM;
+			
+			memoFile.putInt(address + offset, nextChunkNum);
+			offset += OFFSET_NEXTCHUNKNUM;
+			
+			memoFile.putLong(address + offset, nextChunkAddress);
+			offset += OFFSET_NEXTCHUNKADDRESS;
+			
+			if(dataBytes != null) {
+				memoFile.putInt(address + offset, chunkLength);
+				offset += OFFSET_CHUNKLENGTH;
+				
+				memoFile.setBytes(address + offset, dataBytes, 0, chunkLength);
+			} else if(dataInputStream != null){
+				memoFile.putInt(address + offset, chunkLength);
+				offset += OFFSET_CHUNKLENGTH;
+				
+				final int BUFSIZE = 8096;
+				byte[] buffer;
+				
+				int read = 0;
+				int totalRead = 0;
+				do {
+					int len = chunkLength - totalRead;
+					if(len > BUFSIZE) {
+						buffer = new byte[BUFSIZE];
+					} else {
+						buffer = new byte[len];
+					}
+					if(read > 0) {
+						memoFile.setBytes(address + offset, buffer, 0, read);
+						totalRead += read;
+						offset += read;
+						if(totalRead == chunkLength)
+							break;
+					}
+				} while((read = dataInputStream.read(buffer)) != -1);
+			} else {
+				memoFile.putInt(address + offset, 0);
+				offset += OFFSET_CHUNKLENGTH;
+			}
+			persistentDone(memoFile, address);
+		} catch(Throwable t) {
+			t.printStackTrace();
+//			persistentCorrupted(memoFile, address);
+			if(t instanceof IOException) {
+				throw t;
+			} else {
+				throw new IOException(t.getMessage(), t);
+			}
+		}
 	}
 
 	@Override
 	protected int length() {
-		return OFFSET_LENGTH;
+		return OFFSET_LENGTH + chunkLength;
 	}
 }
