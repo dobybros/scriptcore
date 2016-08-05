@@ -7,7 +7,8 @@ package script.memodb.data;
  *
  * @param <T>
  */
-public class Index<T> extends Blob{
+public class Index<T> extends MData{
+	
 	public static final byte VALUETYPE_INT = 1;
 	public static final byte VALUETYPE_DOUBLE = 2;
 	public static final byte VALUETYPE_FLOAT = 3;
@@ -28,4 +29,9 @@ public class Index<T> extends Blob{
 	 * Index value
 	 */
 	public T value;
+	@Override
+	protected int length() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

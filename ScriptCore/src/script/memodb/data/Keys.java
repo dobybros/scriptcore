@@ -2,7 +2,7 @@ package script.memodb.data;
 
 import java.util.Map;
 
-public class Keys extends Blob{
+public class Keys extends MData{
 	/**
 	 * Id of data the Keys stand for. 
 	 */
@@ -37,5 +37,10 @@ public class Keys extends Blob{
 		 * The count of all chunks. 
 		 */
 		public int chunkCount;
+	}
+	@Override
+	protected int length() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
