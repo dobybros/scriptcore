@@ -2,6 +2,7 @@
 * This class was inspired from an entry in Bryce Nyeggen's blog 
 */
 package script.memodb.data;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -73,12 +74,19 @@ public class MemoryMappedFile {
 		unmmap.invoke(null, addr, this.size);
 	}
 	
+	private void check(long pos, int typeSize) throws IOException {
+		if(pos < 0 || pos + typeSize > this.size) {
+			throw new IOException("pos " + pos + " typeSize " + typeSize + " is illegal, " + this.size);
+		}
+	}
+	
 	/**
 	 * Reads a byte from the specified position.
 	 * @param pos the position in the memory mapped file
 	 * @return the value read
 	 */
-	public byte getByte(long pos) {
+	public byte getByte(long pos) throws IOException {
+		check(pos, 1);
 		return unsafe.getByte(pos + addr);
 	}
 
@@ -87,7 +95,8 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @return the value read
 	 */
-	protected byte getByteVolatile(long pos) {
+	protected byte getByteVolatile(long pos) throws IOException {
+		check(pos, 1);
 		return unsafe.getByteVolatile(null, pos + addr);
 	}
  
@@ -96,7 +105,8 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @return the value read
 	 */
-	public int getInt(long pos) {
+	public int getInt(long pos) throws IOException {
+		check(pos, 4);
 		return unsafe.getInt(pos + addr);
 	}
 
@@ -105,7 +115,8 @@ public class MemoryMappedFile {
 	 * @param pos position in the memory mapped file
 	 * @return the value read
 	 */
-	protected int getIntVolatile(long pos) {
+	protected int getIntVolatile(long pos) throws IOException {
+		check(pos, 4);
 		return unsafe.getIntVolatile(null, pos + addr);
 	}
 
@@ -114,7 +125,8 @@ public class MemoryMappedFile {
 	 * @param pos position in the memory mapped file
 	 * @return the value read
 	 */
-	public long getLong(long pos) {
+	public long getLong(long pos) throws IOException {
+		check(pos, 8);
 		return unsafe.getLong(pos + addr);
 	}
 	
@@ -123,7 +135,8 @@ public class MemoryMappedFile {
 	 * @param pos position in the memory mapped file
 	 * @return the value read
 	 */
-	protected long getLongVolatile(long pos) {
+	protected long getLongVolatile(long pos) throws IOException {
+		check(pos, 8);
 		return unsafe.getLongVolatile(null, pos + addr);
 	}
 	
@@ -132,7 +145,8 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @param val the value to write
 	 */
-	public void putByte(long pos, byte val) {
+	public void putByte(long pos, byte val) throws IOException {
+		check(pos, 1);
 		unsafe.putByte(pos + addr, val);
 	}
 	
@@ -141,7 +155,8 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @param val the value to write
 	 */
-	protected void putByteVolatile(long pos, byte val) {
+	protected void putByteVolatile(long pos, byte val) throws IOException {
+		check(pos, 1);
 		unsafe.putByteVolatile(null, pos + addr, val);
 	}
 
@@ -150,7 +165,8 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @param val the value to write
 	 */
-	public void putInt(long pos, int val) {
+	public void putInt(long pos, int val) throws IOException {
+		check(pos, 4);
 		unsafe.putInt(pos + addr, val);
 	}
 
@@ -159,7 +175,8 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @param val the value to write
 	 */
-	protected void putIntVolatile(long pos, int val) {
+	protected void putIntVolatile(long pos, int val) throws IOException {
+		check(pos, 4);
 		unsafe.putIntVolatile(null, pos + addr, val);
 	}
 
@@ -168,20 +185,18 @@ public class MemoryMappedFile {
 	 * @param pos the position in the memory mapped file
 	 * @param val the value to write
 	 */
-	public void putLong(long pos, long val) {
+	public void putLong(long pos, long val) throws IOException {
+		check(pos, 8);
 		unsafe.putLong(pos + addr, val);
 	}
-	
-	public long getAddress() {
-		return addr;
-	}
-	
+
 	/**
 	 * Writes a long (volatile) to the specified position.
 	 * @param pos the position in the memory mapped file
 	 * @param val the value to write
 	 */
-	protected void putLongVolatile(long pos, long val) {
+	protected void putLongVolatile(long pos, long val) throws IOException {
+		check(pos, 8);
 		unsafe.putLongVolatile(null, pos + addr, val);
 	}
 	
@@ -192,7 +207,8 @@ public class MemoryMappedFile {
 	 * @param offset the offset in the buffer of the first byte to read data into
 	 * @param length the length of the data
 	 */
-	public void getBytes(long pos, byte[] data, int offset, int length) {
+	public void getBytes(long pos, byte[] data, int offset, int length) throws IOException {
+		check(pos, 1);
 		unsafe.copyMemory(null, pos + addr, data, BYTE_ARRAY_OFFSET + offset, length);
 	}
  
@@ -203,19 +219,23 @@ public class MemoryMappedFile {
 	 * @param offset the offset in the buffer of the first byte to write
 	 * @param length the length of the data
 	 */
-	public void setBytes(long pos, byte[] data, int offset, int length) {
+	public void setBytes(long pos, byte[] data, int offset, int length) throws IOException {
+		check(pos, length);
 		unsafe.copyMemory(data, BYTE_ARRAY_OFFSET + offset, null, pos + addr, length);
 	}
 
-	protected boolean compareAndSwapInt(long pos, int expected, int value) {
+	protected boolean compareAndSwapInt(long pos, int expected, int value) throws IOException {
+		check(pos, 4);
 		return unsafe.compareAndSwapInt(null, pos + addr, expected, value);
 	}
 		
-	protected boolean compareAndSwapLong(long pos, long expected, long value) {
+	protected boolean compareAndSwapLong(long pos, long expected, long value) throws IOException {
+		check(pos, 4);
 		return unsafe.compareAndSwapLong(null, pos + addr, expected, value);
 	}
 
-	protected long getAndAddLong(long pos, long delta) {
+	protected long getAndAddLong(long pos, long delta) throws IOException {
+		check(pos, 8);
 		return unsafe.getAndAddLong(null, pos + addr, delta);
 	}
 }

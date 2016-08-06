@@ -2,7 +2,7 @@ package script.memodb.data;
 
 import java.util.Map;
 
-public class Keys extends MData{
+public class Keys extends MData {
 	/**
 	 * Id of data the Keys stand for. 
 	 */

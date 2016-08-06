@@ -6,7 +6,7 @@ public class MessageReader {
 
 	public static void main(String[] args) {
 		MessageReader reader = new MessageReader();
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < 1; i++){
 			reader.run("/tmp/test" + i);
 		}
 	}

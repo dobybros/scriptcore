@@ -14,7 +14,7 @@ public class MDataFile<T extends MData> {
 	 */
 	private static final int MDATAFILE_RESERVED = 256;
 	private static final int RESERVED_CURSORADDRESS = 0;
-	private long cursorAddress;
+	private int offset;
 	
 	public static final int STATUS_STANDBY = 0;
 	public static final int STATUS_OPENED = 1;
@@ -34,10 +34,10 @@ public class MDataFile<T extends MData> {
 			try {
 				memFile = new MemoryMappedFile(path, length);
 				//read reserved parameters for a mdatafile. 
-				cursorAddress = memFile.getLongVolatile(RESERVED_CURSORADDRESS);
-				if(cursorAddress == 0) {
-					cursorAddress = memFile.getAddress() + MDATAFILE_RESERVED;
-					memFile.putLongVolatile(RESERVED_CURSORADDRESS, cursorAddress);
+				offset = memFile.getIntVolatile(RESERVED_CURSORADDRESS);
+				if(offset == 0) {
+					offset = MDATAFILE_RESERVED;
+					memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -48,17 +48,28 @@ public class MDataFile<T extends MData> {
 	}
 	
 	public void add(T mdata) throws IOException {
-		mdata.persistent(memFile, cursorAddress);
-		cursorAddress += mdata.dataLength();
-		memFile.putLongVolatile(RESERVED_CURSORADDRESS, cursorAddress);
+		mdata.persistent(memFile, offset);
+		offset += mdata.dataLength();
+		memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
 	}
 	
 	public void read(int pos, T mdata) throws IOException {
-		long start = memFile.getAddress() + MDATAFILE_RESERVED;
+		int start = MDATAFILE_RESERVED;
 		for(int i = 0; i < pos; i++) {
 			int length = MData.readDataLength(memFile, start);
 			start += length;
 		}
 		mdata.resurrect(memFile, start);
+	}
+	
+	public void readAll(int limit, T mdata) throws IOException {
+		int start = MDATAFILE_RESERVED;
+		for(int i = 0; i < limit; i++) {
+			mdata.resurrect(memFile, start);
+
+			int length = MData.readDataLength(memFile, start);
+			start += length;
+		}
+		
 	}
 }
