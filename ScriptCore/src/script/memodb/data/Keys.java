@@ -32,7 +32,7 @@ public class Keys extends MData {
 		/**
 		 * Chunk address in Chunk file specified by chunkFileName. 
 		 */
-		public long chunkAddress;
+		public int chunkOffset;
 		/**
 		 * The count of all chunks. 
 		 */

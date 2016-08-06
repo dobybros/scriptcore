@@ -18,7 +18,7 @@ public class ChunkMDataFileWriteTest {
 			chunk.chunkNum = 0;
 			chunk.dataBytes = ("hello world " + i).getBytes("utf8");
 			chunk.chunkLength = chunk.dataBytes.length;
-			chunk.nextChunkAddress = -1;
+			chunk.nextChunkOffset = -1;
 			chunk.nextChunkNum = -1;
 			
 			file.add(chunk);

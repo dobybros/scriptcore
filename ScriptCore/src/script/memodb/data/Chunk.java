@@ -24,14 +24,14 @@ public class Chunk extends MData{
 	 * address of next chunk
 	 * if no next chunk, this field will be -1
 	 */
-	public long nextChunkAddress;
-	private static final int OFFSET_NEXTCHUNKADDRESS = 8;
+	public int nextChunkOffset;
+	private static final int OFFSET_NEXTCHUNKOFFSET = 4;
 	
 	private static final int OFFSET_LENGTH = 
 			OFFSET_CHUNKNUM + 
 			OFFSET_CHUNKLENGTH + 
 			OFFSET_NEXTCHUNKNUM + 
-			OFFSET_NEXTCHUNKADDRESS;
+			OFFSET_NEXTCHUNKOFFSET;
 	
 	/**
 	 * Data in byte array
@@ -55,8 +55,8 @@ public class Chunk extends MData{
 			nextChunkNum = memoFile.getInt(offsetInc);
 			offsetInc += OFFSET_NEXTCHUNKNUM;
 			
-			nextChunkAddress = memoFile.getLong(offsetInc);
-			offsetInc += OFFSET_NEXTCHUNKADDRESS;
+			nextChunkOffset = memoFile.getInt(offsetInc);
+			offsetInc += OFFSET_NEXTCHUNKOFFSET;
 			
 			chunkLength = memoFile.getInt(offsetInc);
 			offsetInc += OFFSET_CHUNKLENGTH;
@@ -77,8 +77,8 @@ public class Chunk extends MData{
 			memoFile.putInt(offsetInc, nextChunkNum);
 			offsetInc += OFFSET_NEXTCHUNKNUM;
 			
-			memoFile.putLong(offsetInc, nextChunkAddress);
-			offsetInc += OFFSET_NEXTCHUNKADDRESS;
+			memoFile.putInt(offsetInc, nextChunkOffset);
+			offsetInc += OFFSET_NEXTCHUNKOFFSET;
 			
 			if(dataBytes != null) {
 				memoFile.putInt(offsetInc, chunkLength);
