@@ -8,6 +8,7 @@ public class ChunkMDataFileReadTest extends MDataFile<Index> {
 	}
 	
 	public static void main(String[] args) throws IOException {
+//		ChunkMDataFile file = new ChunkMDataFile("C:\\Dev\\tmp\\1.chunk");
 		ChunkMDataFile file = new ChunkMDataFile("/Users/aplombchen/Desktop/1.chunk");
 //		ChunkMDataFile file = new ChunkMDataFile("/tmp/test/1.chunk");
 		file.open();

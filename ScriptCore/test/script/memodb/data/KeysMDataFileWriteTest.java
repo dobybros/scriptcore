@@ -10,7 +10,7 @@ public class KeysMDataFileWriteTest {
 	}
 	
 	public static void main(String[] args) throws IOException {
-//		ChunkMDataFile file = new ChunkMDataFile("C:\\Dev\\tmp\\1.chunk");
+//		KeysMDataFile file = new KeysMDataFile("C:\\Dev\\tmp\\1.keys");
 		KeysMDataFile file = new KeysMDataFile("/Users/aplombchen/Desktop/1.keys");
 //		ChunkMDataFile file = new ChunkMDataFile("/tmp/test/1.chunk");
 		file.open();

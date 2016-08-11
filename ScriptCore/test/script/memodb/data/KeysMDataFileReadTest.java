@@ -8,6 +8,7 @@ public class KeysMDataFileReadTest extends MDataFile<Index> {
 	}
 	
 	public static void main(String[] args) throws IOException {
+//		KeysMDataFile file = new KeysMDataFile("C:\\Dev\\tmp\\1.keys");
 		KeysMDataFile file = new KeysMDataFile("/Users/aplombchen/Desktop/1.keys");
 //		ChunkMDataFile file = new ChunkMDataFile("/tmp/test/1.chunk");
 		file.open();
