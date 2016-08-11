@@ -21,6 +21,6 @@ public class KeysMDataFileReadTest extends MDataFile<Index> {
 		long takes = (System.currentTimeMillis() - time);
 		System.out.println("takes " + takes);
 		System.out.println("takes seconds " + ((float)takes / 1000));
-		System.out.println("byte per second " + count * 38 / ((float)takes / 1000) / 1024 / 1024 + "m");
+		System.out.println("byte per second " + count * 102 / ((float)takes / 1000) / 1024 / 1024 + "m");
 	}
 }

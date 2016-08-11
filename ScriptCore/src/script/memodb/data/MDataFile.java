@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MDataFile<T extends MData> {
 	public static final long MDATAFILE_MAXSIZE_CHUNK = 1024 * 1024 * 1024;
 	public static final long MDATAFILE_MAXSIZE_INDEX = 256 * 1024 * 1024;
-	public static final long MDATAFILE_MAXSIZE_KEYS = 512 * 1024 * 1024;
+	public static final long MDATAFILE_MAXSIZE_KEYS = 1024 * 1024 * 1024;
 	private MemoryMappedFile memFile;
 	
 	/**

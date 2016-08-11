@@ -175,7 +175,7 @@ public class Keys extends MData {
 			keyMap = new HashMap<>();
 			for(int i = 0; i < keyCount; i++) {
 				Key key = new Key();
-				offsetInc += key.resurrect(memoFile, offsetInc);
+				offsetInc = key.resurrect(memoFile, offsetInc);
 				keyMap.put(key.key, key);
 			}
 		}
