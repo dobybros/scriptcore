@@ -7,24 +7,24 @@ public class Chunk extends MData{
 	/**
 	 * Chunk num of this chunk
 	 */
-	public int chunkNum;
+	private int chunkNum;
 	private static final int OFFSET_CHUNKNUM = 4;
 	/**
 	 * Each chunk is no more than 64m
 	 */
-	public int chunkLength;
+	private int chunkLength;
 	private static final int OFFSET_CHUNKLENGTH = 4;
 	/**
 	 * if data is splitted into chunks, this field specified the next chunk number
 	 * if no next chunk, this field will be -1
 	 */
-	public int nextChunkNum;
+	private int nextChunkNum;
 	private static final int OFFSET_NEXTCHUNKNUM = 4;
 	/**
 	 * address of next chunk
 	 * if no next chunk, this field will be -1
 	 */
-	public int nextChunkOffset;
+	private int nextChunkOffset;
 	private static final int OFFSET_NEXTCHUNKOFFSET = 4;
 	
 	private static final int OFFSET_LENGTH = 
@@ -37,12 +37,12 @@ public class Chunk extends MData{
 	 * Data in byte array
 	 * This is alternative with dataInputStream 
 	 */
-	public byte[] dataBytes;
+	private byte[] dataBytes;
 	/**
 	 * Data in InputStream
 	 * This is alternative with dataBytes
 	 */
-	public InputStream dataInputStream;
+	private InputStream dataInputStream;
 	@Override
 	public void resurrect(MemoryMappedFile memoFile, int offset) throws IOException {
 		super.resurrect(memoFile, offset);
@@ -128,5 +128,48 @@ public class Chunk extends MData{
 	@Override
 	protected int length() {
 		return OFFSET_LENGTH + chunkLength;
+	}
+	
+	public int getChunkNum() {
+		return chunkNum;
+	}
+
+	public void setChunkNum(int chunkNum) {
+		this.chunkNum = chunkNum;
+	}
+
+	public int getNextChunkNum() {
+		return nextChunkNum;
+	}
+
+	public void setNextChunkNum(int nextChunkNum) {
+		this.nextChunkNum = nextChunkNum;
+	}
+
+	public int getNextChunkOffset() {
+		return nextChunkOffset;
+	}
+
+	public void setNextChunkOffset(int nextChunkOffset) {
+		this.nextChunkOffset = nextChunkOffset;
+	}
+
+	public byte[] getDataBytes() {
+		return dataBytes;
+	}
+
+	public void setDataBytes(byte[] dataBytes) {
+		this.dataBytes = dataBytes;
+		if(this.dataBytes != null)
+			this.chunkLength = dataBytes.length;
+	}
+
+	public InputStream getDataInputStream() {
+		return dataInputStream;
+	}
+
+	public void setDataInputStream(InputStream dataInputStream, int chunkLength) {
+		this.dataInputStream = dataInputStream;
+		this.chunkLength = chunkLength;
 	}
 }

@@ -101,6 +101,26 @@ public class MemoryMappedFile {
 	}
  
 	/**
+	 * Reads a short from the specified position.
+	 * @param pos the position in the memory mapped file
+	 * @return the value read
+	 */
+	public short getShort(long pos) throws IOException {
+		check(pos, 4);
+		return unsafe.getShort(pos + addr);
+	}
+
+	/**
+	 * Reads a short (volatile) from the specified position.
+	 * @param pos position in the memory mapped file
+	 * @return the value read
+	 */
+	protected short getShortVolatile(long pos) throws IOException {
+		check(pos, 4);
+		return unsafe.getShortVolatile(null, pos + addr);
+	}
+	
+	/**
 	 * Reads an int from the specified position.
 	 * @param pos the position in the memory mapped file
 	 * @return the value read
@@ -160,6 +180,26 @@ public class MemoryMappedFile {
 		unsafe.putByteVolatile(null, pos + addr, val);
 	}
 
+	/**
+	 * Writes an short to the specified position.
+	 * @param pos the position in the memory mapped file
+	 * @param val the value to write
+	 */
+	public void putShort(long pos, short val) throws IOException {
+		check(pos, 2);
+		unsafe.putShort(pos + addr, val);
+	}
+	
+	/**
+	 * Writes an int (volatile) to the specified position.
+	 * @param pos the position in the memory mapped file
+	 * @param val the value to write
+	 */
+	protected void putShortVolatile(long pos, short val) throws IOException {
+		check(pos, 2);
+		unsafe.putShortVolatile(null, pos + addr, val);
+	}
+	
 	/**
 	 * Writes an int to the specified position.
 	 * @param pos the position in the memory mapped file

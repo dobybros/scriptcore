@@ -9,10 +9,26 @@ public abstract class MData implements MMFileSerializable {
 	
 	private static final int VERSION = 1;
 	protected static final int OFFSET_VERSION = 1;
-	public byte version = VERSION;
+	private byte version = VERSION;
 	
+	public byte getVersion() {
+		return version;
+	}
+
+	public void setVersion(byte version) {
+		this.version = version;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
 	protected static final int OFFSET_LENGTH = 4;
-	public int length;
+	private int length;
 	
 	protected static final int OFFSET_MDATA = OFFSET_VERSION + OFFSET_LENGTH;
 
