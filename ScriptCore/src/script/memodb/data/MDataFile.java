@@ -48,9 +48,26 @@ public class MDataFile<T extends MData> {
 	}
 	
 	public void add(T mdata) throws IOException {
-		mdata.persistent(memFile, offset);
-		offset += mdata.dataLength();
-		memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
+		if(acquireAdd(mdata)) {
+			mdata.persistent(memFile, offset);
+		} else {
+			throw new IOException("Acquire add failed, maybe acquired by another thread already, please try again. offset " + offset + " mdata " + mdata);
+		}
+	}
+	
+	private synchronized boolean acquireAdd(T mdata) throws IOException {
+		int dataLength = mdata.dataLength();
+		int nextOffset = offset + dataLength;
+		boolean acquired = memFile.compareAndSwapInt(RESERVED_CURSORADDRESS, offset, nextOffset);
+		if(acquired) {
+			offset = nextOffset;
+			memFile.putByte(offset, MData.VERSION_UPDATING);
+			memFile.putInt(offset + MData.OFFSET_VERSION, dataLength);
+			
+			memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
+			return true;
+		}
+		return false;
 	}
 	
 	public void read(int pos, T mdata) throws IOException {

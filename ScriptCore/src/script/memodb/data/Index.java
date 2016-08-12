@@ -1,5 +1,14 @@
 package script.memodb.data;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringUtils;
+
+import script.memodb.data.Keys.Key;
+
 /**
  * 
  * 
@@ -20,18 +29,126 @@ public class Index<T> extends MData{
 	/**
 	 * Type of index value. 
 	 */
-	public byte valueType;
+	private byte valueType;
+	private static final int OFFSET_VALUETYPE = 1;
+	
 	/**
 	 * Id of data this index stand for.
 	 */
-	public String id;
+//	public String id;
+	private int keyOffset;
+	private static final int OFFSET_KEYOFFSET = 4;
+	
+	private int keyFileNumber;
+	private static final int OFFSET_KEYFILENUMBER = 4;
+	
+	private static final int OFFSET_VALUELENGTH = 2;
 	/**
 	 * Index value
 	 */
-	public T value;
+	private T value;
+	
+	@Override
+	public void resurrect(MemoryMappedFile memoFile, int offset) throws IOException {
+		super.resurrect(memoFile, offset);
+		int offsetInc = offset + OFFSET_MDATA;
+		
+		if(isCompletedData()) {
+			valueType = memoFile.getByte(offsetInc);
+			offsetInc += OFFSET_VALUETYPE;
+			
+			keyOffset = memoFile.getInt(offsetInc);
+			offsetInc += OFFSET_KEYOFFSET;
+			
+			keyFileNumber = memoFile.getInt(offsetInc);
+			offsetInc += OFFSET_KEYFILENUMBER;
+			
+//			int keyCount = memoFile.getInt(offsetInc);
+//			offsetInc += OFFSET_KEYCOUNT;
+//			
+//			keyMap = new HashMap<>();
+//			for(int i = 0; i < keyCount; i++) {
+//				Key key = new Key();
+//				offsetInc = key.resurrect(memoFile, offsetInc);
+//				keyMap.put(key.key, key);
+//			}
+		}
+	}
+	
+	@Override
+	public void persistent(MemoryMappedFile memoFile, int offset) throws IOException {
+//		if(StringUtils.isBlank(id))
+//			throw new IOException("id couldn't be null");
+		super.persistent(memoFile, offset);
+		int offsetInc = offset + OFFSET_MDATA;
+		try {
+//			byte[] idBytes = id.getBytes("utf8");
+			
+//			memoFile.putInt(offsetInc, idBytes.length);
+//			offsetInc += OFFSET_IDLENGTH;
+//			
+//			memoFile.setBytes(offsetInc, idBytes, 0, idBytes.length);;
+//			offsetInc += idBytes.length;
+//			
+//			if(keyMap == null || keyMap.isEmpty()) {
+//				memoFile.putInt(offsetInc, 0);
+//				offsetInc += OFFSET_KEYCOUNT;
+//			} else {
+//				memoFile.putInt(offsetInc, keyMap.size());
+//				offsetInc += OFFSET_KEYCOUNT;
+//				
+//				Set<Entry<String, Key>> entries = keyMap.entrySet();
+//				for(Entry<String, Key> entry : entries) {
+//					Key key = entry.getValue();
+//					offsetInc = key.persistent(memoFile, offsetInc);
+//				}
+//			}
+			persistentDone(memoFile, offset);
+		} catch(Throwable t) {
+			t.printStackTrace();
+//			persistentCorrupted(memoFile, address);
+			if(t instanceof IOException) {
+				throw t;
+			} else {
+				throw new IOException(t.getMessage(), t);
+			}
+		}
+	}
+	
 	@Override
 	protected int length() {
-		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public byte getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(byte valueType) {
+		this.valueType = valueType;
+	}
+
+	public int getKeyOffset() {
+		return keyOffset;
+	}
+
+	public void setKeyOffset(int keyOffset) {
+		this.keyOffset = keyOffset;
+	}
+
+	public int getKeyFileNumber() {
+		return keyFileNumber;
+	}
+
+	public void setKeyFileNumber(int keyFileNumber) {
+		this.keyFileNumber = keyFileNumber;
+	}
+
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(T value) {
+		this.value = value;
 	}
 }

@@ -41,7 +41,7 @@ public class Keys extends MData {
 		private String key;
 		
 		/**
-		 * Chunk file number 
+		 * Chunk file number
 		 */
 		private int chunkFileNumber;
 		private static final int OFFSET_KEYMAP_CHUNKFILENUMBER = 4;
@@ -54,6 +54,7 @@ public class Keys extends MData {
 		
 		/**
 		 * The count of all chunks. 
+		 * This chunk could be first chunk, other chunks could be in different chunk file. 
 		 */
 		private int chunkCount;
 		private static final int OFFSET_KEYMAP_CHUNKCOUNT = 4;

@@ -12,7 +12,7 @@ public class ChunkMDataFileWriteTest {
 //		ChunkMDataFile file = new ChunkMDataFile("/tmp/test/1.chunk");
 		file.open();
 		long time = System.currentTimeMillis();
-		int count = 10000000;
+		int count = 25000000;
 		for(int i = 0; i < count;i++) {
 			Chunk chunk = new Chunk();
 			chunk.setChunkNum(0);

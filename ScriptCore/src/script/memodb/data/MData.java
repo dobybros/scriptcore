@@ -41,7 +41,7 @@ public abstract class MData implements MMFileSerializable {
 	}
 	
 	public static int readDataLength(MemoryMappedFile memoFile, int offset) throws IOException {
-		return memoFile.getInt(offset + OFFSET_VERSION) + OFFSET_MDATA;
+		return memoFile.getInt(offset + OFFSET_VERSION);
 	}
 	
 	public boolean isCompletedData() {
@@ -50,8 +50,8 @@ public abstract class MData implements MMFileSerializable {
 	
 	@Override
 	public void persistent(MemoryMappedFile memoFile, int offset) throws IOException {
-		memoFile.putByte(offset, VERSION_UPDATING);
-		memoFile.putInt(offset + OFFSET_VERSION, length());
+//		memoFile.putByte(offset, VERSION_UPDATING);
+//		memoFile.putInt(offset + OFFSET_VERSION, length());
 	}
 	
 	public void persistentDone(MemoryMappedFile memoFile, int offset) throws IOException {
