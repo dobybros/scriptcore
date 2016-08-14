@@ -47,7 +47,7 @@ public class IndexMapTest {
 		time = System.currentTimeMillis();
 		for(int i = 0; i < count; i++) {
 			skipComparatorMap.put("hello" + i, "hi");
-			skipComparatorMap.put("hello" + i, "hi");
+//			skipComparatorMap.put("hello" + i, "hi");
 		}
 		System.out.println("ConcurrentSkipListMap w/ comparator insert " + count + " actual " + skipComparatorMap.size() + " takes " + ((float)(System.currentTimeMillis() - time) / 1000) + "s");
 		
