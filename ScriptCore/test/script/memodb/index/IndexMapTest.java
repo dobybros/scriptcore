@@ -37,24 +37,25 @@ public class IndexMapTest {
 			@Override
 			public int compare(String o1, String o2) {
 				int c = o1.compareTo(o2);
-//				if(c == 0) {
+				if(c == 0) {
 //					String v1 = skipComparatorMap.get(o1);
-//				}
+					return 0;
+				}
 				return c;
 			}
 		};
 		skipComparatorMap = new ConcurrentSkipListMap<>(comparator);
 		time = System.currentTimeMillis();
 		for(int i = 0; i < count; i++) {
-			skipComparatorMap.put("hello" + i, "hi");
-//			skipComparatorMap.put("hello" + i, "hi");
+			skipComparatorMap.put("hello" + i, "hi1");
+			skipComparatorMap.put("hello" + i, "hi2");
 		}
 		System.out.println("ConcurrentSkipListMap w/ comparator insert " + count + " actual " + skipComparatorMap.size() + " takes " + ((float)(System.currentTimeMillis() - time) / 1000) + "s");
 		
 		time = System.currentTimeMillis();
-		ConcurrentNavigableMap<String, String> subMap = skipComparatorMap.subMap("hello3", "hello5");
+		ConcurrentNavigableMap<String, String> subMap = skipComparatorMap.subMap("a", "z");
 		for(String key : subMap.keySet()) {
-			System.out.println("subMap key = " + key);
+			System.out.println("subMap key = " + key + " value = " + subMap.get(key));
 		}
 		System.out.println("subMap " + subMap.size() + " takes " + ((float)(System.currentTimeMillis() - time) / 1000) + "s");
 		

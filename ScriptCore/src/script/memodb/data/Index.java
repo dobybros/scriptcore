@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -47,6 +48,33 @@ public class Index<T> extends MData{
 	 * Index value
 	 */
 	private T value;
+	
+	//////////////////////////Runtime
+	private ConcurrentSkipListSet<Index<T>> duplicatedSet;
+	public static final int TYPE_DUPLICATED = 10;
+	public static final int TYPE_INDEX = 1;
+	private int type = TYPE_INDEX;
+
+	public void enableDuplicatedSet() {
+		type = TYPE_DUPLICATED;
+		duplicatedSet = new ConcurrentSkipListSet<Index<T>>();
+	}
+	
+	public boolean add(Index<T> index) {
+		return duplicatedSet.add(index);
+	}
+	
+	public boolean remove(Index<T> index) {
+		return duplicatedSet.remove(index);
+	}
+	
+	public boolean isEmpty() {
+		return duplicatedSet.isEmpty();
+	}
+	
+	public ConcurrentSkipListSet<Index<T>> getDuplicatedSet() {
+		return duplicatedSet;
+	}
 	
 	@Override
 	public void resurrect(MemoryMappedFile memoFile, int offset) throws IOException {
@@ -151,4 +179,9 @@ public class Index<T> extends MData{
 	public void setValue(T value) {
 		this.value = value;
 	}
+
+	public int getType() {
+		return type;
+	}
+
 }

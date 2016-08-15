@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import script.memodb.data.Index;
 
-public abstract class MDataIndexMap<T> extends ConcurrentSkipListMap<T, Index<T>>{
+public abstract class MDataIndexMap<T> {
 	/**
 	 * 
 	 */
@@ -15,8 +15,40 @@ public abstract class MDataIndexMap<T> extends ConcurrentSkipListMap<T, Index<T>
 
 	private ConcurrentHashMap<T, ConcurrentSkipListSet<Index<T>>> duplicatedMap = new ConcurrentHashMap<>();
 	
+	private ConcurrentSkipListMap<T, Index<T>> indexMap;
+	
 	public MDataIndexMap(Comparator<T> comparator) {
-		super(comparator);
+		indexMap = new ConcurrentSkipListMap<>(comparator);
+	}
+	
+	public Index<T> put(T key, Index<T> value) {
+		Index<T> index = indexMap.putIfAbsent(key, value);
+		if(index != null) {
+			Index<T> duplicatedIndex = new Index<T>();
+			duplicatedIndex.enableDuplicatedSet();
+			indexMap.put(key, duplicatedIndex);
+			duplicatedIndex.add(index);
+			duplicatedIndex.add(value);
+		}
+		return value;
+    }
+	
+	public Index<T> remove(T key) {
+		return indexMap.remove(key);
+	}
+	
+	public boolean remove(T key, Index<T> value) {
+		boolean bool = indexMap.remove(key, value);
+		if(!bool) {
+			Index<T> index = indexMap.get(key);
+			if(index != null && index.getType() == Index.TYPE_DUPLICATED) {
+				bool = index.remove(value);
+//				if(bool && index.isEmpty()) {
+//					indexMap.remove(key, index);
+//				}
+			}
+		}
+		return bool;
 	}
 	
 	void addDuplicatedIndexs(T key, Index<T>...indexs) {
