@@ -17,28 +17,23 @@ public class MDataFile<T extends MData> {
 	int offset;
 	
 	public static final int STATUS_STANDBY = 0;
-	public static final int STATUS_OPENED = 1;
+	public static final int STATUS_OPENNING = 1;
+	public static final int STATUS_OPENED = 5;
 	public static final int STATUS_CLEANFRAGMENT = 10;
 	public static final int STATUS_CLOSED = 100;
-	private AtomicInteger status = new AtomicInteger(STATUS_STANDBY);
+	AtomicInteger status = new AtomicInteger(STATUS_STANDBY);
 	
-	private String path;
-	private long length;
+	String path;
+	long length;
 	public MDataFile(String path, long length) {
 		this.path = path;
 		this.length = length;
 	}
 	
-	public void open() throws IOException {
+	public synchronized void open() throws IOException {
 		if(status.compareAndSet(STATUS_STANDBY, STATUS_OPENED)) {
 			try {
-				memFile = new MemoryMappedFile(path, length);
-				//read reserved parameters for a mdatafile. 
-				offset = memFile.getIntVolatile(RESERVED_CURSORADDRESS);
-				if(offset == 0) {
-					offset = MDATAFILE_RESERVED;
-					memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
-				}
+				openFile();
 			} catch (Throwable e) {
 				e.printStackTrace();
 				status.set(STATUS_CLOSED);
@@ -47,7 +42,23 @@ public class MDataFile<T extends MData> {
 		}
 	}
 	
+	void openFile() throws Exception {
+		memFile = new MemoryMappedFile(path, length);
+		//read reserved parameters for a mdatafile. 
+		offset = memFile.getIntVolatile(RESERVED_CURSORADDRESS);
+		if(offset == 0) {
+			offset = MDATAFILE_RESERVED;
+			memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
+		}		
+	}
+	
+	void check() throws IOException {
+		if(status.get() != STATUS_OPENED)
+			throw new IOException("Path " + path + " hasn't been openned yet, status " + status.get());
+	}
+	
 	public void add(T mdata) throws IOException {
+		check();
 		if(acquireAdd(mdata)) {
 			mdata.persistent(memFile, offset);
 		} else {
@@ -71,6 +82,7 @@ public class MDataFile<T extends MData> {
 	}
 	
 	public void read(int pos, T mdata) throws IOException {
+		check();
 		int start = MDATAFILE_RESERVED;
 		for(int i = 0; i < pos; i++) {
 			int length = MData.readDataLength(memFile, start);
@@ -80,6 +92,7 @@ public class MDataFile<T extends MData> {
 	}
 	
 	public void readAll(int limit, T mdata) throws IOException {
+		check();
 		int start = MDATAFILE_RESERVED;
 		for(int i = 0; i < limit; i++) {
 			mdata.resurrect(memFile, start);

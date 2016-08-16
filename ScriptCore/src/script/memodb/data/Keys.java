@@ -33,7 +33,7 @@ public class Keys extends MData {
 		 * Length of key
 		 */
 		private short keyLength;
-		private static final int OFFSET_KEYMAP_KEYLENGTH = 2;
+		static final int OFFSET_KEYMAP_KEYLENGTH = 2;
 		
 		/**
 		 * Key in string
