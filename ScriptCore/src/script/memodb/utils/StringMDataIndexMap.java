@@ -9,9 +9,6 @@ public class StringMDataIndexMap extends MDataIndexMap<String>{
 			@Override
 			public int compare(String o1, String o2) {
 				int result = o1.compareTo(o2);
-				if(result == 0) {
-					//result == 0, the o2 will be ignored from the map. 
-				}
 				return result;
 			}
 		});

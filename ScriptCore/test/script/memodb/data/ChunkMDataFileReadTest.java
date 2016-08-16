@@ -2,10 +2,7 @@ package script.memodb.data;
 
 import java.io.IOException;
 
-public class ChunkMDataFileReadTest extends MDataFile<Index> {
-	private ChunkMDataFileReadTest(String path) {
-		super(path, MDATAFILE_MAXSIZE_INDEX);
-	}
+public class ChunkMDataFileReadTest {
 	
 	public static void main(String[] args) throws IOException {
 //		ChunkMDataFile file = new ChunkMDataFile("C:\\Dev\\tmp\\1.chunk");

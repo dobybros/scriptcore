@@ -54,6 +54,7 @@ public class IndexMapTest {
 		
 		time = System.currentTimeMillis();
 		ConcurrentNavigableMap<String, String> subMap = skipComparatorMap.subMap("a", "z");
+//		ConcurrentNavigableMap<String, String> subMap = skipComparatorMap.descendingMap();
 		for(String key : subMap.keySet()) {
 			System.out.println("subMap key = " + key + " value = " + subMap.get(key));
 		}

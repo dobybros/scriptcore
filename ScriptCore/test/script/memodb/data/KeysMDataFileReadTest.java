@@ -2,10 +2,7 @@ package script.memodb.data;
 
 import java.io.IOException;
 
-public class KeysMDataFileReadTest extends MDataFile<Index> {
-	private KeysMDataFileReadTest(String path) {
-		super(path, MDATAFILE_MAXSIZE_INDEX);
-	}
+public class KeysMDataFileReadTest {
 	
 	public static void main(String[] args) throws IOException {
 //		KeysMDataFile file = new KeysMDataFile("C:\\Dev\\tmp\\1.keys");

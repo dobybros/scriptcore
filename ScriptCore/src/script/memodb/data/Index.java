@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.apache.commons.lang.StringUtils;
 
 import script.memodb.data.Keys.Key;
+import script.memodb.utils.MDataIndexMap;
 
 /**
  * 
@@ -49,7 +50,11 @@ public class Index<T> extends MData{
 	 */
 	private T value;
 	
+	private Index<?> nextIndex;
+	
 	//////////////////////////Runtime
+	private MDataIndexMap<?> nextIndexMap;
+	
 	private ConcurrentSkipListSet<Index<T>> duplicatedSet;
 	public static final int TYPE_DUPLICATED = 10;
 	public static final int TYPE_INDEX = 1;
@@ -182,6 +187,14 @@ public class Index<T> extends MData{
 
 	public int getType() {
 		return type;
+	}
+
+	public Index<?> getNextIndex() {
+		return nextIndex;
+	}
+
+	public void setNextIndex(Index<?> nextIndex) {
+		this.nextIndex = nextIndex;
 	}
 
 }

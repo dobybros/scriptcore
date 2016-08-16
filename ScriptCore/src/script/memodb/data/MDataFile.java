@@ -7,14 +7,14 @@ public class MDataFile<T extends MData> {
 	public static final long MDATAFILE_MAXSIZE_CHUNK = 1024 * 1024 * 1024;
 	public static final long MDATAFILE_MAXSIZE_INDEX = 256 * 1024 * 1024;
 	public static final long MDATAFILE_MAXSIZE_KEYS = 1024 * 1024 * 1024;
-	private MemoryMappedFile memFile;
+	MemoryMappedFile memFile;
 	
 	/**
 	 * Reserved size for a mdatafile. 
 	 */
-	private static final int MDATAFILE_RESERVED = 256;
-	private static final int RESERVED_CURSORADDRESS = 0;
-	private int offset;
+	static final int MDATAFILE_RESERVED = 256;
+	static final int RESERVED_CURSORADDRESS = 0;
+	int offset;
 	
 	public static final int STATUS_STANDBY = 0;
 	public static final int STATUS_OPENED = 1;
