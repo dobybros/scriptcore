@@ -9,7 +9,7 @@ import script.memodb.data.Keys.Key;
 
 public class IndexMDataFile extends MDataFile<Index<?>> {
 	private static final int OFFSET_INDEXMDATAFILE_UNIQUE = 1;
-	private IndexMDataFile(String path) {
+	public IndexMDataFile(String path) {
 		super(path, MDATAFILE_MAXSIZE_INDEX);
 	}
 	
