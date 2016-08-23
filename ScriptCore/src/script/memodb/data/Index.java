@@ -53,13 +53,18 @@ public class Index<T> extends MData{
 	private Index<?> nextIndex;
 	
 	//////////////////////////Runtime
-	private MDataIndexMap<?> nextIndexMap;
+	private MDataIndexMap<?> indexMap;
 	
 	private ConcurrentSkipListSet<Index<T>> duplicatedSet;
+	public static final int TYPE_EMBEDDED_INDEX = 20;
 	public static final int TYPE_DUPLICATED = 10;
 	public static final int TYPE_INDEX = 1;
 	private int type = TYPE_INDEX;
 
+	public void enableIndexMap() {
+		type = TYPE_EMBEDDED_INDEX;
+	}
+	
 	public void enableDuplicatedSet() {
 		type = TYPE_DUPLICATED;
 		duplicatedSet = new ConcurrentSkipListSet<Index<T>>();
@@ -195,6 +200,14 @@ public class Index<T> extends MData{
 
 	public void setNextIndex(Index<?> nextIndex) {
 		this.nextIndex = nextIndex;
+	}
+
+	public MDataIndexMap<?> getIndexMap() {
+		return indexMap;
+	}
+
+	public void setIndexMap(MDataIndexMap<?> indexMap) {
+		this.indexMap = indexMap;
 	}
 
 }

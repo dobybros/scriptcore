@@ -31,10 +31,11 @@ public class IndexMDataFileWriteTest {
 		
 	}
 
-	private static Index<String> getKey(int i) {
+	private static Index<String> getIndex() {
 		Index<String> index = new Index<String>();
 		index.setKeyFileNumber(2);
 		index.setKeyOffset(23432);
 		index.setValue("hello");
+		return index;
 	}
 }

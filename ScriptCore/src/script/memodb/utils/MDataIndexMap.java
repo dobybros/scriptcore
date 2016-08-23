@@ -21,10 +21,39 @@ public abstract class MDataIndexMap<T> {
 		indexMap = new ConcurrentSkipListMap<>(comparator);
 	}
 	
-	public synchronized Index<T> put(T key, Index<T> value) {
+	public static interface DuplicatedListener {
+		public void duplicated();
+	}
+	
+	public synchronized Index<T> put(T key, Index<T> value, DuplicatedListener duplicatedListener) {
 		Index<T> index = indexMap.putIfAbsent(key, value);
 		if(index != null) {
+			if(duplicatedListener != null) {
+				
+			}
 			Index<T> duplicatedIndex = null;
+			switch (index.getType()) {
+			case Index.TYPE_DUPLICATED:
+				duplicatedIndex = index;
+				break;
+			case Index.TYPE_EMBEDDED_INDEX:
+				break;
+			case Index.TYPE_INDEX:
+				Index<?> nextIndex = index.getNextIndex();
+				duplicatedIndex = new Index<T>();
+				if(nextIndex != null) {
+					duplicatedIndex.enableIndexMap();
+				} else {
+					duplicatedIndex.enableDuplicatedSet();
+					duplicatedIndex.add(index);
+				}
+				
+				indexMap.put(key, duplicatedIndex);
+				break;
+
+			default:
+				break;
+			}
 			if(index.getType() == Index.TYPE_DUPLICATED) {
 				duplicatedIndex = index;
 			} else {
