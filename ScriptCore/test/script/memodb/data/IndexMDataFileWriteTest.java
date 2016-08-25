@@ -17,17 +17,17 @@ public class IndexMDataFileWriteTest {
 		file.setIndexes(new IndexInfo("a", IndexInfo.SORT_ASC), new IndexInfo("hello", IndexInfo.SORT_DESC));
 		file.setUnique(true);
 		file.open();
-		int length = getKey(1).dataLength() + 4;
-		System.out.println("length " + length);
-		long time = System.currentTimeMillis();
-		int count = 1;
-		for(int i = 0; i < count;i++) {
-			file.add(getKey(i));
-		}
-		long takes = (System.currentTimeMillis() - time);
-		System.out.println("takes " + takes);
-		System.out.println("takes seconds " + ((float)takes / 1000));
-		System.out.println("byte per second " + count * length / ((float)takes / 1000) / 1024 / 1024 + "m");
+//		int length = getKey(1).dataLength() + 4;
+//		System.out.println("length " + length);
+//		long time = System.currentTimeMillis();
+//		int count = 1;
+//		for(int i = 0; i < count;i++) {
+//			file.add(getKey(i));
+//		}
+//		long takes = (System.currentTimeMillis() - time);
+//		System.out.println("takes " + takes);
+//		System.out.println("takes seconds " + ((float)takes / 1000));
+//		System.out.println("byte per second " + count * length / ((float)takes / 1000) / 1024 / 1024 + "m");
 		
 	}
 
