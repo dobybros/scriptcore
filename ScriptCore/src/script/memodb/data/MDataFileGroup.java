@@ -2,12 +2,12 @@ package script.memodb.data;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -23,9 +23,14 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 	private static final String TAG = MDataFileGroup.class.getSimpleName();
 	private List<T> files;
 	
-	public static final int AVAILABLE_FILESIZE = 5 * 1024 * 1024;
+	public static final int AVAILABLE_FILESIZE = 10 * 1024 * 1024;
 
+	private String fileName;
+	private String basePath;
+	
 	public MDataFileGroup(String basePath, String fileName) {
+		this.fileName = fileName;
+		this.basePath = basePath;
 		files = new ArrayList<T>();
 		Collection<File> keyFiles = FileUtils.listFiles(new File(basePath),
 				FileFilterUtils.prefixFileFilter(fileName),
@@ -54,16 +59,53 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 		}
 	}
 	
+	public T findCurrent() {
+		return findCurrent(0);
+	}
+	public T findCurrent(int expectSize) {
+		int size;
+		if(AVAILABLE_FILESIZE < expectSize) 
+			size = expectSize;
+		else
+			size = AVAILABLE_FILESIZE;
+		
+		for(int i = 0; i < files.size(); i++) {
+			T t = files.get(i);
+			if(t == null) {
+				T dataFile = createFile(new File(this.basePath + "/" + this.fileName + "." + i));
+				if(dataFile != null) {
+					files.add(i, dataFile);
+					t = dataFile;
+				}
+			}
+			if(t != null) {
+				int availableSize = t.length - t.offset;
+				if(availableSize > size) {
+					return t;
+				}
+			}
+		}
+		
+		int index = files.size();
+		T dataFile = createFile(new File(this.basePath + "/" + this.fileName + "." + index));
+		if(dataFile != null) {
+			files.add(index, dataFile);
+		}
+		return dataFile;
+	}
+
+	private Class<? extends MDataFile<?>> fileClass;
 	private T createFile(File file) {
-		Class<? extends MDataFile<?>> fileClass = null;
-		Type[] types = this.getClass().getGenericInterfaces();
-		for (Type type : types) {
-			if (type instanceof ParameterizedType) {
-				ParameterizedType pType = (ParameterizedType) type;
-				if (pType.getRawType().equals(MDataFile.class)) {
-					Type[] params = pType.getActualTypeArguments();
-					if (params != null && params.length == 1) {
-						fileClass = (Class<? extends MDataFile<?>>) params[0];
+		if(fileClass == null) {
+			Type[] types = this.getClass().getGenericInterfaces();
+			for (Type type : types) {
+				if (type instanceof ParameterizedType) {
+					ParameterizedType pType = (ParameterizedType) type;
+					if (pType.getRawType().equals(MDataFile.class)) {
+						Type[] params = pType.getActualTypeArguments();
+						if (params != null && params.length == 1) {
+							fileClass = (Class<? extends MDataFile<?>>) params[0];
+						}
 					}
 				}
 			}
@@ -85,5 +127,13 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 	public static void main(String[] args) {
 		MDataFileGroup<KeysMDataFile> group = new MDataFileGroup<KeysMDataFile>("/Users/aplombchen/Desktop/data", "MemoTableFactory.index");
 //		System.out.println('5' + 2);
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

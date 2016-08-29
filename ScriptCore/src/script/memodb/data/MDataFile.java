@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MDataFile<T extends MData> {
-	public static final long MDATAFILE_MAXSIZE_CHUNK = 1024 * 1024 * 1024;
-	public static final long MDATAFILE_MAXSIZE_INDEX = 256 * 1024 * 1024;
-	public static final long MDATAFILE_MAXSIZE_KEYS = 1024 * 1024 * 1024;
+//	public static final int MDATAFILE_MAXSIZE_CHUNK = 1024 * 1024 * 1024;
+//	public static final int MDATAFILE_MAXSIZE_INDEX = 256 * 1024 * 1024;
+//	public static final int MDATAFILE_MAXSIZE_KEYS = 1024 * 1024 * 1024;
+	
+	public static final int MDATAFILE_MAXSIZE_CHUNK = 11 * 1024 * 1024;
+	public static final int MDATAFILE_MAXSIZE_INDEX = 11 * 1024 * 1024;
+	public static final int MDATAFILE_MAXSIZE_KEYS = 11 * 1024 * 1024;
 	MemoryMappedFile memFile;
 	
 	/**
@@ -24,8 +28,8 @@ public class MDataFile<T extends MData> {
 	AtomicInteger status = new AtomicInteger(STATUS_STANDBY);
 	
 	String path;
-	long length;
-	public MDataFile(String path, long length) {
+	int length;
+	public MDataFile(String path, int length) {
 		this.path = path;
 		this.length = length;
 	}
