@@ -10,14 +10,24 @@ public class KeysMDataFileGroupTest {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		MDataFileGroup<KeysMDataFile> group = new MDataFileGroup<KeysMDataFile>("/Users/aplombchen/Desktop/data", "topic.keys");
+		MDataFileGroup<KeysMDataFile> group = new MDataFileGroup<KeysMDataFile>("/Users/aplombchen/Desktop/data", "topic.keys", KeysMDataFile.class);
 		int length = getKey(1).dataLength() + 4;
 		System.out.println("length " + length);
 		long time = System.currentTimeMillis();
 		int count = 10000000;
 		KeysMDataFile keyFile = group.findCurrent();
 		for(int i = 0; i < count;i++) {
-			keyFile.add(getKey(i));
+			Keys keys = getKey(i);
+			int status = keyFile.add(keys);
+			switch(status) {
+			case MDataFile.ACQUIREADD_FAILED:
+				throw new IOException("Acquire add failed, maybe acquired by another thread already, please try again. i " + i);
+			case MDataFile.ACQUIREADD_NOTENOUGHSPACE:
+				//Handle not enough space for this file error. 
+				keyFile = group.findCurrent();
+				keyFile.add(keys);
+				break;
+			}
 		}
 		long takes = (System.currentTimeMillis() - time);
 		System.out.println("takes " + takes);
@@ -28,7 +38,7 @@ public class KeysMDataFileGroupTest {
 
 	private static Keys getKey(int i) {
 		Keys keys = new Keys();
-		keys.setId("123key " + i);
+		keys.setId("Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i Acquire add failed, maybe acquired by another thread already, please try again. i  " + i);
 		HashMap<String, Key> keyMap = new HashMap<>();
 		keys.setKeyMap(keyMap);
 		Key k1 = keys.new Key();

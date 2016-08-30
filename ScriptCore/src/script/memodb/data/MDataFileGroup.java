@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -28,9 +27,10 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 	private String fileName;
 	private String basePath;
 	
-	public MDataFileGroup(String basePath, String fileName) {
+	public MDataFileGroup(String basePath, String fileName, Class<T> tClass) {
 		this.fileName = fileName;
 		this.basePath = basePath;
+		this.fileClass = tClass;
 		files = new ArrayList<T>();
 		Collection<File> keyFiles = FileUtils.listFiles(new File(basePath),
 				FileFilterUtils.prefixFileFilter(fileName),
@@ -41,9 +41,10 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 			if(StringUtils.isBlank(theFileName)) {
 				T dataFile = createFile(file);
 				if(dataFile != null) {
-					files.add(0, dataFile);
+					addDataFile(0, dataFile);
 				}
 			} else {
+				theFileName = theFileName.substring(1);
 				int number = -1;
 				try {
 					number = Integer.parseInt(theFileName);
@@ -52,9 +53,22 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 				if(number > 0) {
 					T dataFile = createFile(file);
 					if(dataFile != null) {
-						files.add(number, dataFile);
+						addDataFile(number, dataFile);
 					}
 				}
+			}
+		}
+	}
+	
+	private void addDataFile(int index, T t) {
+		synchronized (files) {
+			if(files.size() <= index) {
+				for(int i = files.size(); i < index; i++) {
+					files.add(null);
+				}
+				files.add(t);
+			} else {
+				files.add(index, t);
 			}
 		}
 	}
@@ -72,9 +86,9 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 		for(int i = 0; i < files.size(); i++) {
 			T t = files.get(i);
 			if(t == null) {
-				T dataFile = createFile(new File(this.basePath + "/" + this.fileName + "." + i));
+				T dataFile = createFile(getFile(i));
 				if(dataFile != null) {
-					files.add(i, dataFile);
+					addDataFile(i, dataFile);
 					t = dataFile;
 				}
 			}
@@ -87,33 +101,32 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 		}
 		
 		int index = files.size();
-		T dataFile = createFile(new File(this.basePath + "/" + this.fileName + "." + index));
+		T dataFile = createFile(getFile(index));
 		if(dataFile != null) {
-			files.add(index, dataFile);
+			addDataFile(index, dataFile);
 		}
-		return dataFile;
+		int availableSize = dataFile.length - dataFile.offset;
+		if(availableSize > size) {
+			return dataFile;
+		}
+		return null;
 	}
 
+	private File getFile(int index) {
+		if(index <= 0) {
+			return new File(this.basePath + "/" + this.fileName);	
+		}
+		return new File(this.basePath + "/" + this.fileName + "." + index);
+	}
+	
 	private Class<? extends MDataFile<?>> fileClass;
 	private T createFile(File file) {
-		if(fileClass == null) {
-			Type[] types = this.getClass().getGenericInterfaces();
-			for (Type type : types) {
-				if (type instanceof ParameterizedType) {
-					ParameterizedType pType = (ParameterizedType) type;
-					if (pType.getRawType().equals(MDataFile.class)) {
-						Type[] params = pType.getActualTypeArguments();
-						if (params != null && params.length == 1) {
-							fileClass = (Class<? extends MDataFile<?>>) params[0];
-						}
-					}
-				}
-			}
-		}
 		if(fileClass != null) { 
 			try {
 				Constructor<?> constructor = fileClass.getConstructor(String.class);
-				return (T) constructor.newInstance(file.getAbsolutePath());
+				T t = (T) constructor.newInstance(file.getAbsolutePath());
+				t.open();
+				return t;
 			} catch (Throwable t) {
 				t.printStackTrace();
 				LoggerEx.error(TAG, "Create MDataFile " + file + " failed, " + t.getMessage());
@@ -125,7 +138,7 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 	}
 	
 	public static void main(String[] args) {
-		MDataFileGroup<KeysMDataFile> group = new MDataFileGroup<KeysMDataFile>("/Users/aplombchen/Desktop/data", "MemoTableFactory.index");
+		MDataFileGroup<KeysMDataFile> group = new MDataFileGroup<KeysMDataFile>("/Users/aplombchen/Desktop/data", "MemoTableFactory.index", KeysMDataFile.class);
 //		System.out.println('5' + 2);
 	}
 

@@ -80,6 +80,13 @@ public class MemoryMappedFile {
 		}
 	}
 	
+	public boolean isEnough(long pos, int typeSize) throws IOException {
+		if(pos < 0 || pos + typeSize > this.size) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Reads a byte from the specified position.
 	 * @param pos the position in the memory mapped file

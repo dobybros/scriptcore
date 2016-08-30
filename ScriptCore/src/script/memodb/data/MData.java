@@ -35,7 +35,7 @@ public abstract class MData implements MMFileSerializable {
 	@Override
 	public void resurrect(MemoryMappedFile memoFile, int offset) throws IOException {
 		version = memoFile.getByte(offset);
-		if(version == 0)
+		if(version != VERSION)
 			throw new IOException("Illegal version " + version + " of MData, expected " + VERSION);
 		length = memoFile.getInt(offset + OFFSET_VERSION);
 	}

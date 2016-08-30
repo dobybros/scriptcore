@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MDataFile<T extends MData> {
-//	public static final int MDATAFILE_MAXSIZE_CHUNK = 1024 * 1024 * 1024;
-//	public static final int MDATAFILE_MAXSIZE_INDEX = 256 * 1024 * 1024;
-//	public static final int MDATAFILE_MAXSIZE_KEYS = 1024 * 1024 * 1024;
+	public static final int MDATAFILE_MAXSIZE_CHUNK = 1024 * 1024 * 1024;
+	public static final int MDATAFILE_MAXSIZE_INDEX = 256 * 1024 * 1024;
+	public static final int MDATAFILE_MAXSIZE_KEYS = 1024 * 1024 * 1024;
 	
-	public static final int MDATAFILE_MAXSIZE_CHUNK = 11 * 1024 * 1024;
-	public static final int MDATAFILE_MAXSIZE_INDEX = 11 * 1024 * 1024;
-	public static final int MDATAFILE_MAXSIZE_KEYS = 11 * 1024 * 1024;
+//	public static final int MDATAFILE_MAXSIZE_CHUNK = 11 * 1024 * 1024;
+//	public static final int MDATAFILE_MAXSIZE_INDEX = 11 * 1024 * 1024;
+//	public static final int MDATAFILE_MAXSIZE_KEYS = 11 * 1024 * 1024;
 	MemoryMappedFile memFile;
 	
 	/**
@@ -61,28 +61,38 @@ public class MDataFile<T extends MData> {
 			throw new IOException("Path " + path + " hasn't been openned yet, status " + status.get());
 	}
 	
-	public void add(T mdata) throws IOException {
+	public int add(T mdata) throws IOException {
 		check();
-		if(acquireAdd(mdata)) {
-			mdata.persistent(memFile, offset);
-		} else {
-			throw new IOException("Acquire add failed, maybe acquired by another thread already, please try again. offset " + offset + " mdata " + mdata);
-		}
+		int pos = acquireAdd(mdata);
+		if(pos >= 0) {
+			mdata.persistent(memFile, pos);
+			return ACQUIREADD_SUCCESSFULLY;
+		} 
+		return pos;
 	}
 	
-	private synchronized boolean acquireAdd(T mdata) throws IOException {
+	public static final int ACQUIREADD_SUCCESSFULLY = 1;
+	public static final int ACQUIREADD_FAILED = -1;
+	public static final int ACQUIREADD_NOTENOUGHSPACE = -2;
+	
+	private synchronized int acquireAdd(T mdata) throws IOException {
+		int pos;
 		int dataLength = mdata.dataLength();
 		int nextOffset = offset + dataLength;
+		if(!memFile.isEnough(offset, dataLength)) {
+			return ACQUIREADD_NOTENOUGHSPACE;//Not enough space for this file. 
+		}
 		boolean acquired = memFile.compareAndSwapInt(RESERVED_CURSORADDRESS, offset, nextOffset);
 		if(acquired) {
+			pos = offset;
 			offset = nextOffset;
-			memFile.putByte(offset, MData.VERSION_UPDATING);
-			memFile.putInt(offset + MData.OFFSET_VERSION, dataLength);
+			memFile.putByte(pos, MData.VERSION_UPDATING);
+			memFile.putInt(pos + MData.OFFSET_VERSION, dataLength);
 			
-			memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
-			return true;
-		}
-		return false;
+//			memFile.putIntVolatile(RESERVED_CURSORADDRESS, offset);
+			return pos;
+		} 
+		return ACQUIREADD_FAILED;
 	}
 	
 	public void read(int pos, T mdata) throws IOException {
