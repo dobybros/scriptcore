@@ -61,6 +61,16 @@ public class MDataFile<T extends MData> {
 			throw new IOException("Path " + path + " hasn't been openned yet, status " + status.get());
 	}
 	
+	/**
+	 * returns 
+	 * public static final int ACQUIREADD_SUCCESSFULLY = 1;
+	 * public static final int ACQUIREADD_FAILED = -1;
+	 * public static final int ACQUIREADD_NOTENOUGHSPACE = -2;
+	 * 
+	 * @param mdata
+	 * @return
+	 * @throws IOException
+	 */
 	public int add(T mdata) throws IOException {
 		check();
 		int pos = acquireAdd(mdata);
