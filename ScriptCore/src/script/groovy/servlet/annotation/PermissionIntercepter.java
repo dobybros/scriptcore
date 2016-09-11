@@ -6,14 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import script.groovy.servlets.GroovyServletManager;
-
-@Target(value = {ElementType.METHOD})
+@Target(value = {ElementType.TYPE})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface RequestMapping {
-	public String method() default "GET";
-	public String uri();
-	public String responseType() default GroovyServletManager.RESPONSETYPE_JSON;
-	public String[] perms();
+public @interface PermissionIntercepter {
 }

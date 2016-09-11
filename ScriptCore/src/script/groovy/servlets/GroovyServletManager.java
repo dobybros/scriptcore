@@ -36,6 +36,8 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 	private HashMap<String, GroovyObjectEx<RequestIntercepter>> interceptorMap;
 
 	private static GroovyServletManager instance;
+	
+	private PermissionIntercepter permissionIntercepter;
 
 	public static GroovyServletManager getInstance() {
 		return instance;
@@ -43,6 +45,10 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 
 	public GroovyServletManager() {
 		instance = this;
+	}
+	
+	public interface PermissionIntercepter {
+		public void invoke(String[] perms, String method, HttpServletRequest request, HttpServletResponse response) throws CoreException;
 	}
 
 	private void handleRequestUri(String groovyPath, RequestURI requestUri, RequestURIWrapper requestUriWrapper, HashTree<String, RequestURIWrapper> tree, StringBuilder uriLogs) {
@@ -218,6 +224,7 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 										RequestURIWrapper requestUriWrapper = new RequestURIWrapper(groovyServlet);
 										requestUriWrapper.analyzeMethod(method);
 										requestUriWrapper.setResponseType(requestMapping.responseType());
+										requestUriWrapper.setPermissions(requestMapping.perms());
 										handleRequestUri(key, requestUri, requestUriWrapper, tree, uriLogs);
 //											requestUriWrapper.setGroovyObject(groovyServlet);
 									}
@@ -232,6 +239,14 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 			uriLogs.append("---------------------------------------");
 			LoggerEx.info(TAG, uriLogs.toString());
 		}
+	}
+
+	public PermissionIntercepter getPermissionIntercepter() {
+		return permissionIntercepter;
+	}
+
+	public void setPermissionIntercepter(PermissionIntercepter permissionIntercepter) {
+		this.permissionIntercepter = permissionIntercepter;
 	}
 
 }
