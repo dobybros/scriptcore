@@ -4,7 +4,8 @@ import java.util.List;
 
 
 public abstract class MemoTable {
-	private String name;
+	protected String name;
+	protected String basePath;
 
 	public static interface MemoCursor {
 		public boolean hasNext();
@@ -79,8 +80,11 @@ public abstract class MemoTable {
 		
 	}
 	
+	public abstract void open();
+	public abstract void close();
 	public abstract void addMemoData(MemoData data);
 	public abstract MemoCursor find(MemoIndexer byIndexer);
+	
 	
 	public String getName() {
 		return name;
@@ -88,5 +92,11 @@ public abstract class MemoTable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getBasePath() {
+		return basePath;
+	}
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
 	}
 }

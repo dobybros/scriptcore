@@ -1,9 +1,7 @@
 package solr
 
-import jdk.internal.dynalink.linker.LinkerServices.Implementation;
 import groovy.json.JsonBuilder
 import common.distribution.Article
-import connectors.mongodb.codec.DataObject
 import connectors.solr.SolrData
 import connectors.solr.annotations.DocumentField
 import connectors.solr.annotations.SolrDocument

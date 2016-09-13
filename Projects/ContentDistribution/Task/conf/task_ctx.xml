@@ -35,7 +35,6 @@
     	<property name="mongoClientHelper" ref="mongoClientHelper"></property>
     </bean>
     <bean id="groovyBeanFactory" class="script.groovy.runtime.GroovyBeanFactory">
-    	<property name="groovyRuntime" ref="groovyRuntime"></property>
     </bean>
     <bean id="groovyRedeployMainHandler" class="script.groovy.runtime.GroovyRedeployMainHandler"></bean>
 	<bean id="groovyServletManager" class="script.groovy.servlets.GroovyServletManager">

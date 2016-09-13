@@ -16,10 +16,9 @@
 		<property name="optimize" value="on" />
 		<property name="deprecation" value="on" />
 		<property name="encoding" value="utf-8" />
-		<property name="deployment.dir" location="../Deployment" />
-		<property name="dist.dir" location="${basedir}/deploy" />
+		<property name="dist.dir" location="${basedir}/deploy/lib" />
 		<property name="lib.dir" value="${basedir}/../libs" />
-		<property name="reflib.dir" value="${basedir}/../reflibs" />
+		<property name="reflib.dir" value="${basedir}/../../../ScriptCore/buildlib/deploy/lib" />
 		<property name="src.dir" value="${basedir}/../src" />
 		<property name="source.dir" value="${dist.dir}/src" />
 		<property name="classes.dir" value="${dist.dir}/classes" />
@@ -60,12 +59,6 @@
 
 		<mkdir dir="${classes.dir}" />
 
-		<unzip dest="${classes.dir}">
-			<fileset dir="${lib.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</unzip>
-
 		<javac includeantruntime="false" srcdir="${source.dir}" destdir="${classes.dir}" deprecation="${deprecation}" optimize="${optimize}" debug="${debug}" encoding="${encoding}" source="1.8" target="1.8" compiler="javac1.8">
 			<classpath id="tcls">
 				<path refid="build.classpath" />
@@ -76,6 +69,12 @@
 		<jar basedir="${classes.dir}" destfile="${dist.dir}/${jar.name}">
 		</jar>
 
+		<copy todir="${dist.dir}">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		
 		<delete dir="${source.dir}" failonerror="false" />
 		<delete dir="${classes.dir}" failonerror="false" />
 	</target>

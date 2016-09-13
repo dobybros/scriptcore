@@ -13,6 +13,9 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import script.groovy.annotation.Bean
 
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+
 @DBCollection(name = "article", databaseClass = ArticleDatabase.class)
 @Bean
 class ArticleService extends MongoCollectionHelper {
@@ -28,11 +31,21 @@ class ArticleService extends MongoCollectionHelper {
 		}
 		return null;
 	}
-	private List<Article> findArticles(Bson query) {
+	private List<Article> findArticles(Bson query, Integer offset, Integer limit, AtomicLong total) {
 		MongoCollection<Article> collection = this.getMongoCollection();
 		FindIterable<Article> iterable = collection.find(query);
 		if(iterable != null) {
+			if(offset != null)
+				iterable.skip(offset);
+			if(limit != null)
+				iterable.limit(limit);
+			iterable.sort(new Document().append(Article.FIELD_CREATETIME, -1));
+
 			MongoCursor<Article> cursor = iterable.iterator();
+			if(total != null) {
+				long count = collection.count(query);
+				total.set(count);
+			}
 			List<Article> list = new ArrayList<>();
 			while(cursor.hasNext()) {
 				list.add(cursor.next());
@@ -62,7 +75,7 @@ class ArticleService extends MongoCollectionHelper {
 			throw new CoreException(ERRORCODE_ARTICLE_DELETE_FAILED, "Delete article " + id + " failed");
 	}
 
-	public List<Article> queryArticles(String companyId, String authorUserId) {
+	public List<Article> queryArticles(String companyId, String authorUserId, Integer offset, Integer limit, AtomicLong total) {
 		Document query = new Document();
 		if(companyId != null) {
 			query.append(Article.FIELD_COMPANYID, companyId);
@@ -70,7 +83,7 @@ class ArticleService extends MongoCollectionHelper {
 		if(authorUserId != null) {
 			query.append(Article.FIELD_USERID, authorUserId);
 		}
-		return findArticles(query);
+		return findArticles(query, offset, limit, total);
 	}
 
 }

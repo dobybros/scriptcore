@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project name="accounts" default="publish_tar" basedir="../">
+	<description>
+		AcuLearn
+    </description>
+
+	<target name="init" description="Initialize the target...">
+		<property environment="env" />
+		<property name="name" value="wallboard" />
+		<property name="version" value="v0.1.0.4" />
+		<property name="year" value="2014" />
+		<echo message="Building ${ant.project.name} ${version}...." />
+		<property name="build.compiler" value="modern" />
+		<property name="debug" value="false" />
+		<property name="optimize" value="on" />
+		<property name="deprecation" value="on" />
+		<property name="encoding" value="utf-8" />
+		<property name="deployment.dir" location="../Deployment" />
+		<property name="dist.dir" location="${basedir}/buildlib/deploy" />
+		<property name="lib.dir" value="${basedir}/lib" />
+		<property name="conf.dir" value="${basedir}/conf" />
+		<property name="i18n.dir" value="${basedir}/i18n" />
+		<property name="sticker.dir" value="${basedir}/stickersuit" />
+		<property name="src.dir" value="${basedir}/src" />
+		<property name="affiliate.dir" value="${deployment.dir}/affiliates" />
+		<property name="lib.web.dir" value="${dist.dir}/war/WEB-INF/lib" />
+		<property name="scriptcore.lib.web.dir" value="${dist.dir}/war/WEB-INF/scriptcore" />
+		<property name="build.dir" value="${dist.dir}/war/WEB-INF/classes" />
+		<property name="buildlib.dir" value="${core.dir}/buildlib" />
+		<property name="log.dir" value="${dist.dir}/logs" />
+		<property name="dist.tar.gz" value="wallboard.tar.gz" />
+		<property name="jar.name" value="a.jar" />
+		<property name="jar.obfuscated.name" value="ao.jar" />
+
+		<filter token="year" value="${year}" />
+		<filter token="version" value="${version}" />
+		<filter token="date" value="${TODAY}" />
+		<filter token="log" value="true" />
+		<filter token="verbose" value="true" />
+
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${buildlib.dir}/ant-contrib-1.0b3.jar" />
+	</target>
+
+
+	<!--Prepare the build directory.-->
+	<target name="prepare" depends="init">
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${lib.web.dir}" />
+		<mkdir dir="${scriptcore.lib.web.dir}" />
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${build.dir}" failonerror="false" />
+		<delete failonerror="false">
+			<fileset dir="${dist.dir}">
+				<include name="**" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="compile" depends="prepare" description="compile project, generate build directory">
+		<echo message="build source..." />
+		<!--copy todir="${source.dir}" failonerror="false" file="${scriptcore.dir}/src/chat/main/Main.java">
+			</copy-->
+		<mkdir dir="${dist.dir}/tmp"/>
+		<copy todir="${dist.dir}/bin">
+			<fileset dir="${basedir}/run" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/groovy">
+			<fileset dir="${basedir}/groovy" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${lib.web.dir}">
+			<fileset dir="${basedir}/war/WEB-INF/lib" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${scriptcore.lib.web.dir}">
+			<fileset dir="${basedir}/war/WEB-INF/scriptcore" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${dist.dir}/war/WEB-INF">
+			<fileset dir="${basedir}/war/WEB-INF" excludes="*.svn">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dir}">
+			<fileset dir="${conf.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${i18n.dir}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!--target name="publish_tar" depends="clean,compile,affiliates.prepare,obfuscate,configweb" description="Make distribution tar file."-->
+	<target name="publish_tar" depends="clean,compile" description="Make distribution tar file.">
+		<delete dir="${log.dir}" failonerror="false" />
+		<mkdir dir="${log.dir}" />
+		<tar destfile="${dist.dir}/${dist.tar.gz}" compression="gzip">
+			<tarfileset dir="${dist.dir}" excludes="*.svn">
+				<include name="bin/**" />
+				<include name="war/**" />
+				<include name="lib/**" />
+				<include name="groovy/**" />
+				<include name="logs/" />
+				<include name="tmp/" />
+			</tarfileset>
+		</tar>
+		<delete dir="${dist.dir}/bin" failonerror="false" />
+		<delete dir="${dist.dir}/war" failonerror="false" />
+		<delete dir="${dist.dir}/lib" failonerror="false" />
+		<delete dir="${dist.dir}/logs" failonerror="false" />
+		<delete dir="${dist.dir}/tmp" failonerror="false" />
+		<delete dir="${dist.dir}/groovy" failonerror="false" />
+	</target>
+
+	<target name="affiliates.prepare">
+		<copy todir="${build.dir}" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/${name}/conf" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/bin" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/${name}/bin" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${build.dir}" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/core" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${web.static.dir}/res/download" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/${name}/download" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+</project>

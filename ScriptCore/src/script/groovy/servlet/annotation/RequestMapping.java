@@ -15,4 +15,5 @@ public @interface RequestMapping {
 	public String method() default "GET";
 	public String uri();
 	public String responseType() default GroovyServletManager.RESPONSETYPE_JSON;
+	public String[] perms() default "";
 }

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="mongodbconnector">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/mongodbconnector.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

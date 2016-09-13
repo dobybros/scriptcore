@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="noggit-0.6">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/noggit-0.6.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

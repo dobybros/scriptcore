@@ -29,12 +29,15 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 	public static final String RESPONSETYPE_DOWNLOAD = "download";
 	
 	public static final String VARIABLE = "VARIABLE";
+	public static final String IGNOREPATH = "**.";
 	private static final String TAG = GroovyServletManager.class
 			.getSimpleName();
 	private HashTree<String, RequestURIWrapper> servletTree;
 	private HashMap<String, GroovyObjectEx<RequestIntercepter>> interceptorMap;
 
 	private static GroovyServletManager instance;
+	
+	private GroovyObjectEx<PermissionIntercepter> permissionIntercepter;
 
 	public static GroovyServletManager getInstance() {
 		return instance;
@@ -42,6 +45,10 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 
 	public GroovyServletManager() {
 		instance = this;
+	}
+	
+	public interface PermissionIntercepter {
+		public void invoke(String[] perms, String method, HttpServletRequest request, HttpServletResponse response) throws CoreException;
 	}
 
 	private void handleRequestUri(String groovyPath, RequestURI requestUri, RequestURIWrapper requestUriWrapper, HashTree<String, RequestURIWrapper> tree, StringBuilder uriLogs) {
@@ -51,11 +58,15 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 		HashTree<String, RequestURIWrapper> theTree = tree;
 		if (groovyMethod != null && groovyPath != null
 				&& requestMethod != null && uris != null) {
+			boolean forceParsingUris = false;
 			for (String uri : uris) {
 				HashTree<String, RequestURIWrapper> childrenTree = null;
 				if (uri.startsWith("{") && uri.endsWith("}")) {
 					childrenTree = theTree.getChildren(VARIABLE, true);
 					uri = uri.substring(1, uri.length() - 1);
+					if(uri.startsWith(IGNOREPATH)) {
+						forceParsingUris = true;
+					}
 					String key = VARIABLE + "_" + requestMethod;
 					Object params = childrenTree.getParameter(key);
 					HashSet<String> uriSet = null;
@@ -74,6 +85,8 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 					childrenTree = theTree.getChildren(uri, true);
 				}
 				theTree = childrenTree;
+				if(forceParsingUris)
+					break;
 			}
 			
 			RequestURIWrapper old = theTree.get(requestMethod);
@@ -106,7 +119,9 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 		String[] uriStrs = uri.split("/");
 		HashTree<String, RequestURIWrapper> theTree = this.servletTree;
 		HashMap<String, String> parameters = null;
-		for (String uriStr : uriStrs) {
+		boolean forceParsingUris = false;
+		for (int i = 0; i < uriStrs.length; i++) {
+			String uriStr = uriStrs[i];
 			HashTree<String, RequestURIWrapper> children = theTree
 					.getChildren(uriStr);
 			if (children == null) {
@@ -119,7 +134,19 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 						if (parameters == null)
 							parameters = new HashMap<String, String>();
 						for(String variable : uriSet) {
-							parameters.put(variable, uriStr);
+							if(variable.startsWith(IGNOREPATH)) {
+								StringBuilder builder = new StringBuilder();
+								for (int j = i; j < uriStrs.length; j++) {
+									builder.append(uriStrs[j]);
+									if(j != uriStrs.length - 1) {
+										builder.append("/");
+									}
+								}
+								parameters.put(variable.substring(IGNOREPATH.length()), builder.toString());
+								forceParsingUris = true;
+							} else {
+								parameters.put(variable, uriStr);
+							}
 						}
 					}
 				}
@@ -128,6 +155,8 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 				return null;
 			else
 				theTree = children;
+			if(forceParsingUris)
+				break;
 		}
 		if (theTree != null) {
 			RequestURIWrapper obj = theTree.get(method);
@@ -195,6 +224,7 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 										RequestURIWrapper requestUriWrapper = new RequestURIWrapper(groovyServlet);
 										requestUriWrapper.analyzeMethod(method);
 										requestUriWrapper.setResponseType(requestMapping.responseType());
+										requestUriWrapper.setPermissions(requestMapping.perms());
 										handleRequestUri(key, requestUri, requestUriWrapper, tree, uriLogs);
 //											requestUriWrapper.setGroovyObject(groovyServlet);
 									}
@@ -209,6 +239,14 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 			uriLogs.append("---------------------------------------");
 			LoggerEx.info(TAG, uriLogs.toString());
 		}
+	}
+
+	public GroovyObjectEx<PermissionIntercepter> getPermissionIntercepter() {
+		return permissionIntercepter;
+	}
+
+	public void setPermissionIntercepter(GroovyObjectEx<PermissionIntercepter> permissionIntercepter) {
+		this.permissionIntercepter = permissionIntercepter;
 	}
 
 }

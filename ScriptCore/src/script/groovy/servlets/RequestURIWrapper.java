@@ -32,6 +32,7 @@ public class RequestURIWrapper implements GroovyObjectListener{
 	private String method;
 	private String responseType;
 	private LinkedHashMap<Parameter, HandleRequest> parameters = new LinkedHashMap<>();
+	private String[] permissions;
 	
 	public static interface HandleRequest {
 	}
@@ -264,5 +265,13 @@ public class RequestURIWrapper implements GroovyObjectListener{
 
 	public void setResponseType(String responseType) {
 		this.responseType = responseType;
+	}
+
+	public String[] getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(String[] permissions) {
+		this.permissions = permissions;
 	}
 }

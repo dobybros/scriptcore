@@ -30,10 +30,11 @@ public class ReloadMemoryTest extends ChatTestCase {
 			assert cookieString != null;
 			method.setRequestHeader(new Header("Cookie", cookieString));
 			Part[] parts = new Part[4];
-			parts[0] = new StringPart("article", "{\"title\" : \"hello\", \"summary\" : \"This is summary\"}", "utf8");
-			parts[1] = new StringPart("html", "<html><body><img src=\"{unique125}\" />Hello world, this is very good!<img src=\"{unique123}\" /></body></html>", "utf8");
-			parts[2] = new FilePart("unique123", "icon40@2x.png", new File("data/icon40@2x.png"));
-			parts[3] = new FilePart("unique125", "icon40@2x.png", new File("data/icon40@2x.png"));
+			parts[0] = new StringPart("article", "{\"title\" : \"hello_" + i + "\", \"summary\" : \"This is summary\"}", "utf8");
+//		parts[1] = new StringPart("html", "<html><body><img src=\"{unique125}\" />Hello world, this is very good!<img src=\"{unique123}\" /></body></html>", "utf8");
+			parts[1] = new StringPart("content", "{\"text\" : \"hello world\", \"image\" : \"icon40@2x.png\", \"image\" : \"icon40@2x.png\"}", "utf8");
+			parts[2] = new FilePart("1", "icon40@2x.png", new File("data/icon40@2x.png"));
+			parts[3] = new FilePart("2", "icon40@2x.png", new File("data/icon40@2x.png"));
 			method.setRequestEntity(new MultipartRequestEntity(parts, method.getParams()));
 			int code = httpClient.executeMethod(method);
 

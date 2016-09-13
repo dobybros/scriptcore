@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project name="scriptcore" default="compile_jar" basedir=".">
+	<description>
+		AcuLearn
+    </description>
+
+	<target name="init" description="Initialize the target...">
+		<property environment="env" />
+		<property name="name" value="ScriptCore" />
+		<property name="version" value="v0.1" />
+		<property name="year" value="2016" />
+		<echo message="Building ${ant.project.name} ${version}...." />
+		<property name="build.compiler" value="modern" />
+		<property name="debug" value="false" />
+		<property name="optimize" value="on" />
+		<property name="deprecation" value="on" />
+		<property name="encoding" value="utf-8" />
+		<property name="dist.dir" location="${basedir}/deploy/lib" />
+		<property name="lib.dir" value="${basedir}/../libs" />
+		<property name="src.dir" value="${basedir}/../src" />
+		<property name="source.dir" value="${dist.dir}/src" />
+		<property name="classes.dir" value="${dist.dir}/classes" />
+		<property name="build.dir" value="${dist.dir}/classes" />
+
+		<filter token="year" value="${year}" />
+		<filter token="version" value="${version}" />
+		<filter token="date" value="${TODAY}" />
+		<filter token="log" value="true" />
+		<filter token="verbose" value="true" />
+
+		<!-- run classpath -->
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}" includes="**/*.jar" />
+			<pathelement location="${build.dir}" />
+		</path>
+	</target>
+
+
+	<!--Prepare the build directory.-->
+	<target name="prepare" depends="init">
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+	
+	<target name="jar" depends="prepare">
+		<echo message="build source..." />
+		<property name="jar.name" value="scriptcore.jar" />
+		<mkdir dir="${source.dir}"/>
+		<copy todir="${source.dir}" failonerror="false">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${classes.dir}" />
+		
+		<!-- <echo message="Unzip ${classes.dir} to ${lib.dir}" />
+		<unzip dest="${classes.dir}">
+		    <fileset dir="${lib.dir}">
+		        <include name="*.jar"/>
+		    </fileset>
+		</unzip>
+		-->
+	</target>
+	
+	<target name="jar_allinone" depends="prepare">
+		<echo message="build source..." />
+		<property name="jar.name" value="scriptcore_allinone.jar" />
+		<mkdir dir="${source.dir}"/>
+		<copy todir="${source.dir}" failonerror="false">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${classes.dir}" />
+		
+		<echo message="Unzip ${classes.dir} to ${lib.dir}" />
+		<unzip dest="${classes.dir}">
+		    <fileset dir="${lib.dir}">
+		        <include name="*.jar"/>
+		    </fileset>
+		</unzip>
+		
+	</target>
+
+	<target name="compile_jar" depends="jar" description="compile project, generate build directory">
+		
+		<javac includeantruntime="false" srcdir="${source.dir}" destdir="${classes.dir}" deprecation="${deprecation}" optimize="${optimize}" debug="${debug}" encoding="${encoding}" source="1.8" target="1.8" compiler="javac1.8">
+			<classpath refid="build.classpath"></classpath>
+			<exclude name="**/Test*" />
+		</javac>
+
+		<jar basedir="${classes.dir}" destfile="${dist.dir}/${jar.name}">
+		</jar>
+		<copy todir="${dist.dir}" failonerror="false">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<delete dir="${source.dir}" failonerror="false" />
+		<delete dir="${classes.dir}" failonerror="false" />
+	</target>
+	<target name="compile_jar_allinone" depends="jar_allinone" description="compile project, generate build directory">
+		
+		<javac includeantruntime="false" srcdir="${source.dir}" destdir="${classes.dir}" deprecation="${deprecation}" optimize="${optimize}" debug="${debug}" encoding="${encoding}" source="1.8" target="1.8" compiler="javac1.8">
+			<classpath refid="build.classpath"></classpath>
+			<exclude name="**/Test*" />
+		</javac>
+
+		<jar basedir="${classes.dir}" destfile="${dist.dir}/${jar.name}">
+		</jar>
+		
+		<delete dir="${source.dir}" failonerror="false" />
+		<delete dir="${classes.dir}" failonerror="false" />
+	</target>
+</project>

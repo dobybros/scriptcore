@@ -4,22 +4,11 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
-
-import connectors.mongodb.MongoClientHelper;
-import connectors.mongodb.MongoCollectionHelper;
-import connectors.mongodb.annotations.DBCollection;
-import connectors.mongodb.annotations.Database;
-import connectors.mongodb.annotations.DBDocument;
-import script.groovy.annotation.Bean;
-import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
+import connectors.mongodb.annotations.DBCollection;
 
 public class MongoCollectionAnnotationHolder implements ClassAnnotationHandler {
 	private static final String TAG = MongoCollectionAnnotationHolder.class.getSimpleName();
