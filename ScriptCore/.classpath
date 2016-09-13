@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="src" path="unittest"/>
 	<classpathentry exported="true" kind="lib" path="libs/log4j-over-slf4j-1.7.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/logback-classic-1.1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/logback-core-1.1.2.jar"/>

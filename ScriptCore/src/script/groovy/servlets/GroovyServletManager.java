@@ -37,7 +37,7 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 
 	private static GroovyServletManager instance;
 	
-	private PermissionIntercepter permissionIntercepter;
+	private GroovyObjectEx<PermissionIntercepter> permissionIntercepter;
 
 	public static GroovyServletManager getInstance() {
 		return instance;
@@ -241,11 +241,11 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 		}
 	}
 
-	public PermissionIntercepter getPermissionIntercepter() {
+	public GroovyObjectEx<PermissionIntercepter> getPermissionIntercepter() {
 		return permissionIntercepter;
 	}
 
-	public void setPermissionIntercepter(PermissionIntercepter permissionIntercepter) {
+	public void setPermissionIntercepter(GroovyObjectEx<PermissionIntercepter> permissionIntercepter) {
 		this.permissionIntercepter = permissionIntercepter;
 	}
 

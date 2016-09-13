@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime;
+import script.groovy.servlets.GroovyServletManager.PermissionIntercepter;
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
@@ -234,7 +235,16 @@ public class RequestHolder {
 			GroovyObjectEx<GroovyServlet> servletObj) throws CoreException {
 		//TODO annotation
 		Object[] args = requestUriWrapper.getActualParameters(this);
-		servletObj.invokeMethod(groovyMethod, args);
+		GroovyServletManager groovyServletManager = GroovyServletManager.getInstance();
+		
+		String[] permissions = requestUriWrapper.getPermissions();
+		if(permissions != null && permissions.length > 0) {
+			GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
+			if(permissionIntecepter != null) {
+				permissionIntecepter.getObject().invoke(permissions, requestUriWrapper.getMethod(), request, response);
+			}
+			servletObj.invokeMethod(groovyMethod, args);
+		}
 	}
 
 }
