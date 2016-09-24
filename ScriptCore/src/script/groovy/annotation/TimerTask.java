@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface TimerTask {
 	public long period();
+	public String key();
 }
