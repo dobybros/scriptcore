@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -665,5 +666,18 @@ public class GroovyRuntime extends ScriptRuntime{
 		} else {
 			this.annotationHandlers = annotationHandlers;
 		}
+	}
+	
+	public Class<?> getClass(String classStr) {
+		if(StringUtils.isBlank(classStr))
+			return null;
+		classStr = classStr.replace(".", "/") + ".groovy";
+		if(classLoader != null) {
+			ClassHolder holder = classLoader.getClass(classStr);
+			if(holder != null) {
+				return holder.getParsedClass();
+			}
+		}
+		return null;
 	}
 }

@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface DBCollection {
 	public String name();
-	public Class<?> databaseClass();
+	public String databaseClass();
 }
