@@ -1,4 +1,4 @@
-package connectors.mongodb.annotations;
+package script.groovy.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,7 +9,5 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.TYPE})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface DBDocument {
-	public String collectionClass() default "";
-	public String[] filters() default "";
+public @interface ServerLifeCircle {
 }

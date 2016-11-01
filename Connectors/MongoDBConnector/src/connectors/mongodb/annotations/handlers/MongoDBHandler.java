@@ -12,6 +12,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 
 import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
+import script.groovy.runtime.GroovyRuntime.ClassHolder;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
@@ -71,6 +72,7 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 	@Override
 	public void handleAnnotatedClasses(Map<String, Class<?>> arg0,
 			MyGroovyClassLoader arg1) {
+		GroovyRuntime groovyRuntime = GroovyRuntime.getInstance();
 		MongoDatabaseAnnotationHolder databaseHolder = MongoDatabaseAnnotationHolder.getInstance();
 		MongoCollectionAnnotationHolder collectionHolder = MongoCollectionAnnotationHolder.getInstance();
 		MongoDocumentAnnotationHolder documentHolder = MongoDocumentAnnotationHolder.getInstance();
@@ -114,7 +116,10 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 			DBCollection mongoCollection = collectionMap.get(collectionClass);
 			if(mongoCollection != null) {
 				String collectionName = mongoCollection.name();
-				Class<?> databaseClass = mongoCollection.databaseClass();
+				String dClass = mongoCollection.databaseClass();
+				Class<?> databaseClass = groovyRuntime.getClass(dClass);
+				if(databaseClass == null)
+					continue;
 				if(collectionName != null && databaseClass != null) {
 					com.mongodb.client.MongoDatabase database = newDatabaseMap.get(databaseClass);
 					if(database != null) {
@@ -133,7 +138,9 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 			DBDocument mongoDocument = documentMap.get(documentClass);
 			if(mongoDocument != null) {
 				String[] filters = mongoDocument.filters();
-				Class<?> collectionClass = mongoDocument.collectionClass();
+				Class<?> collectionClass = groovyRuntime.getClass(mongoDocument.collectionClass());
+				if(collectionClass == null)
+					continue;
 				CollectionHolder holder = newCollectionMap.get(collectionClass);
 				if(holder != null) {
 					Object value = null;

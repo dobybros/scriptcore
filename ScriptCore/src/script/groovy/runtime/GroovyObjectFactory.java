@@ -5,7 +5,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 
 import script.groovy.object.GroovyObjectEx;
-
+/**
+ * 
+ * @author aplombchen
+ * @deprecated use GroovyBeanFactory instead.
+ */
 public class GroovyObjectFactory {
 	@Resource
 	private GroovyRuntime groovyRuntime;

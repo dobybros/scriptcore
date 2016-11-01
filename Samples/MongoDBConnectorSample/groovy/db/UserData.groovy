@@ -4,7 +4,7 @@ import connectors.mongodb.annotations.DBDocument
 import connectors.mongodb.annotations.DocumentField
 import connectors.mongodb.codec.DataObject
 
-@DBDocument(collectionClass = UserCollection.class, filters = ["type", "user"])
+@DBDocument(collectionClass = "db.UserCollection", filters = ["type", "user"])
 class UserData extends DataObject{
 	@DocumentField(key = "name")
 	private String name;

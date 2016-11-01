@@ -9,7 +9,6 @@ import a.Aplomb
 import a.CUser
 import a.User
 
-import com.balancer.main.Test
 
 @CompileStatic
 class test implements Callable{

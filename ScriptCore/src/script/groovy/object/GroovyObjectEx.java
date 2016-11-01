@@ -81,13 +81,17 @@ public class GroovyObjectEx<T> {
 											String beanName = bean.name();
 											Class<?> gClass = null;
 											if(StringUtils.isBlank(beanName)) {
-												Type fieldType = field.getGenericType();
-												if(fieldType instanceof ParameterizedType) {
-													 ParameterizedType pType = (ParameterizedType) fieldType;
-													 Type[] aTypes = pType.getActualTypeArguments();
-													 if(aTypes != null && aTypes.length == 1) {
-														 gClass = (Class<?>) aTypes[0];
-													 }
+												if(field.getType().isAssignableFrom(GroovyObjectEx.class)) {
+													Type fieldType = field.getGenericType();
+													if(fieldType instanceof ParameterizedType) {
+														ParameterizedType pType = (ParameterizedType) fieldType;
+														Type[] aTypes = pType.getActualTypeArguments();
+														if(aTypes != null && aTypes.length == 1) {
+															gClass = (Class<?>) aTypes[0];
+														}
+													}
+												} else {
+													gClass = field.getType();
 												}
 											}
 											GroovyObjectEx<?> beanValue;
@@ -96,10 +100,17 @@ public class GroovyObjectEx<T> {
 											} else {
 												beanValue = beanFactory.getBean(beanName);
 											}
-											if(beanValue != null && field.getType().isAssignableFrom(GroovyObjectEx.class)) {
-												if(!field.isAccessible())
-													field.setAccessible(true);
-												field.set(gObj, beanValue);
+											if(beanValue != null) {
+												if(field.getType().isAssignableFrom(GroovyObjectEx.class)) {
+													if(!field.isAccessible())
+														field.setAccessible(true);
+													field.set(gObj, beanValue);
+												} else {
+													if(!field.isAccessible())
+														field.setAccessible(true);
+													Object obj = groovyRuntime.getProxyObject(beanValue);
+													field.set(gObj, gClass.cast(obj));
+												} 
 											}
 										}
 									}

@@ -42,7 +42,7 @@ public class AdminController extends GroovyServlet{
 	private GroovyObjectEx<UserStatusCollection> userStatusCollection;
 	
 	@Bean
-	private GroovyObjectEx<UserService> userService;
+	private UserService userService;
 
 	/**
 	 * 获取Balancer概要信息的接口
@@ -98,7 +98,6 @@ public class AdminController extends GroovyServlet{
 			buidler.append(dataObject);
 		}
 
-		UserService userService = userService.getObject();
 		UserData user1 = userService.getUser(user.getId());
 		buidler.append(" user " + user1);
 		response.getOutputStream().write(buidler.toString().getBytes());
@@ -118,5 +117,10 @@ public class AdminController extends GroovyServlet{
 		System.gc();
 		response.getOutputStream().write(("used: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + "M").getBytes());
 	}
-
+	  @RequestMapping(uri = "hello", method = GroovyServlet.GET)
+	  public void hello(HttpServletRequest request,
+								HttpServletResponse response) throws CoreException{
+		  println userService.hello();
+		  response.getOutputStream().write(("used: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + "M").getBytes());
+	  }
 }

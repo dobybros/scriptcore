@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -44,6 +46,7 @@ public class GroovyRuntime extends ScriptRuntime{
 	private ClassLoader parentClassLoader;
 	private List<ClassAnnotationHandler> annotationHandlers;
 	private static GroovyRuntime instance;
+	private Class<?> groovyObjectExProxyClass;
 
 	public static GroovyRuntime getInstance() {
 		return instance;
@@ -469,7 +472,6 @@ public class GroovyRuntime extends ScriptRuntime{
 //			newClassLoader
 //					.parseClass(new File(
 //							"/home/momo/Aplomb/workspaces/ggtsworkspaces/Admin/groovy/services/IBaihuaService.groovy"));
-			
 			newClassLoader.pendingGroovyClasses = new HashSet<String>();
 			newClassLoader.parsingGroovyClasses = new HashSet<String>();
 			for(File file : files) {
@@ -519,7 +521,25 @@ public class GroovyRuntime extends ScriptRuntime{
 					}
 				}
 			}
-
+			String[] strs = new String[] {
+					"package script.groovy.runtime;",
+					"import script.groovy.object.GroovyObjectEx",
+					"class GroovyObjectExProxy implements GroovyInterceptable{",
+						"private GroovyObjectEx<?> groovyObject;",
+						"public GroovyObjectExProxy(GroovyObjectEx<?> groovyObject) {",
+							"this.groovyObject = groovyObject;",
+						"}",
+						"def invokeMethod(String name, args) {",
+							"Class<?> groovyClass = this.groovyObject.getGroovyClass();",
+							"def calledMethod = groovyClass.metaClass.getMetaMethod(name, args);",
+							"def returnObj = calledMethod?.invoke(this.groovyObject.getObject(), args);",
+							"return returnObj;",
+					    "}",
+					"}"
+			};
+			String proxyClassStr = StringUtils.join(strs, "\r\n"); 
+			groovyObjectExProxyClass = newClassLoader.parseClass(proxyClassStr, 
+					"/script/groovy/runtime/GroovyObjectExProxy.groovy");
 			deploySuccessfully = true;
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -563,7 +583,7 @@ public class GroovyRuntime extends ScriptRuntime{
 						@Override
 						public void run() {
 							for(ClassAnnotationHandler annotationHandler : annotationHandlers) {
-								Map<String, Class<?>> values = handlerMap.get(annotationHandler);;
+								Map<String, Class<?>> values = handlerMap.get(annotationHandler);
 								if (values != null) {
 									try {
 										annotationHandler.handleAnnotatedClasses(values,
@@ -637,7 +657,63 @@ public class GroovyRuntime extends ScriptRuntime{
 		goe.setGroovyRuntime(this);
 		return goe;
 	}
+	
+	public <T> Object newObject(Class<?> c) {
+		return newObject(path(c), null);
+	}
+	
+	public <T> Object newObject(String groovyPath) {
+		return newObject(groovyPath, null);
+	}
+	
+	public <T> Object newObject(String groovyPath,
+			Class<? extends GroovyObjectEx<T>> groovyObjectClass) {
+		GroovyObjectEx<T> goe = null;
+		if (groovyObjectClass != null) {
+			try {
+				Constructor<? extends GroovyObjectEx<T>> constructor = groovyObjectClass
+						.getConstructor(String.class);
+				goe = constructor.newInstance(groovyPath);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				LoggerEx.error(TAG, "Initialize customized groovyObjectClass "
+						+ groovyObjectClass + " failed, " + e.getMessage());
+				return null;
+			}
+		} else {
+			goe = new GroovyObjectEx<T>(groovyPath);
+		}
+		goe.setGroovyRuntime(this);
+		
+		Object obj = null;
+		try {
+			Constructor<?> constructor = groovyObjectExProxyClass.getConstructor(GroovyObjectEx.class);
+			obj = constructor.newInstance(goe);
+		} catch (Throwable  e) {
+			e.printStackTrace();
+			LoggerEx.error(TAG, "New proxy instance "
+					+ groovyObjectClass + " failed, " + e.getMessage());
+		}
+		return obj;
+	}
 
+	public Object getProxyObject(GroovyObjectEx<?> groovyObject) {
+		Object obj = null;
+		try {
+			GroovyBeanFactory factory = GroovyBeanFactory.getInstance();
+			Class<?> proxyClass = factory.getProxyClass(groovyObject.getGroovyClass().getName());
+			if(proxyClass != null) {
+				Constructor<?> constructor = proxyClass.getConstructor(GroovyObjectEx.class);
+				obj = constructor.newInstance(groovyObject);
+			}
+		} catch (Throwable  e) {
+			e.printStackTrace();
+			LoggerEx.error(TAG, "New proxy instance(getProxyObject) "
+					+ groovyObject.getGroovyPath() + " failed, " + e.getMessage());
+		}
+		return obj;
+	}
+	
 	public AtomicLong getLatestVersion() {
 		return latestVersion;
 	}
@@ -665,5 +741,18 @@ public class GroovyRuntime extends ScriptRuntime{
 		} else {
 			this.annotationHandlers = annotationHandlers;
 		}
+	}
+	
+	public Class<?> getClass(String classStr) {
+		if(StringUtils.isBlank(classStr))
+			return null;
+		classStr = classStr.replace(".", "/") + ".groovy";
+		if(classLoader != null) {
+			ClassHolder holder = classLoader.getClass(classStr);
+			if(holder != null) {
+				return holder.getParsedClass();
+			}
+		}
+		return null;
 	}
 }

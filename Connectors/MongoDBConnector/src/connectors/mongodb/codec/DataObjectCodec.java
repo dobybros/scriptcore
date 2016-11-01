@@ -225,6 +225,8 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 							} else if(BaseObject.class.isAssignableFrom(field.getType())) {
 								BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
 								holder.assignField(dataObj, key, valueObj);
+							} else if(field.getType().equals(Document.class)) {
+								holder.assignField(dataObj, key, value);
 							}
 						} else if (value instanceof Iterable) {
 				            Iterable<Object> values = (Iterable<Object>) value;
@@ -248,6 +250,9 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 										BaseObject valueObj = BaseObjectCodec.convert((Document) o, clazz);
 										list.add(valueObj);
 //										holder.assignField(dataObj, key, valueObj);
+									} else if(clazz.equals(Document.class)) {
+										list.add(o);
+//										holder.assignField(dataObj, key, value);
 									}
 								} else {
 //									holder.assignField(dataObj, key, o);
