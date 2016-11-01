@@ -16,6 +16,10 @@ class UserService {
 	@Bean
 	private GroovyObjectEx<UserCollection> userCollection;
 	
+	public String hello() {
+		return "hello world";
+	}
+	
 	public UserData getUser(String id) {
 		FindIterable<UserData> iterable = userCollection.getObject().getMongoCollection().find(new Document().append("_id", id));
 		MongoCursor<UserData> cursor = iterable.iterator();

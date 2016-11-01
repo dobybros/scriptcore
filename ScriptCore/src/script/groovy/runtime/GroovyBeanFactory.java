@@ -17,6 +17,7 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 	private static final String TAG = GroovyBeanFactory.class.getSimpleName();
 
 	private ConcurrentHashMap<String, GroovyObjectEx> beanMap = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, Class<?>> proxyClassMap = new ConcurrentHashMap<>();
 	
 	private static GroovyBeanFactory instance;
 
@@ -26,6 +27,10 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 
 	public GroovyBeanFactory() {
 		instance = this;
+	}
+	
+	public Class<?> getProxyClass(String className) {
+		return proxyClassMap.get(className);
 	}
 	
 	public <T> GroovyObjectEx<T> getBean(String beanName) {
@@ -56,6 +61,7 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 		String groovyPath = GroovyRuntime.path(c);
 		GroovyObjectEx<T> goe = beanMap.get(groovyPath);
 		if(goe == null) {
+			
 			goe = GroovyRuntime.getInstance().create(groovyPath);
 			if(beanName == null) {
 				beanName = groovyPath;
@@ -85,6 +91,7 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 	public void handleAnnotatedClasses(Map<String, Class<?>> annotatedClassMap,
 			MyGroovyClassLoader classLoader) {
 		ConcurrentHashMap<String, GroovyObjectEx> newBeanMap = new ConcurrentHashMap<>();
+		ConcurrentHashMap<String, Class<?>> newProxyClassMap = new ConcurrentHashMap<>();
 		if(annotatedClassMap != null) {
 			Collection<Class<?>> values = annotatedClassMap.values();
 			for(Class<?> groovyClass : values) {
@@ -93,10 +100,43 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 				if(StringUtils.isBlank(name)) {
 					name = null;
 				}
+				Class<?> groovyObjectExProxyClass = proxyClassMap.get(groovyClass.getName());
+				if(groovyObjectExProxyClass == null) {
+					String[] strs = new String[] {
+							"package script.groovy.runtime;",
+							"import script.groovy.object.GroovyObjectEx",
+							"class GroovyObjectEx" + groovyClass.getSimpleName() + "Proxy extends " + groovyClass.getName() + " implements GroovyInterceptable{",
+								"private GroovyObjectEx<?> groovyObject;",
+								"public GroovyObjectEx" + groovyClass.getSimpleName() + "Proxy(GroovyObjectEx<?> groovyObject) {",
+									"this.groovyObject = groovyObject;",
+								"}",
+								"def invokeMethod(String name, args) {",
+									"Class<?> groovyClass = this.groovyObject.getGroovyClass();",
+									"def calledMethod = groovyClass.metaClass.getMetaMethod(name, args);",
+									"def returnObj = calledMethod?.invoke(this.groovyObject.getObject(), args);",
+									"return returnObj;",
+								"}",
+							"}"
+					};
+					String proxyClassStr = StringUtils.join(strs, "\r\n"); 
+					groovyObjectExProxyClass = GroovyRuntime.getInstance().getClassLoader().parseClass(proxyClassStr, 
+							"/script/groovy/runtime/proxy/GroovyObjectEx" + groovyClass.getSimpleName() + "Proxy.groovy");
+					
+					newProxyClassMap.put(groovyClass.getName(), groovyObjectExProxyClass);
+				}
+				
 				getObject(name, groovyClass, newBeanMap);
 			}
 		}
+		ConcurrentHashMap<String, Class<?>> oldProxyClassMap = proxyClassMap;
+		proxyClassMap = newProxyClassMap;
+		if(oldProxyClassMap != null)
+			oldProxyClassMap.clear();
+		
+		ConcurrentHashMap<String, GroovyObjectEx> oldBeanMap = beanMap;
 		beanMap = newBeanMap;
+		if(oldBeanMap != null)
+			oldBeanMap.clear();
 	}
 
 }

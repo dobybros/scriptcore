@@ -17,5 +17,6 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-webmvc-4.0.5.RELEASE.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/MongoDBConnector"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ScriptCore"/>
+	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
