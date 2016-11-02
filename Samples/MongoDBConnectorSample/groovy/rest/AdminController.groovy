@@ -36,10 +36,10 @@ public class AdminController extends GroovyServlet{
 	private static final String TAG = "ADMIN";
 	
 	@Bean
-	private GroovyObjectEx<UserCollection> userCollection;
+	private UserCollection userCollection;
 	
 	@Bean
-	private GroovyObjectEx<UserStatusCollection> userStatusCollection;
+	private UserStatusCollection userStatusCollection;
 	
 	@Bean
 	private UserService userService;
@@ -60,7 +60,7 @@ public class AdminController extends GroovyServlet{
 		LoggerEx.info(TAG, "hello " + hello + " qq " + qq + " request " + request + " response " + response + " holder " + holder + " ua " + ua);
 		StringBuilder buidler = new StringBuilder();
 
-		MongoCollection<DataObject> theUserCollection = userCollection.getObject().getMongoCollection();
+		MongoCollection<DataObject> theUserCollection = userCollection.getMongoCollection();
 		DeleteResult result = theUserCollection.deleteMany(new Document());
 		buidler.append(" ua " + ua).append(" hello " + hello).append(" qq " + qq);
 
