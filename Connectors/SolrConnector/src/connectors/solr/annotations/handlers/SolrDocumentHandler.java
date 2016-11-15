@@ -105,9 +105,11 @@ public class SolrDocumentHandler implements ClassAnnotationHandler {
 			if(documentField != null) {
 				String key = documentField.key();
 				float boost = documentField.boost();
+				String mapKey = documentField.mapKey();
 				FieldEx fieldEx = new FieldEx(field);
 				fieldEx.put(KEY, key);
 				fieldEx.put(BOOST, boost);
+				fieldEx.put(MAPKEY, mapKey);
 				return fieldEx;
 			}
 			return super.field(field);

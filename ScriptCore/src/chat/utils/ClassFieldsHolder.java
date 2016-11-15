@@ -9,6 +9,8 @@ import chat.logs.LoggerEx;
 
 public class ClassFieldsHolder {
 	public static abstract class FieldIdentifier {
+		public static final String MAPKEY = "mapkey";
+		
 		public abstract String getFieldKey(Field field);
 		
 		public FieldEx field(Field field) {
