@@ -140,9 +140,10 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 			if(mongoDocument != null) {
 				String[] filters = mongoDocument.filters();
 				Class<?> collectionClass = groovyRuntime.getClass(mongoDocument.collectionClass());
-				if(collectionClass == null)
-					continue;
-				CollectionHolder holder = newCollectionMap.get(collectionClass);
+				CollectionHolder holder = null;
+				if(collectionClass != null) {
+					holder = newCollectionMap.get(collectionClass);
+				}
 				if(holder != null) {
 					Object value = null;
 					HashTree<String, String> tree = holder.filters;
@@ -197,7 +198,8 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 //				String key = documentField.key();
 				String mapKey = documentField.mapKey();
 				FieldEx fieldEx = new FieldEx(field);
-				fieldEx.put(MAPKEY, mapKey);
+				if(!StringUtils.isBlank(mapKey))
+					fieldEx.put(MAPKEY, mapKey);
 				return fieldEx;
 			}
 			return super.field(field);

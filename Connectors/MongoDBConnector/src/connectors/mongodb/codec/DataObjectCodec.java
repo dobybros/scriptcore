@@ -161,7 +161,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
     @Override
     public DataObject decode(final BsonReader reader, final DecoderContext decoderContext) {
     	Document document = documentCodec.decode(reader, decoderContext);
-		System.out.println("document " + document);
+//		System.out.println("document " + document);
 		
 		HashMap<Class<?>, CollectionHolder> map = MongoDBHandler.getInstance().getCollectionMap();
 		if(map != null) {
@@ -196,7 +196,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 					}
 					if(tree != null)
 						documentClass = (Class<?>) tree.getParameter(MongoDBHandler.CLASS);
-					System.out.println(documentClass + " " + value);
+//					System.out.println(documentClass + " " + value);
 					if(documentClass != null) {
 						return convert(document, documentClass);
 					}
@@ -220,85 +220,94 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 					Set<String> keys = fieldMap.keySet();
 					for(String key : keys) {
 						Object value = document.get(key);
-						FieldEx fieldEx = fieldMap.get(key);
-						Field field = fieldEx.getField();
-						if(value instanceof Document) {
-							if(DataObject.class.isAssignableFrom(field.getType())) {
-								DataObject valueObj = DataObjectCodec.convert((Document) value, field.getType());
-								holder.assignField(dataObj, key, valueObj);
-							} else if(BaseObject.class.isAssignableFrom(field.getType())) {
-								BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
-								holder.assignField(dataObj, key, valueObj);
-							} else if(field.getType().equals(Document.class)) {
+//						LoggerEx.info("AAA", "handle field " + key + " value " + value);
+						if(value != null) {
+							FieldEx fieldEx = fieldMap.get(key);
+							Field field = fieldEx.getField();
+							if(value instanceof Document) {
+								if(DataObject.class.isAssignableFrom(field.getType())) {
+									DataObject valueObj = DataObjectCodec.convert((Document) value, field.getType());
+									holder.assignField(dataObj, key, valueObj);
+								} else if(BaseObject.class.isAssignableFrom(field.getType())) {
+									BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
+									holder.assignField(dataObj, key, valueObj);
+								} else if(field.getType().equals(Document.class)) {
+									holder.assignField(dataObj, key, value);
+								}
+							} else if (value instanceof Iterable) {
+								Iterable<Object> values = (Iterable<Object>) value;
+								
+//								LoggerEx.info("AAA", "handle Iterable " + field.getGenericType() + " MAPKEY " + fieldEx.get(FieldIdentifier.MAPKEY));
+								
+								Class<?> clazz = null;
+								Type type = field.getGenericType();
+								if(type instanceof ParameterizedType) {
+									ParameterizedType pType = (ParameterizedType) type;
+									Type[] params = pType.getActualTypeArguments();  
+									if(params != null && params.length > 0) {
+										clazz = (Class<?>) params[params.length - 1];
+									}
+								}
+								LinkedHashMap<Object, Object> linkedMap = null;
+								ArrayList<Object> list = null;
+								String mapKey = (String) fieldEx.get(FieldIdentifier.MAPKEY);
+								if(StringUtils.isBlank(mapKey)) {
+									list = new ArrayList<Object>();
+								} else {
+									linkedMap = new LinkedHashMap<Object, Object>();
+								}
+								
+								for(Object o : values) {
+									if(o instanceof Document) {
+										if(DataObject.class.isAssignableFrom(clazz)) {
+											Document doc = (Document) o;
+											DataObject valueObj = DataObjectCodec.convert(doc, clazz);
+											if(valueObj != null) {
+												if(list != null) {
+													list.add(valueObj);
+												} else if(linkedMap != null) {
+													Object theKey = doc.get(mapKey);
+													if(theKey != null) {
+														linkedMap.put(theKey, valueObj);
+													}
+												}
+											}
+										} else if(BaseObject.class.isAssignableFrom(clazz)) {
+											Document doc = (Document) o;
+											BaseObject valueObj = BaseObjectCodec.convert(doc, clazz);
+											if(valueObj != null) {
+												if(list != null) {
+													list.add(valueObj);
+												} else if(linkedMap != null) {
+													Object theKey = doc.get(mapKey);
+													if(theKey != null) {
+														linkedMap.put(theKey, valueObj);
+													}
+												}
+											}
+										} else if(clazz.equals(Document.class)) {
+											Document doc = (Document) o;
+											if(list != null) {
+												list.add(doc);
+											} else if(linkedMap != null) {
+												Object theKey = doc.get(mapKey);
+												if(theKey != null) {
+													linkedMap.put(theKey, doc);
+												}
+											}
+										}
+									} else {
+										list.add(o);
+									}
+								}
+								if(list != null) {
+									holder.assignField(dataObj, key, list);
+								} else if(linkedMap != null) {
+									holder.assignField(dataObj, key, linkedMap);
+								}
+							} else {
 								holder.assignField(dataObj, key, value);
 							}
-						} else if (value instanceof Iterable) {
-				            Iterable<Object> values = (Iterable<Object>) value;
-				            
-				            Class<?> clazz = null;
-				            Type type = field.getGenericType();
-				            if(type instanceof ParameterizedType) {
-				            	ParameterizedType pType = (ParameterizedType) type;
-				            	Type[] params = pType.getActualTypeArguments();  
-				            	if(params != null && params.length == 1) {
-				            		clazz = (Class<?>) params[0];
-				            	}
-				            }
-				            LinkedHashMap<Object, Object> linkedMap = null;
-				            ArrayList<Object> list = null;
-				            String mapKey = (String) fieldEx.get(FieldIdentifier.MAPKEY);
-				            if(StringUtils.isBlank(mapKey)) {
-				            	list = new ArrayList<Object>();
-				            } else {
-				            	linkedMap = new LinkedHashMap<Object, Object>();
-				            }
-				            
-				            for(Object o : values) {
-				            	if(o instanceof Document) {
-									if(DataObject.class.isAssignableFrom(clazz)) {
-										Document doc = (Document) o;
-										DataObject valueObj = DataObjectCodec.convert(doc, clazz);
-										if(list != null) {
-											list.add(valueObj);
-										} else if(linkedMap != null) {
-											Object theKey = doc.get(mapKey);
-											if(theKey != null) {
-												linkedMap.put(theKey, valueObj);
-											}
-										}
-									} else if(BaseObject.class.isAssignableFrom(clazz)) {
-										Document doc = (Document) o;
-										BaseObject valueObj = BaseObjectCodec.convert(doc, clazz);
-										if(list != null) {
-											list.add(valueObj);
-										} else if(linkedMap != null) {
-											Object theKey = doc.get(mapKey);
-											if(theKey != null) {
-												linkedMap.put(theKey, valueObj);
-											}
-										}
-									} else if(clazz.equals(Document.class)) {
-										Document doc = (Document) o;
-										if(list != null) {
-											list.add(doc);
-										} else if(linkedMap != null) {
-											Object theKey = doc.get(mapKey);
-											if(theKey != null) {
-												linkedMap.put(theKey, doc);
-											}
-										}
-									}
-								} else {
-									list.add(o);
-								}
-				            }
-				            if(list != null) {
-				            	holder.assignField(dataObj, key, list);
-				            } else if(linkedMap != null) {
-				            	holder.assignField(dataObj, key, linkedMap);
-				            }
-				        } else {
-							holder.assignField(dataObj, key, value);
 						}
 					}
 				}
@@ -336,7 +345,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
         } else if (value instanceof Map) {
         	if(fieldEx != null) {
         		String mapKey = (String) fieldEx.get(FieldIdentifier.MAPKEY);
-        		if(mapKey != null) {
+        		if(!StringUtils.isBlank(mapKey)) {
         			writeIterable(writer, ((Map) value).values(), encoderContext.getChildContext(), fieldEx);
         			return;
         		}

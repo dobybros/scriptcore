@@ -100,7 +100,7 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 				if(StringUtils.isBlank(name)) {
 					name = null;
 				}
-				Class<?> groovyObjectExProxyClass = proxyClassMap.get(groovyClass.getName());
+				Class<?> groovyObjectExProxyClass = newProxyClassMap.get(groovyClass.getName());
 				if(groovyObjectExProxyClass == null) {
 					String[] strs = new String[] {
 							"package script.groovy.runtime;",

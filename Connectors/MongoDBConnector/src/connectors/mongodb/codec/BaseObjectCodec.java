@@ -183,8 +183,8 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 				            if(type instanceof ParameterizedType) {
 				            	ParameterizedType pType = (ParameterizedType) type;
 				            	Type[] params = pType.getActualTypeArguments();  
-				            	if(params != null && params.length == 1) {
-				            		clazz = (Class<?>) params[0];
+				            	if(params != null && params.length > 0) {
+				            		clazz = (Class<?>) params[params.length - 1];
 				            	}
 				            }
 				            /*ArrayList<Object> list = new ArrayList<Object>();
@@ -212,23 +212,27 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 									if(DataObject.class.isAssignableFrom(clazz)) {
 										Document doc = (Document) o;
 										DataObject valueObj = DataObjectCodec.convert(doc, clazz);
-										if(list != null) {
-											list.add(valueObj);
-										} else if(linkedMap != null) {
-											Object theKey = doc.get(mapKey);
-											if(theKey != null) {
-												linkedMap.put(theKey, valueObj);
+										if(valueObj != null) {
+											if(list != null) {
+												list.add(valueObj);
+											} else if(linkedMap != null) {
+												Object theKey = doc.get(mapKey);
+												if(theKey != null) {
+													linkedMap.put(theKey, valueObj);
+												}
 											}
 										}
 									} else if(BaseObject.class.isAssignableFrom(clazz)) {
 										Document doc = (Document) o;
 										BaseObject valueObj = BaseObjectCodec.convert(doc, clazz);
-										if(list != null) {
-											list.add(valueObj);
-										} else if(linkedMap != null) {
-											Object theKey = doc.get(mapKey);
-											if(theKey != null) {
-												linkedMap.put(theKey, valueObj);
+										if(valueObj != null) {
+											if(list != null) {
+												list.add(valueObj);
+											} else if(linkedMap != null) {
+												Object theKey = doc.get(mapKey);
+												if(theKey != null) {
+													linkedMap.put(theKey, valueObj);
+												}
 											}
 										}
 									} else if(clazz.equals(Document.class)) {
@@ -279,7 +283,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
         } else if (value instanceof Map) {
         	if(fieldEx != null) {
         		String mapKey = (String) fieldEx.get(FieldIdentifier.MAPKEY);
-        		if(mapKey != null) {
+        		if(!StringUtils.isBlank(mapKey)) {
         			writeIterable(writer, ((Map) value).values(), encoderContext.getChildContext(), fieldEx);
         			return;
         		}

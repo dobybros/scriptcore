@@ -109,7 +109,8 @@ public class SolrDocumentHandler implements ClassAnnotationHandler {
 				FieldEx fieldEx = new FieldEx(field);
 				fieldEx.put(KEY, key);
 				fieldEx.put(BOOST, boost);
-				fieldEx.put(MAPKEY, mapKey);
+				if(!StringUtils.isBlank(mapKey))
+					fieldEx.put(MAPKEY, mapKey);
 				return fieldEx;
 			}
 			return super.field(field);

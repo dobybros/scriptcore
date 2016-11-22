@@ -5,16 +5,6 @@
 	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="src" path="gggg"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-aop-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-aspects-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-beans-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-context-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-context-support-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-core-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-expression-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-test-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-web-4.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-webmvc-4.0.5.RELEASE.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/MongoDBConnector"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ScriptCore"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
