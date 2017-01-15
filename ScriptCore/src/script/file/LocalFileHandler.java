@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang.StringUtils;
 
+import script.file.FileAdapter.PathEx;
 import chat.utils.MD5InputStream;
 
 public class LocalFileHandler extends FileAdapter {
@@ -27,13 +28,20 @@ public class LocalFileHandler extends FileAdapter {
 	public LocalFileHandler() {
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		LocalFileHandler fileHandler = new LocalFileHandler();
-		fileHandler.setRootPath("/root/");
-		System.out.println(fileHandler.getAbsolutePath("/adf/bbb/1.png"));
+		fileHandler.setRootPath("/Users/aplombchen/Desktop/files");
+		Collection<FileEntity> files = fileHandler.getFilesInDirectory(new PathEx("/"), new String[]{"zip"}, true);
+		System.out.println(files);
+		for(FileEntity file : files) {
+			fileHandler.readFile(new PathEx(file.getAbsolutePath()), FileUtils.openOutputStream(new File("/Users/aplombchen/Desktop/1.zip")));
+		}
 	}
 	
 	private String getAbsolutePath(String path) {
+		if(path.startsWith(rootPath)) {
+			return path;
+		}
 	    String prefix = FilenameUtils.getPrefix(path);
 	    if (!StringUtils.isEmpty(prefix)) {
 	        path = path.substring(1);
@@ -77,17 +85,22 @@ public class LocalFileHandler extends FileAdapter {
 	}
 
 	@Override
-	public List<String> getFilesInDirectory(PathEx path) throws IOException {
+	public List<FileEntity> getFilesInDirectory(PathEx path, String[] extensions, boolean recursive) throws IOException {
 		File directory = new File(getAbsolutePath(path.getPath()));
 		if(directory.exists()) {
 			if(directory.isFile())
 				throw new IOException("Get files in directory failed, target is a file, " + getAbsolutePath(path.getPath()));
 			
-			Iterator<File> files = FileUtils.iterateFiles(directory, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
-			List<String> list = new ArrayList<String>();
-			while(files.hasNext()) {
-				File file = files.next();
-				list.add(file.getAbsolutePath());
+			Collection<File>  files = FileUtils.listFiles(directory, extensions, recursive);
+//			Iterator<File> files = FileUtils.iterateFiles(directory, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
+			List<FileEntity> list = new ArrayList<>();
+			for(File file : files) {
+				FileEntity entity = new FileEntity();
+				entity.setAbsolutePath(file.getAbsolutePath());
+				entity.setLastModificationTime(file.lastModified());
+				entity.setLength(file.length());
+				entity.setType(file.isFile() ? FileEntity.TYPE_FILE : FileEntity.TYPE_DIRECTORY);
+				list.add(entity);
 			}
 			return list;
 		} else 

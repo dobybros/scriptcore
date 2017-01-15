@@ -20,7 +20,8 @@
     <bean id="mongoClientHelper" class="connectors.mongodb.MongoClientHelper">
     	<property name="hosts" value="${database.host}"></property>
     </bean>
-    
+
+    <bean id="groovyTimerTaskHandler" class="script.groovy.runtime.GroovyTimerTaskHandler"></bean>
     <bean id="mongoDatabaseAnnotationHolder" class="connectors.mongodb.annotations.handlers.MongoDatabaseAnnotationHolder"></bean>
     <bean id="mongoCollectionAnnotationHolder" class="connectors.mongodb.annotations.handlers.MongoCollectionAnnotationHolder"></bean>
     <bean id="mongoDocumentAnnotationHolder" class="connectors.mongodb.annotations.handlers.MongoDocumentAnnotationHolder"></bean>
@@ -30,9 +31,12 @@
     <bean id="groovyBeanFactory" class="script.groovy.runtime.GroovyBeanFactory">
     </bean>
     <bean id="groovyRedeployMainHandler" class="script.groovy.runtime.GroovyRedeployMainHandler"></bean>
+	<bean id="jsonFilterFactory" class="script.filter.JsonFilterFactory"></bean>
+	<bean id="serverLifeCircleHandler" class="script.groovy.runtime.ServerLifeCircleHandler" destroy-method="shutdown"></bean>
+
 	<bean id="groovyServletManager" class="script.groovy.servlets.GroovyServletManager">
 	</bean>
-	      
+
 	<bean id="groovyRuntime" class="script.groovy.runtime.GroovyRuntime" init-method="init">
 		<property name="path" value="${groovy.path}"/>
 		<property name="annotationHandlers">
@@ -43,7 +47,10 @@
 				<ref bean="mongoCollectionAnnotationHolder"/>
 				<ref bean="mongoDocumentAnnotationHolder"/>
 				<ref bean="mongoDBHandler"/>
+				<ref bean="groovyTimerTaskHandler"/>
 				<ref bean="groovyRedeployMainHandler"/>
+				<ref bean="jsonFilterFactory" />
+				<ref bean="serverLifeCircleHandler" />
 			</list>
 		</property>
 	</bean>

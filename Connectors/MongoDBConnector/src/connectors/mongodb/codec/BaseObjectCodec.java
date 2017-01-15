@@ -24,11 +24,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.BsonReader;
 import org.bson.BsonType;
@@ -49,6 +51,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import chat.logs.LoggerEx;
 import chat.utils.ClassFieldsHolder;
 import chat.utils.ClassFieldsHolder.FieldEx;
+import chat.utils.ClassFieldsHolder.FieldIdentifier;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
 
 /**
@@ -168,7 +171,8 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 					Set<String> keys = fieldMap.keySet();
 					for(String key : keys) {
 						Object value = document.get(key);
-						Field field = fieldMap.get(key).getField();
+						FieldEx fieldEx = fieldMap.get(key);
+						Field field = fieldEx.getField();
 						if(BaseObject.class.isAssignableFrom(field.getType()) && value.getClass().equals(Document.class)) {
 							BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
 							holder.assignField(dataObj, key, valueObj);
@@ -179,11 +183,11 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 				            if(type instanceof ParameterizedType) {
 				            	ParameterizedType pType = (ParameterizedType) type;
 				            	Type[] params = pType.getActualTypeArguments();  
-				            	if(params != null && params.length == 1) {
-				            		clazz = (Class<?>) params[0];
+				            	if(params != null && params.length > 0) {
+				            		clazz = (Class<?>) params[params.length - 1];
 				            	}
 				            }
-				            ArrayList<Object> list = new ArrayList<Object>();
+				            /*ArrayList<Object> list = new ArrayList<Object>();
 				            for(Object o : values) {
 				            	if(o instanceof Document) {
 									BaseObject valueObj = BaseObjectCodec.convert((Document) o, clazz);
@@ -193,8 +197,64 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 //									holder.assignField(dataObj, key, o);
 									list.add(o);
 								}
+				            }*/
+				            LinkedHashMap<Object, Object> linkedMap = null;
+				            ArrayList<Object> list = null;
+				            String mapKey = (String) fieldEx.get(FieldIdentifier.MAPKEY);
+				            if(StringUtils.isBlank(mapKey)) {
+				            	list = new ArrayList<Object>();
+				            } else {
+				            	linkedMap = new LinkedHashMap<Object, Object>();
 				            }
-				            holder.assignField(dataObj, key, list);
+				            
+				            for(Object o : values) {
+				            	if(o instanceof Document) {
+									if(DataObject.class.isAssignableFrom(clazz)) {
+										Document doc = (Document) o;
+										DataObject valueObj = DataObjectCodec.convert(doc, clazz);
+										if(valueObj != null) {
+											if(list != null) {
+												list.add(valueObj);
+											} else if(linkedMap != null) {
+												Object theKey = doc.get(mapKey);
+												if(theKey != null) {
+													linkedMap.put(theKey, valueObj);
+												}
+											}
+										}
+									} else if(BaseObject.class.isAssignableFrom(clazz)) {
+										Document doc = (Document) o;
+										BaseObject valueObj = BaseObjectCodec.convert(doc, clazz);
+										if(valueObj != null) {
+											if(list != null) {
+												list.add(valueObj);
+											} else if(linkedMap != null) {
+												Object theKey = doc.get(mapKey);
+												if(theKey != null) {
+													linkedMap.put(theKey, valueObj);
+												}
+											}
+										}
+									} else if(clazz.equals(Document.class)) {
+										Document doc = (Document) o;
+										if(list != null) {
+											list.add(doc);
+										} else if(linkedMap != null) {
+											Object theKey = doc.get(mapKey);
+											if(theKey != null) {
+												linkedMap.put(theKey, doc);
+											}
+										}
+									}
+								} else {
+									list.add(o);
+								}
+				            }
+				            if(list != null) {
+				            	holder.assignField(dataObj, key, list);
+				            } else if(linkedMap != null) {
+				            	holder.assignField(dataObj, key, linkedMap);
+				            }
 				        } else {
 							holder.assignField(dataObj, key, value);
 						}
@@ -215,24 +275,31 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void writeValue(final BsonWriter writer, final EncoderContext encoderContext, final Object value) {
+    private void writeValue(final BsonWriter writer, final EncoderContext encoderContext, final Object value, FieldEx fieldEx) {
         if (value == null) {
             writer.writeNull();
         } else if (value instanceof Iterable) {
-            writeIterable(writer, (Iterable<Object>) value, encoderContext.getChildContext());
+            writeIterable(writer, (Iterable<Object>) value, encoderContext.getChildContext(), fieldEx);
         } else if (value instanceof Map) {
-            writeMap(writer, (Map<String, Object>) value, encoderContext.getChildContext());
+        	if(fieldEx != null) {
+        		String mapKey = (String) fieldEx.get(FieldIdentifier.MAPKEY);
+        		if(!StringUtils.isBlank(mapKey)) {
+        			writeIterable(writer, ((Map) value).values(), encoderContext.getChildContext(), fieldEx);
+        			return;
+        		}
+        	}
+            writeMap(writer, (Map<String, Object>) value, encoderContext.getChildContext(), fieldEx);
         } else {
             Codec codec = registry.get(value.getClass());
             encoderContext.encodeWithChildContext(codec, writer, value);
         }
     }
-    private void writeMap(final BsonWriter writer, final Map<String, Object> map, final EncoderContext encoderContext) {
+    private void writeMap(final BsonWriter writer, final Map<String, Object> map, final EncoderContext encoderContext, FieldEx fieldEx) {
         writer.writeStartDocument();
 
         for (final Map.Entry<String, Object> entry : map.entrySet()) {
             writer.writeName(entry.getKey());
-            writeValue(writer, encoderContext, entry.getValue());
+            writeValue(writer, encoderContext, entry.getValue(), fieldEx);
         }
         writer.writeEndDocument();
     }
@@ -247,7 +314,8 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     		if(fields != null) {
     			for (final Map.Entry<String, FieldEx> entry : fields.entrySet()) {
     	            writer.writeName(entry.getKey());
-    	            Field field = entry.getValue().getField();
+    	            FieldEx fieldEx = entry.getValue();
+    	            Field field = fieldEx.getField();
     	            Object value = null;
 					try {
 						if(!field.isAccessible()) 
@@ -257,7 +325,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 							| IllegalAccessException e) {
 						e.printStackTrace();
 					}
-    	            writeValue(writer, encoderContext, value);
+    	            writeValue(writer, encoderContext, value, fieldEx);
     	        }
     		}
     	}
@@ -271,10 +339,10 @@ public class BaseObjectCodec implements Codec<BaseObject> {
         writer.writeEndDocument();
     }
 
-    private void writeIterable(final BsonWriter writer, final Iterable<Object> list, final EncoderContext encoderContext) {
+    private void writeIterable(final BsonWriter writer, final Iterable<Object> list, final EncoderContext encoderContext, FieldEx fieldEx) {
         writer.writeStartArray();
         for (final Object value : list) {
-            writeValue(writer, encoderContext, value);
+            writeValue(writer, encoderContext, value, fieldEx);
         }
         writer.writeEndArray();
     }

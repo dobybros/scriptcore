@@ -9,8 +9,8 @@ class UserData extends DataObject{
 	@DocumentField(key = "name")
 	private String name;
 	
-	@DocumentField(key = "acc")
-	private Account account;
+	@DocumentField(key = "accs")
+	private List<Account> accounts;
 	
 	@DocumentField(key = "rids")
 	private List<MediaResource> resources;

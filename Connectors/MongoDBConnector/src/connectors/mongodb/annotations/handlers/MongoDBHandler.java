@@ -17,6 +17,7 @@ import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ClassFieldsHolder;
+import chat.utils.ClassFieldsHolder.FieldEx;
 import chat.utils.ClassFieldsHolder.FieldIdentifier;
 import chat.utils.HashTree;
 
@@ -139,9 +140,10 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 			if(mongoDocument != null) {
 				String[] filters = mongoDocument.filters();
 				Class<?> collectionClass = groovyRuntime.getClass(mongoDocument.collectionClass());
-				if(collectionClass == null)
-					continue;
-				CollectionHolder holder = newCollectionMap.get(collectionClass);
+				CollectionHolder holder = null;
+				if(collectionClass != null) {
+					holder = newCollectionMap.get(collectionClass);
+				}
 				if(holder != null) {
 					Object value = null;
 					HashTree<String, String> tree = holder.filters;
@@ -187,6 +189,20 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 			if(documentField != null) 
 				return documentField.key();
 			return null;
+		}
+		
+		@Override
+		public FieldEx field(Field field) {
+			DocumentField documentField = field.getAnnotation(DocumentField.class);
+			if(documentField != null) {
+//				String key = documentField.key();
+				String mapKey = documentField.mapKey();
+				FieldEx fieldEx = new FieldEx(field);
+				if(!StringUtils.isBlank(mapKey))
+					fieldEx.put(MAPKEY, mapKey);
+				return fieldEx;
+			}
+			return super.field(field);
 		}
 	}
 	

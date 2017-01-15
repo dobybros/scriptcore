@@ -52,20 +52,20 @@
 	<classpathentry exported="true" kind="lib" path="libs/websocket-server-9.3.9.v20160517.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/websocket-servlet-9.3.9.v20160517.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/aopalliance.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/groovy-all-2.4.7-indy.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/httpclient-4.4.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/httpcore-4.4.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/httpmime-4.4.1.jar"/>
-	<classpathentry kind="lib" path="libs/spring-aop-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-aspects-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-beans-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-context-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-context-support-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-core-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-expression-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-test-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-web-4.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="libs/spring-webmvc-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-aop-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-aspects-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-beans-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-context-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-context-support-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-core-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-expression-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-test-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-web-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-webmvc-4.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/groovy-all-2.4.8.jar"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

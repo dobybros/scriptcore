@@ -411,10 +411,11 @@ public class GroovyRuntime extends ScriptRuntime{
 	}
 
 	public GroovyRuntime() {
-		instance = this;
+//		instance = this;
 	}
 
 	public synchronized void init() throws CoreException {
+		instance = this;
 		redeploy();
 	}
 

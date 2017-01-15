@@ -12,4 +12,5 @@ import java.lang.annotation.Target;
 public @interface DocumentField {
 	public String key();
 	public float boost() default 1.0f;
+	public String mapKey() default "";
 }

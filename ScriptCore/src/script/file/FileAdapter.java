@@ -135,8 +135,11 @@ public abstract class FileAdapter {
 		public String toString() {
 			return path + ", hashKey " + hashKey + ", metadata " + metadata;
 		}
-		public PathEx(String path, String hashKey, MetadataEx metadata) {
+		public PathEx(String path) {
 			this.path = path;
+		}
+		public PathEx(String path, String hashKey, MetadataEx metadata) {
+			this(path);
 			this.hashKey = hashKey;
 			this.setMetadata(metadata);
 		}
@@ -245,7 +248,7 @@ public abstract class FileAdapter {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract List<String> getFilesInDirectory(PathEx path) throws IOException;
+	public abstract List<FileEntity> getFilesInDirectory(PathEx path, String[] extensions, boolean recursive) throws IOException;
 	
 	public EncryptService getEncryptService() {
 		return encryptService;

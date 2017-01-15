@@ -1,21 +1,12 @@
 package rest
 
-import com.mongodb.client.FindIterable
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoCursor
-import com.mongodb.client.result.DeleteResult
-import connectors.mongodb.annotations.DocumentField
-import connectors.mongodb.codec.DataObject
-import db.Account
-import db.MediaResource
-import org.bson.Document;
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+import org.bson.Document
+
 import script.groovy.annotation.Bean
-import script.groovy.object.GroovyObjectEx
-import script.groovy.runtime.GroovyRuntime;
+import script.groovy.runtime.GroovyRuntime
 import script.groovy.servlet.annotation.ControllerMapping
 import script.groovy.servlet.annotation.PathVariable
 import script.groovy.servlet.annotation.RequestHeader
@@ -25,9 +16,20 @@ import script.groovy.servlets.GroovyServlet
 import script.groovy.servlets.RequestHolder
 import chat.errors.CoreException
 import chat.logs.LoggerEx
+
+import com.mongodb.client.FindIterable
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoCursor
+import com.mongodb.client.result.DeleteResult
+
+import connectors.mongodb.codec.DataObject
+import db.Account
+import db.MediaResource
+import db.QuestStatus
 import db.UserCollection
 import db.UserData
 import db.UserStatusCollection
+import db.services.QuestStatusService
 import db.services.UserService
 
 //@ControllerMapping(interceptClass = "core/intercepters/InternalServerIntercepter.groovy")
@@ -36,14 +38,30 @@ public class AdminController extends GroovyServlet{
 	private static final String TAG = "ADMIN";
 	
 	@Bean
-	private GroovyObjectEx<UserCollection> userCollection;
+	private UserCollection userCollection;
 	
 	@Bean
-	private GroovyObjectEx<UserStatusCollection> userStatusCollection;
+	private UserStatusCollection userStatusCollection;
 	
 	@Bean
 	private UserService userService;
+	
+	@Bean
+	private QuestStatusService questStatusService;
 
+	@RequestMapping(uri = "test/aaa", method = GroovyServlet.GET)
+	public void getMemoryInfo1(){
+		QuestStatus qs = questStatusService.getQuestStatus("5577bc4284ae5740892a5fe2");
+		println qs;
+	}
+	
+	@RequestMapping(uri = "test/bbb", method = GroovyServlet.GET)
+	public void getMemoryInfo2(){
+		QuestStatus qs = questStatusService.getQuestStatus("5577bc4284ae5740892a5fe2");
+		qs.setId("asdf");
+		questStatusService.addQuestStatus(qs);
+	}
+	
 	/**
 	 * 获取Balancer概要信息的接口
 	 * @param holder
@@ -60,7 +78,7 @@ public class AdminController extends GroovyServlet{
 		LoggerEx.info(TAG, "hello " + hello + " qq " + qq + " request " + request + " response " + response + " holder " + holder + " ua " + ua);
 		StringBuilder buidler = new StringBuilder();
 
-		MongoCollection<DataObject> theUserCollection = userCollection.getObject().getMongoCollection();
+		MongoCollection<DataObject> theUserCollection = userCollection.getMongoCollection();
 		DeleteResult result = theUserCollection.deleteMany(new Document());
 		buidler.append(" ua " + ua).append(" hello " + hello).append(" qq " + qq);
 
