@@ -29,6 +29,7 @@ public final class ServerStart {
 	private int serverPort;
 	private int maxThreadPoolSize;
 	private int maxInnerThreadPoolSize;
+	private String customWarPath;
 	
 	private Map<String, String> asyncServletMap;
 	
@@ -46,10 +47,11 @@ public final class ServerStart {
 		return context;
 	}
 	
-	public ServerStart(int serverPort, int maxThreadPoolSize, int maxInnerThreadPoolSize) {
+	public ServerStart(int serverPort, int maxThreadPoolSize, int maxInnerThreadPoolSize, String customWarPath) {
 		this.serverPort = serverPort;
 		this.maxThreadPoolSize = maxThreadPoolSize;
 		this.maxInnerThreadPoolSize = maxInnerThreadPoolSize;
+		this.customWarPath = customWarPath;
 		instance = this;
 		if(maxInnerThreadPoolSize > 0) {
 			threadPool = new QueuedThreadPool(maxInnerThreadPoolSize);
@@ -81,7 +83,10 @@ public final class ServerStart {
 		try {
 			WebAppContext webapp = new WebAppContext();
 			webapp.setContextPath(contextPath);
-			webapp.setWar(jetty_home + warPath);
+			if(customWarPath != null)
+				webapp.setWar(customWarPath);
+			else
+				webapp.setWar(jetty_home + warPath);
 			webapp.setParentLoaderPriority(true);
 			webapp.setTempDirectory(new File("./tmp"));
 			

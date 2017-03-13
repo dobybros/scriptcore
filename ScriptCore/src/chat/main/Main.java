@@ -22,6 +22,7 @@ public class Main {
 	private static int serverPort;
 	private static int maxThreadPoolSize;
 	private static int maxInnerThreadPoolSize;
+	private static String customWarPath;
 	
 //	private static Map<String, String> asyncMap;
 	/**
@@ -65,6 +66,9 @@ public class Main {
 			} else {
 				maxInnerThreadPoolSize = 0;
 			}
+			if(line.hasOption('w')){
+				customWarPath = line.getOptionValue('w');
+			}
 			
 //			String mapStr = null;
 //			if(line.hasOption('a')){
@@ -82,7 +86,7 @@ public class Main {
 //				}
 //			}
 			
-			ServerStart serverStart = new ServerStart(serverPort, maxThreadPoolSize, maxInnerThreadPoolSize);
+			ServerStart serverStart = new ServerStart(serverPort, maxThreadPoolSize, maxInnerThreadPoolSize, customWarPath);
 //			serverStart.setAsyncServletMap(asyncMap);
 			serverStart.start();
 		}  catch (Exception e) {

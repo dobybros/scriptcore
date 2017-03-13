@@ -243,7 +243,7 @@ public class GroovyRuntime extends ScriptRuntime{
 	
 	public class MyGroovyClassLoader extends GroovyClassLoader {
 		private long version;
-		private HashMap<String, ClassHolder> classCache;
+		private HashMap<String, ClassHolder> myClassCache;
 		private HashSet<String> pendingGroovyClasses;
 		private HashSet<String> parsingGroovyClasses;
 
@@ -262,12 +262,12 @@ public class GroovyRuntime extends ScriptRuntime{
 //					return null;
 //				}
 //			});
-			classCache = new HashMap<>();
+			myClassCache = new HashMap<>();
 		}
 
 		public Class<?> parseGroovyClass(String key, File classFile)
 				throws CoreException {
-			ClassHolder holder =  classCache.get(key);
+			ClassHolder holder =  myClassCache.get(key);
 			if(holder != null && holder.getParsedClass() != null) {
 				LoggerEx.info(TAG, "Load groovy class " + key
 						+ " from cache");
@@ -278,7 +278,7 @@ public class GroovyRuntime extends ScriptRuntime{
 				if (parsedClass != null) {
 					holder = new ClassHolder();
 					holder.parsedClass = parsedClass;
-					classCache.put(key, holder);
+					myClassCache.put(key, holder);
 				}
 				LoggerEx.info(TAG, "Parse groovy class " + key
 						+ " successfully");
@@ -365,7 +365,7 @@ public class GroovyRuntime extends ScriptRuntime{
 						LoggerEx.error(TAG, "parse groovy class failed while load class, " + e.getMessage());
 					}
 				} else {
-					ClassHolder holder =  classCache.get(key);
+					ClassHolder holder =  myClassCache.get(key);
 					if(holder != null && holder.getParsedClass() != null) {
 						LoggerEx.info(TAG, "Load groovy class " + key
 								+ " from cache to avoid loop parse");
@@ -398,7 +398,7 @@ public class GroovyRuntime extends ScriptRuntime{
 		}
 		
 		public ClassHolder getClass(String classPath) {
-			return classCache.get(classPath);
+			return myClassCache.get(classPath);
 		}
 
 		public long getVersion() {
