@@ -13,20 +13,20 @@ import script.groovy.annotation.Bean;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 
-public class GroovyBeanFactory implements ClassAnnotationHandler {
+public class GroovyBeanFactory extends ClassAnnotationHandler {
 	private static final String TAG = GroovyBeanFactory.class.getSimpleName();
 
 	private ConcurrentHashMap<String, GroovyObjectEx> beanMap = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<String, Class<?>> proxyClassMap = new ConcurrentHashMap<>();
 	
-	private static GroovyBeanFactory instance;
+//	private static GroovyBeanFactory instance;
 
-	public static GroovyBeanFactory getInstance() {
-		return instance;
-	}
+//	public static GroovyBeanFactory getInstance() {
+//		return instance;
+//	}
 
 	public GroovyBeanFactory() {
-		instance = this;
+//		instance = this;
 	}
 	
 	public Class<?> getProxyClass(String className) {
@@ -62,7 +62,7 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 		GroovyObjectEx<T> goe = beanMap.get(groovyPath);
 		if(goe == null) {
 			
-			goe = GroovyRuntime.getInstance().create(groovyPath);
+			goe = getGroovyRuntime().create(groovyPath);
 			if(beanName == null) {
 				beanName = groovyPath;
 			}
@@ -119,7 +119,7 @@ public class GroovyBeanFactory implements ClassAnnotationHandler {
 							"}"
 					};
 					String proxyClassStr = StringUtils.join(strs, "\r\n"); 
-					groovyObjectExProxyClass = GroovyRuntime.getInstance().getClassLoader().parseClass(proxyClassStr, 
+					groovyObjectExProxyClass = getGroovyRuntime().getClassLoader().parseClass(proxyClassStr,
 							"/script/groovy/runtime/proxy/GroovyObjectEx" + groovyClass.getSimpleName() + "Proxy.groovy");
 					
 					newProxyClassMap.put(groovyClass.getName(), groovyObjectExProxyClass);

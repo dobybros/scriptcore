@@ -72,11 +72,12 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     private final CodecRegistry registry;
     private final Transformer valueTransformer;
     private Codec<Document> documentCodec;
+    private MongoDBHandler mongoDBHandler;
     /**
      * Construct a new instance with a default {@code CodecRegistry} and
      */
-    public BaseObjectCodec(Class<?> documentClass, final CodecRegistry registry) {
-        this(registry, DEFAULT_BSON_TYPE_CLASS_MAP);
+    public BaseObjectCodec(Class<?> documentClass, final CodecRegistry registry, MongoDBHandler mongoDBHandler) {
+        this(registry, DEFAULT_BSON_TYPE_CLASS_MAP, mongoDBHandler);
         this.documentClass = documentClass;
     }
 
@@ -86,8 +87,8 @@ public class BaseObjectCodec implements Codec<BaseObject> {
      * @param registry         the registry
      * @param bsonTypeClassMap the BSON type class map
      */
-    public BaseObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap) {
-        this(registry, bsonTypeClassMap, null);
+    public BaseObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap, MongoDBHandler mongoDBHandler) {
+        this(registry, bsonTypeClassMap, null, mongoDBHandler);
     }
 
     /**
@@ -99,8 +100,9 @@ public class BaseObjectCodec implements Codec<BaseObject> {
      * @param bsonTypeClassMap the BSON type class map
      * @param valueTransformer the value transformer to use as a final step when decoding the value of any field in the document
      */
-    public BaseObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap, final Transformer valueTransformer) {
-        this.registry = Assertions.notNull("registry", registry);
+    public BaseObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap, final Transformer valueTransformer, MongoDBHandler mongoDBHandler) {
+		this.mongoDBHandler = mongoDBHandler;
+    	this.registry = Assertions.notNull("registry", registry);
         this.bsonTypeClassMap = Assertions.notNull("bsonTypeClassMap", bsonTypeClassMap);
         this.valueTransformer = valueTransformer != null ? valueTransformer : new Transformer() {
             @Override
@@ -121,7 +123,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 //    	Document document = documentCodec.decode(reader, decoderContext);
 //		System.out.println("document " + document);
 //		
-//		HashMap<Class<?>, CollectionHolder> map = MongoDBHandler.getInstance().getCollectionMap();
+//		HashMap<Class<?>, CollectionHolder> map = mongoDBHandler.getCollectionMap();
 //		if(map != null) {
 //			CollectionHolder holder = map.get(documentClass);
 //			if(holder != null) {
@@ -161,10 +163,10 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 		return null;
     }
 
-    static BaseObject convert(Document document, Class<?> documentClass) {
+    static BaseObject convert(Document document, Class<?> documentClass, MongoDBHandler mongoDBHandler) {
     	try {
     		BaseObject dataObj = (BaseObject) documentClass.newInstance();
-			ClassFieldsHolder holder = MongoDBHandler.getInstance().getDocumentMap().get(documentClass);
+			ClassFieldsHolder holder = mongoDBHandler.getDocumentMap().get(documentClass);
 			if(holder != null) {
 				HashMap<String, FieldEx> fieldMap = holder.getFieldMap();
 				if(fieldMap != null) {
@@ -174,7 +176,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 						FieldEx fieldEx = fieldMap.get(key);
 						Field field = fieldEx.getField();
 						if(BaseObject.class.isAssignableFrom(field.getType()) && value.getClass().equals(Document.class)) {
-							BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
+							BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType(), mongoDBHandler);
 							holder.assignField(dataObj, key, valueObj);
 						} else if (value instanceof Iterable) {
 				            Iterable<Object> values = (Iterable<Object>) value;
@@ -211,7 +213,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 				            	if(o instanceof Document) {
 									if(DataObject.class.isAssignableFrom(clazz)) {
 										Document doc = (Document) o;
-										DataObject valueObj = DataObjectCodec.convert(doc, clazz);
+										DataObject valueObj = DataObjectCodec.convert(doc, clazz, mongoDBHandler);
 										if(valueObj != null) {
 											if(list != null) {
 												list.add(valueObj);
@@ -224,7 +226,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 										}
 									} else if(BaseObject.class.isAssignableFrom(clazz)) {
 										Document doc = (Document) o;
-										BaseObject valueObj = BaseObjectCodec.convert(doc, clazz);
+										BaseObject valueObj = BaseObjectCodec.convert(doc, clazz, mongoDBHandler);
 										if(valueObj != null) {
 											if(list != null) {
 												list.add(valueObj);
@@ -307,7 +309,7 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     private void writeBaseObject(final BsonWriter writer, final BaseObject map, final EncoderContext encoderContext) {
         writer.writeStartDocument();
 
-        HashMap<Class<?>, ClassFieldsHolder> documentMap = MongoDBHandler.getInstance().getDocumentMap();
+        HashMap<Class<?>, ClassFieldsHolder> documentMap = mongoDBHandler.getDocumentMap();
     	ClassFieldsHolder fieldHolder = documentMap.get(map.getClass());
     	if(fieldHolder != null) {
     		HashMap<String, FieldEx> fields = fieldHolder.getFieldMap();

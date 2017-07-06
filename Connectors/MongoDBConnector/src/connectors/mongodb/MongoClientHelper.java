@@ -14,7 +14,7 @@ public class MongoClientHelper {
 
 	private String hosts;//"mongodb://localhost:27017,localhost:27018,localhost:27019"
 	
-	private static MongoClientHelper instance;
+//	private static MongoClientHelper instance;
 	
 	private static int[] lock = new int[0];
 	
@@ -27,12 +27,12 @@ public class MongoClientHelper {
 	private Boolean socketKeepAlive;
 	
 	public MongoClientHelper() {
-		instance = this;
+//		instance = this;
 	}
 	
-	public static MongoClientHelper getInstance() {
-		return instance;
-	}
+//	public static MongoClientHelper getInstance() {
+//		return instance;
+//	}
 	
 	public void connect() throws CoreException {
 		connect(null);
@@ -60,12 +60,12 @@ public class MongoClientHelper {
 						optionsBuilder.socketKeepAlive(socketKeepAlive);
 //					CodecRegistry registry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromCodecs(new CleanDocumentCodec()));
 //					optionsBuilder.codecRegistry(registry);
-					
+
 					if(mongoClient != null) {
 						mongoClient.close();
 						LoggerEx.info(TAG, "Connected hosts " + toHosts + " closing old hosts client " + hosts + " now.");
 					}
-					
+
 					MongoClientURI connectionString = new MongoClientURI(toHosts, optionsBuilder);
 					mongoClient = new MongoClient(connectionString);
 					

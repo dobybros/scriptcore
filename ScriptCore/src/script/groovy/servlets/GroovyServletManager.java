@@ -24,7 +24,7 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ChatUtils;
 import chat.utils.HashTree;
-public class GroovyServletManager implements ClassAnnotationHandler {
+public class GroovyServletManager extends ClassAnnotationHandler {
 	public static final String RESPONSETYPE_JSON = "json";
 	public static final String RESPONSETYPE_DOWNLOAD = "download";
 	
@@ -35,18 +35,22 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 	private HashTree<String, RequestURIWrapper> servletTree;
 	private HashMap<String, GroovyObjectEx<RequestIntercepter>> interceptorMap;
 
-	private static GroovyServletManager instance;
+//	private static GroovyServletManager instance;
 	
 	private GroovyObjectEx<PermissionIntercepter> permissionIntercepter;
 
-	public static GroovyServletManager getInstance() {
-		return instance;
-	}
+//	public static GroovyServletManager getInstance() {
+//		return instance;
+//	}
 
 	public GroovyServletManager() {
-		instance = this;
+//		instance = this;
 	}
-	
+
+	public void initAsDefault() {
+		GroovyServletDispatcher.setDefaultGroovyServletManager(this);
+	}
+
 	public interface PermissionIntercepter {
 		public void invoke(String[] perms, String method, HttpServletRequest request, HttpServletResponse response) throws CoreException;
 	}
@@ -106,17 +110,10 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 	}
 
 	public RequestHolder parseUri(HttpServletRequest request,
-			HttpServletResponse response) throws CoreException {
+								  HttpServletResponse response, String[] uriStrs) throws CoreException {
 		if(this.servletTree == null)
 			throw new CoreException(ChatErrorCodes.ERROR_GROOVYSERVLET_SERVLET_NOT_INITIALIZED, "Groovy servlet is not ready");
-		String uri = request.getRequestURI();
 		String method = request.getMethod();
-		if (uri == null)
-			return null;
-		if (uri.startsWith("/")) {
-			uri = uri.substring(1);
-		}
-		String[] uriStrs = uri.split("/");
 		HashTree<String, RequestURIWrapper> theTree = this.servletTree;
 		HashMap<String, String> parameters = null;
 		boolean forceParsingUris = false;
@@ -165,10 +162,22 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 				if(interceptorMap != null) {
 					interceptor = interceptorMap.get(obj.getGroovyPath());
 				}
-				return new RequestHolder(obj, request, response, parameters, interceptor);
+				return new RequestHolder(obj, request, response, parameters, interceptor, this);
 			}
 		}
 		return null;
+	}
+
+	public RequestHolder parseUri(HttpServletRequest request,
+			HttpServletResponse response) throws CoreException {
+		String uri = request.getRequestURI();
+		if (uri == null)
+			return null;
+		if (uri.startsWith("/")) {
+			uri = uri.substring(1);
+		}
+		String[] uriStrs = uri.split("/");
+		return parseUri(request, response, uriStrs);
 	}
 
 	public HashMap<String, GroovyObjectEx<RequestIntercepter>> getInterceptorMap() {
@@ -183,7 +192,7 @@ public class GroovyServletManager implements ClassAnnotationHandler {
 	@Override
 	public void handleAnnotatedClasses(Map<String, Class<?>> annotatedClassMap,
 			MyGroovyClassLoader classLoader) {
-		GroovyRuntime groovyRuntime = GroovyRuntime.getInstance();
+		GroovyRuntime groovyRuntime = getGroovyRuntime();
 		if(annotatedClassMap != null && !annotatedClassMap.isEmpty()) {
 			StringBuilder uriLogs = new StringBuilder("\r\n---------------------------------------\r\n");
 			HashTree<String, RequestURIWrapper> tree = new HashTree<String, RequestURIWrapper>();

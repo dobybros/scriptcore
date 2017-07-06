@@ -7,5 +7,4 @@ import connectors.mongodb.annotations.DBCollection
 @DBCollection(name = "userStatus", databaseClass = "db.UserDatabase")
 @Bean
 class UserStatusCollection extends MongoCollectionHelper {
-
 }

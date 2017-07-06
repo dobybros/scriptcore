@@ -20,15 +20,17 @@ public class RequestHolder {
 	private HttpServletResponse response;
 	private HashMap<String, String> pathVariables;
 	private GroovyObjectEx<RequestIntercepter> interceptor;
+	private GroovyServletManager groovyServletManager;
 
 	RequestHolder(RequestURIWrapper requestUriWrapper,
-			HttpServletRequest request, HttpServletResponse response,
-			HashMap<String, String> pathVariables, GroovyObjectEx<RequestIntercepter> interceptor) {
+				  HttpServletRequest request, HttpServletResponse response,
+				  HashMap<String, String> pathVariables, GroovyObjectEx<RequestIntercepter> interceptor, GroovyServletManager groovyServletManager) {
 		this.requestUriWrapper = requestUriWrapper;
 		this.request = request;
 		this.response = response;
 		this.pathVariables = pathVariables;
 		this.interceptor = interceptor;
+		this.groovyServletManager = groovyServletManager;
 	}
 
 	public String getResponseType() {
@@ -235,8 +237,7 @@ public class RequestHolder {
 			GroovyObjectEx<GroovyServlet> servletObj) throws CoreException {
 		//TODO annotation
 		Object[] args = requestUriWrapper.getActualParameters(this);
-		GroovyServletManager groovyServletManager = GroovyServletManager.getInstance();
-		
+
 		String[] permissions = requestUriWrapper.getPermissions();
 		if(permissions != null && permissions.length > 0) {
 			GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
@@ -247,4 +248,11 @@ public class RequestHolder {
 		}
 	}
 
+	public GroovyServletManager getGroovyServletManager() {
+		return groovyServletManager;
+	}
+
+	public void setGroovyServletManager(GroovyServletManager groovyServletManager) {
+		this.groovyServletManager = groovyServletManager;
+	}
 }

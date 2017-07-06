@@ -71,7 +71,7 @@ public class GroovyObjectEx<T> {
 					if(groovyClass != null) {
 						try {
 							gObj = (GroovyObject) groovyClass.newInstance();
-							GroovyBeanFactory beanFactory = GroovyBeanFactory.getInstance();
+							GroovyBeanFactory beanFactory = groovyRuntime.getBeanFactory();
 							if(beanFactory != null) {
 								Field[] fields = gObj.getClass().getDeclaredFields();
 								if(fields != null) {

@@ -16,20 +16,19 @@ import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.logs.LoggerEx;
 
-public class JsonFilterFactory implements ClassAnnotationHandler{
+public class JsonFilterFactory extends ClassAnnotationHandler{
 	private static final String TAG = JsonFilterFactory.class.getSimpleName();
 	
-	protected static JsonFilterFactory instance;
-	private GroovyRuntime groovyRuntime;
+//	protected static JsonFilterFactory instance;
 	private Map<String, GroovyObjectEx<JsonFilter>> filterMap;
 	
 	public JsonFilterFactory() {
-		instance = this;
+//		instance = this;
 	}
 	
-	public static JsonFilterFactory getInstance() {
-		return instance;
-	}
+//	public static JsonFilterFactory getInstance() {
+//		return instance;
+//	}
 
 	public Object fromByKey(Class<?> filterClass, Object doc, Object...arguments) {
 		return fromByKey(filterClass.getName(), doc, arguments);
@@ -88,7 +87,6 @@ public class JsonFilterFactory implements ClassAnnotationHandler{
 	@Override
 	public Class<? extends Annotation> handleAnnotationClass(
 			GroovyRuntime groovyRuntime) {
-		this.groovyRuntime = groovyRuntime;
 		return JsonFilterClass.class;
 	}
 
@@ -131,7 +129,7 @@ public class JsonFilterFactory implements ClassAnnotationHandler{
 							LoggerEx.error(TAG, "JsonFilterClass " + filterKey + "#" + groovyClass + " is ignored, if targetClass is ParameterizedType, then key has to be specified. \r\n");
 							continue;
 						}
-						GroovyObjectEx<JsonFilter> serverAdapter = groovyRuntime
+						GroovyObjectEx<JsonFilter> serverAdapter = getGroovyRuntime()
 								.create(groovyClass);
 						if (serverAdapter != null) {
 							if (StringUtils.isBlank(filterKey)) {

@@ -10,19 +10,19 @@ import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import connectors.mongodb.annotations.DBCollection;
 
-public class MongoCollectionAnnotationHolder implements ClassAnnotationHandler {
+public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	private static final String TAG = MongoCollectionAnnotationHolder.class.getSimpleName();
 
 	private Map<Class<?>, DBCollection> collectionClassMap = new LinkedHashMap<>();
 	
-	private static MongoCollectionAnnotationHolder instance;
+//	private static MongoCollectionAnnotationHolder instance;
 	public MongoCollectionAnnotationHolder() {
-		instance = this;
+//		instance = this;
 	}
 	
-	public static MongoCollectionAnnotationHolder getInstance() {
-		return instance;
-	}
+//	public static MongoCollectionAnnotationHolder getInstance() {
+//		return instance;
+//	}
 	
 	public void init() {
 	}

@@ -34,7 +34,7 @@
 	<bean id="jsonFilterFactory" class="script.filter.JsonFilterFactory"></bean>
 	<bean id="serverLifeCircleHandler" class="script.groovy.runtime.ServerLifeCircleHandler" destroy-method="shutdown"></bean>
 
-	<bean id="groovyServletManager" class="script.groovy.servlets.GroovyServletManager">
+	<bean id="groovyServletManager" class="script.groovy.servlets.GroovyServletManager" init-method="initAsDefault">
 	</bean>
 
 	<bean id="groovyRuntime" class="script.groovy.runtime.GroovyRuntime" init-method="init">

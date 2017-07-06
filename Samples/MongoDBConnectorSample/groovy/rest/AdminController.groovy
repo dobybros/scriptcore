@@ -125,7 +125,7 @@ public class AdminController extends GroovyServlet{
 	public void getMemoryInfo(HttpServletRequest request, 
 		HttpServletResponse response) throws CoreException{
 		LoggerEx.info(TAG, "hello1");
-		GroovyRuntime.getInstance().redeploy();
+//		GroovyRuntime.getInstance().redeploy();
 		response.getOutputStream().write("Done".getBytes());
 	}
 

@@ -13,7 +13,7 @@ import chat.logs.LoggerEx;
 import chat.utils.TimerEx;
 import chat.utils.TimerTaskEx;
 
-public class GroovyTimerTaskHandler implements ClassAnnotationHandler {
+public class GroovyTimerTaskHandler extends ClassAnnotationHandler {
 
 	private static final String TAG = GroovyTimerTaskHandler.class.getSimpleName();
 	private ConcurrentHashMap<String, MyTimerTask> timerTasks;
@@ -35,7 +35,7 @@ public class GroovyTimerTaskHandler implements ClassAnnotationHandler {
 					long period = timerTask.period();
 					String key = timerTask.key();
 					if(period > 10) {
-						GroovyObjectEx<?> groovyObj = GroovyRuntime.getInstance().create(groovyClass);
+						GroovyObjectEx<?> groovyObj = getGroovyRuntime().create(groovyClass);
 						MyTimerTask task = new MyTimerTask(key, period, groovyObj);
 						MyTimerTask existTask = newTimerTasks.putIfAbsent(key, task);
 						if(existTask != null) {

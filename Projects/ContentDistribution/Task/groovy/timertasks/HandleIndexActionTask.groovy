@@ -4,18 +4,15 @@ import org.apache.commons.httpclient.Header
 import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.methods.GetMethod
 import org.apache.commons.io.IOUtils
-import org.bson.Document
 import org.jsoup.Jsoup;
 
 import script.groovy.annotation.Bean
-import script.groovy.annotation.TimerTask
 import script.groovy.object.GroovyObjectEx
 import solr.ArticleIndex;
 import common.distribution.Article
 import common.distribution.ArticleService
 import common.index.IndexAction
 import common.index.IndexActionService
-import connectors.solr.SolrIndexService;
 
 @TimerTask(period = 10000L)
 class HandleIndexActionTask {

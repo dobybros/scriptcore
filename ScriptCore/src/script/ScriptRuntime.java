@@ -26,4 +26,6 @@ public abstract class ScriptRuntime {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+
+	public abstract void close();
 }

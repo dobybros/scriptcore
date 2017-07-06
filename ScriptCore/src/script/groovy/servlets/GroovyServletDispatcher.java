@@ -1,23 +1,62 @@
 package script.groovy.servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import chat.errors.CoreException;
+import chat.logs.LoggerEx;
 
 public class GroovyServletDispatcher extends HttpServlet {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7785123445517306608L;
-	private GroovyServletManager groovyServletManager = GroovyServletManager.getInstance();
-	
+	private static final String TAG = GroovyServletManager.class.getSimpleName();
+	private static GroovyServletManager groovyServletManager = null;
+
+	private static ConcurrentHashMap<String, GroovyServletManagerEx> groovyServletMap = new ConcurrentHashMap<>();
+
+	public static void setDefaultGroovyServletManager(GroovyServletManager servletManager) {
+		groovyServletManager = servletManager;
+	}
+
+	public static void addGroovyServletManagerEx(String rootPath, GroovyServletManagerEx servletManager) {
+		GroovyServletManagerEx oldGroovyServletMap = groovyServletMap.put(rootPath, servletManager);
+		//TODO whether need clear memory for oldGroovyServletMap
+	}
+
+	public static void removeGroovyServletManagerEx(String rootPath) {
+		groovyServletMap.remove(rootPath);
+	}
+
 	private void servletDispatch(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			RequestHolder holder = groovyServletManager.parseUri(request, response);
+			RequestHolder holder = null;
+			String uri = request.getRequestURI();
+			if (uri.startsWith("/")) {
+				uri = uri.substring(1);
+			}
+			String[] uriStrs = uri.split("/");
+			String matchStr = uriStrs.length > 1 ? uriStrs[1] : null;
+			LoggerEx.info(TAG, "uriStrs " + Arrays.toString(uriStrs) + " matchStr " + matchStr);
+			if(matchStr != null) {
+				GroovyServletManagerEx servletManagerEx = groovyServletMap.get(matchStr);
+				if(servletManagerEx != null) {
+					holder = servletManagerEx.parseUri(request, response, uriStrs);
+				}
+			}
+			if(holder == null) {
+				if(groovyServletManager != null) {
+					holder = groovyServletManager.parseUri(request, response, uriStrs);
+				} else {
+					LoggerEx.error(TAG, "No default groovyServletManager for parseUri " + request.getRequestURI() + " method " + request.getMethod());
+				}
+			}
 			if(holder == null) {
 				try {
 					response.sendError(404, "Url not found");
@@ -27,7 +66,7 @@ public class GroovyServletDispatcher extends HttpServlet {
 			} else {
 				holder.handleRequest();
 			}
-		} catch (CoreException e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			try {
 				response.sendError(500, e.getMessage());

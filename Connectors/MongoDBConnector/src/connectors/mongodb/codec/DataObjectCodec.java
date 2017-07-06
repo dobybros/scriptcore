@@ -80,11 +80,12 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
     private final CodecRegistry registry;
     private final Transformer valueTransformer;
     private Codec<Document> documentCodec;
+    private MongoDBHandler mongoDBHandler;
     /**
      * Construct a new instance with a default {@code CodecRegistry} and
      */
-    public DataObjectCodec(Class<?> collectionClass, final CodecRegistry registry) {
-        this(registry, DEFAULT_BSON_TYPE_CLASS_MAP);
+    public DataObjectCodec(Class<?> collectionClass, final CodecRegistry registry, MongoDBHandler mongoDBHandler) {
+        this(registry, DEFAULT_BSON_TYPE_CLASS_MAP, mongoDBHandler);
         this.collectionClass = collectionClass;
     }
 
@@ -94,8 +95,8 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
      * @param registry         the registry
      * @param bsonTypeClassMap the BSON type class map
      */
-    public DataObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap) {
-        this(registry, bsonTypeClassMap, null);
+    public DataObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap, MongoDBHandler mongoDBHandler) {
+        this(registry, bsonTypeClassMap, null, mongoDBHandler);
     }
 
     /**
@@ -107,8 +108,9 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
      * @param bsonTypeClassMap the BSON type class map
      * @param valueTransformer the value transformer to use as a final step when decoding the value of any field in the document
      */
-    public DataObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap, final Transformer valueTransformer) {
-        this.registry = Assertions.notNull("registry", registry);
+    public DataObjectCodec(final CodecRegistry registry, final BsonTypeClassMap bsonTypeClassMap, final Transformer valueTransformer, MongoDBHandler mongoDBHandler) {
+		this.mongoDBHandler = mongoDBHandler;
+    	this.registry = Assertions.notNull("registry", registry);
         this.bsonTypeClassMap = Assertions.notNull("bsonTypeClassMap", bsonTypeClassMap);
         this.valueTransformer = valueTransformer != null ? valueTransformer : new Transformer() {
             @Override
@@ -163,7 +165,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
     	Document document = documentCodec.decode(reader, decoderContext);
 //		System.out.println("document " + document);
 		
-		HashMap<Class<?>, CollectionHolder> map = MongoDBHandler.getInstance().getCollectionMap();
+		HashMap<Class<?>, CollectionHolder> map = mongoDBHandler.getCollectionMap();
 		if(map != null) {
 			CollectionHolder holder = map.get(collectionClass);
 			if(holder != null) {
@@ -198,7 +200,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 						documentClass = (Class<?>) tree.getParameter(MongoDBHandler.CLASS);
 //					System.out.println(documentClass + " " + value);
 					if(documentClass != null) {
-						return convert(document, documentClass);
+						return convert(document, documentClass, mongoDBHandler);
 					}
 				}
 			}
@@ -206,14 +208,14 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 		return null;
     }
 
-    static DataObject convert(Document document, Class<?> documentClass) {
+    static DataObject convert(Document document, Class<?> documentClass, MongoDBHandler mongoDBHandler) {
     	try {
 			DataObject dataObj = (DataObject) documentClass.newInstance();
 			Object id = document.get(ID_FIELD_NAME);
 			if(id != null) {
 				dataObj.setId(id.toString());
 			}
-			ClassFieldsHolder holder = MongoDBHandler.getInstance().getDocumentMap().get(documentClass);
+			ClassFieldsHolder holder = mongoDBHandler.getDocumentMap().get(documentClass);
 			if(holder != null) {
 				HashMap<String, FieldEx> fieldMap = holder.getFieldMap();
 				if(fieldMap != null) {
@@ -226,10 +228,10 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 							Field field = fieldEx.getField();
 							if(value instanceof Document) {
 								if(DataObject.class.isAssignableFrom(field.getType())) {
-									DataObject valueObj = DataObjectCodec.convert((Document) value, field.getType());
+									DataObject valueObj = DataObjectCodec.convert((Document) value, field.getType(), mongoDBHandler);
 									holder.assignField(dataObj, key, valueObj);
 								} else if(BaseObject.class.isAssignableFrom(field.getType())) {
-									BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType());
+									BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType(), mongoDBHandler);
 									holder.assignField(dataObj, key, valueObj);
 								} else if(field.getType().equals(Document.class)) {
 									holder.assignField(dataObj, key, value);
@@ -261,7 +263,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 									if(o instanceof Document) {
 										if(DataObject.class.isAssignableFrom(clazz)) {
 											Document doc = (Document) o;
-											DataObject valueObj = DataObjectCodec.convert(doc, clazz);
+											DataObject valueObj = DataObjectCodec.convert(doc, clazz, mongoDBHandler);
 											if(valueObj != null) {
 												if(list != null) {
 													list.add(valueObj);
@@ -274,7 +276,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 											}
 										} else if(BaseObject.class.isAssignableFrom(clazz)) {
 											Document doc = (Document) o;
-											BaseObject valueObj = BaseObjectCodec.convert(doc, clazz);
+											BaseObject valueObj = BaseObjectCodec.convert(doc, clazz, mongoDBHandler);
 											if(valueObj != null) {
 												if(list != null) {
 													list.add(valueObj);
@@ -382,7 +384,7 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
 
         beforeFields(writer, encoderContext, map);
 
-        HashMap<Class<?>, ClassFieldsHolder> documentMap = MongoDBHandler.getInstance().getDocumentMap();
+        HashMap<Class<?>, ClassFieldsHolder> documentMap = mongoDBHandler.getDocumentMap();
     	ClassFieldsHolder fieldHolder = documentMap.get(map.getClass());
     	if(fieldHolder != null) {
     		HashMap<String, FieldEx> fields = fieldHolder.getFieldMap();

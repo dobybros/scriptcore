@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,7 +33,7 @@ import connectors.mongodb.codec.BaseObjectCodecProvider;
 import connectors.mongodb.codec.DataObject;
 import connectors.mongodb.codec.DataObjectCodecProvider;
 
-public class MongoDBHandler implements ClassAnnotationHandler{
+public class MongoDBHandler extends ClassAnnotationHandler{
 	public static final String VALUE = "VALUE";
 	public static final String CLASS = "CLASS";
 	private static final String TAG = MongoDBHandler.class.getSimpleName();
@@ -40,8 +41,6 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 	private HashMap<Class<?>, com.mongodb.client.MongoDatabase> databaseMap = new HashMap<>();
 	private HashMap<Class<?>, CollectionHolder> collectionMap = new HashMap<>();
 	private HashMap<Class<?>, ClassFieldsHolder> documentMap = new HashMap<>();
-	
-	private static MongoDBHandler instance;
 	
 	private MongoClientHelper mongoClientHelper;
 	
@@ -62,21 +61,19 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 		}
 	}
 
-	private MongoDBHandler() {
-		instance = this;
-	}
-	
-	public static MongoDBHandler getInstance() {
-		return instance;
+	public MongoDBHandler() {
 	}
 	
 	@Override
 	public void handleAnnotatedClasses(Map<String, Class<?>> arg0,
 			MyGroovyClassLoader arg1) {
-		GroovyRuntime groovyRuntime = GroovyRuntime.getInstance();
-		MongoDatabaseAnnotationHolder databaseHolder = MongoDatabaseAnnotationHolder.getInstance();
-		MongoCollectionAnnotationHolder collectionHolder = MongoCollectionAnnotationHolder.getInstance();
-		MongoDocumentAnnotationHolder documentHolder = MongoDocumentAnnotationHolder.getInstance();
+		GroovyRuntime groovyRuntime = getGroovyRuntime();
+		MongoDatabaseAnnotationHolder databaseHolder = null;
+		MongoCollectionAnnotationHolder collectionHolder = null;
+		MongoDocumentAnnotationHolder documentHolder = null;
+		databaseHolder = (MongoDatabaseAnnotationHolder) groovyRuntime.getClassAnnotationHandler(MongoDatabaseAnnotationHolder.class);
+		collectionHolder = (MongoCollectionAnnotationHolder) groovyRuntime.getClassAnnotationHandler(MongoCollectionAnnotationHolder.class);
+		documentHolder = (MongoDocumentAnnotationHolder) groovyRuntime.getClassAnnotationHandler(MongoDocumentAnnotationHolder.class);
 		if(databaseHolder == null || collectionHolder == null || documentHolder == null) {
 			LoggerEx.info(TAG, "Information is insufficient, databaseHolder = " + databaseHolder + ", collectionHolder = " + collectionHolder + ", documentHolder = " + documentHolder);
 			return;
@@ -124,7 +121,7 @@ public class MongoDBHandler implements ClassAnnotationHandler{
 				if(collectionName != null && databaseClass != null) {
 					com.mongodb.client.MongoDatabase database = newDatabaseMap.get(databaseClass);
 					if(database != null) {
-						CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(new DataObjectCodecProvider(collectionClass), new BaseObjectCodecProvider()), MongoClient.getDefaultCodecRegistry());
+						CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(new DataObjectCodecProvider(collectionClass, this), new BaseObjectCodecProvider(this)), MongoClient.getDefaultCodecRegistry());
 						
 						com.mongodb.client.MongoCollection<DataObject> collection = database.getCollection(collectionName, DataObject.class).withCodecRegistry(codecRegistry);
 						CollectionHolder cHolder = new CollectionHolder();

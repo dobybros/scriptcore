@@ -10,7 +10,7 @@ import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.logs.LoggerEx;
 
-public class ServerLifeCircleHandler implements ClassAnnotationHandler {
+public class ServerLifeCircleHandler extends ClassAnnotationHandler {
 	private static final String TAG = ServerLifeCircleHandler.class.getSimpleName();
 	private ConcurrentHashMap<String, GroovyObjectEx> handlerMap = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<String, Long> startedHandlerMap = new ConcurrentHashMap<>();
@@ -87,7 +87,7 @@ public class ServerLifeCircleHandler implements ClassAnnotationHandler {
 			ConcurrentHashMap<String, GroovyObjectEx> newHandlerMap = new ConcurrentHashMap<>();
 			Collection<Class<?>> values = annotatedClassMap.values();
 			for(Class<?> groovyClass : values) {
-				GroovyObjectEx<?> groovyObj = GroovyRuntime.getInstance().create(groovyClass);
+				GroovyObjectEx<?> groovyObj = getGroovyRuntime().create(groovyClass);
 				newHandlerMap.put(groovyClass.getName(), groovyObj);
 			}
 			handlerMap = newHandlerMap;

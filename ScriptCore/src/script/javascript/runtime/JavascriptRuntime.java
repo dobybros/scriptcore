@@ -51,6 +51,11 @@ public class JavascriptRuntime extends ScriptRuntime {
 		currentScriptEngine = scriptEngine;
 	}
 
+	@Override
+	public void close() {
+
+	}
+
 	public ScriptEngine getCurrentScriptEngine() {
 		return currentScriptEngine;
 	}
