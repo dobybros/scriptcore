@@ -36,13 +36,15 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	public void handleAnnotatedClasses(Map<String, Class<?>> annotatedClassMap,
 			MyGroovyClassLoader classLoader) {
 		if(annotatedClassMap != null) {
+			Map<Class<?>, DBCollection> newCollectionClassMap = new LinkedHashMap<>();
 			Collection<Class<?>> values = annotatedClassMap.values();
 			for(Class<?> groovyClass : values) {
 				DBCollection mongoCollection = groovyClass.getAnnotation(DBCollection.class);
 				if(mongoCollection != null) {
-					collectionClassMap.put(groovyClass, mongoCollection);
+					newCollectionClassMap.put(groovyClass, mongoCollection);
 				}
 			}
+			collectionClassMap = newCollectionClassMap;
 		}
 	}
 

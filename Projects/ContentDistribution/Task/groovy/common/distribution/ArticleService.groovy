@@ -13,7 +13,7 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import script.groovy.annotation.Bean
 
-@DBCollection(name = "article", databaseClass = ArticleDatabase.class)
+@DBCollection(name = "article", databaseClass = "common.distribution.ArticleDatabase")
 @Bean
 class ArticleService extends MongoCollectionHelper {
 	public static final int ERRORCODE_ARTICLE_DELETE_FAILED = 600;

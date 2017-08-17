@@ -70,6 +70,7 @@ public class MongoClientHelper {
 					mongoClient = new MongoClient(connectionString);
 					
 					hosts = toHosts;
+					LoggerEx.info(TAG, "Connected hosts " + toHosts);
 				} catch (Throwable t) {
 					t.printStackTrace();
 					LoggerEx.fatal(TAG, "Build mongo uri for hosts " + hosts + " failed, " + t.getMessage());

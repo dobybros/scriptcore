@@ -19,7 +19,7 @@ import org.bson.types.ObjectId
 
 import script.groovy.annotation.Bean
 
-@DBCollection(name = "indexaction", databaseClass = IndexActionDatabase.class)
+@DBCollection(name = "indexaction", databaseClass = "common.index.IndexActionDatabase")
 @Bean
 class IndexActionService extends MongoCollectionHelper {
 	public static final int ERRORCODE_INDEXACTION_DELETE_FAILED = 900;

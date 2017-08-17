@@ -51,7 +51,6 @@
     <libelement value="jar://$MODULE_DIR$/libs/websocket-server-9.3.9.v20160517.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/websocket-servlet-9.3.9.v20160517.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/aopalliance.jar!/" />
-    <libelement value="jar://$MODULE_DIR$/libs/groovy-all-2.4.7-indy.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/httpclient-4.4.1.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/httpcore-4.4.1.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/httpmime-4.4.1.jar!/" />
@@ -65,13 +64,14 @@
     <libelement value="jar://$MODULE_DIR$/libs/spring-test-4.0.5.RELEASE.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/spring-web-4.0.5.RELEASE.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/spring-webmvc-4.0.5.RELEASE.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/libs/groovy-all-2.4.8.jar!/" />
     <src_description expected_position="0">
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
       <src_folder value="file://$MODULE_DIR$/test" expected_position="1" />
       <src_folder value="GROOVY_DSL_SUPPORT" expected_position="66" />
     </src_description>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/bin" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -530,15 +530,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="groovy-all-2.4.7-indy.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/groovy-all-2.4.7-indy.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
       <library name="httpclient-4.4.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/httpclient-4.4.1.jar!/" />
@@ -565,7 +556,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-aop-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-aop-4.0.5.RELEASE.jar!/" />
@@ -574,7 +565,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-aspects-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-aspects-4.0.5.RELEASE.jar!/" />
@@ -583,7 +574,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-beans-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-beans-4.0.5.RELEASE.jar!/" />
@@ -592,7 +583,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-context-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-context-4.0.5.RELEASE.jar!/" />
@@ -601,7 +592,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-context-support-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-context-support-4.0.5.RELEASE.jar!/" />
@@ -610,7 +601,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-core-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-core-4.0.5.RELEASE.jar!/" />
@@ -619,7 +610,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-expression-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-expression-4.0.5.RELEASE.jar!/" />
@@ -628,7 +619,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-test-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-test-4.0.5.RELEASE.jar!/" />
@@ -637,7 +628,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-web-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-web-4.0.5.RELEASE.jar!/" />
@@ -646,7 +637,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="spring-webmvc-4.0.5.RELEASE.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/libs/spring-webmvc-4.0.5.RELEASE.jar!/" />
@@ -655,6 +646,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="groovy-all-2.4.8.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/groovy-all-2.4.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="library" exported="" name="fastjson-1.2.32" level="project" />
+    <orderEntry type="library" exported="" name="guava-16.0.1" level="project" />
   </component>
 </module>

@@ -16,12 +16,12 @@ public abstract class GroovyServlet implements GroovyObject{
 	public static final String OPTIONS = "OPTIONS";
 	public static final String TRACE = "TRACE";
 	
-	protected GroovyRuntime groovyRuntime;
+//	protected GroovyRuntime groovyRuntime;
 	
-	public GroovyRuntime getGroovyRuntime() {
-		return groovyRuntime;
-	}
-	public void setGroovyRuntime(GroovyRuntime groovyRuntime) {
-		this.groovyRuntime = groovyRuntime;
-	}
+//	public GroovyRuntime getGroovyRuntime() {
+//		return groovyRuntime;
+//	}
+//	public void setGroovyRuntime(GroovyRuntime groovyRuntime) {
+//		this.groovyRuntime = groovyRuntime;
+//	}
 }

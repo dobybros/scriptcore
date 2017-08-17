@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface DocumentField {
 	public String key() default "";
 	public String mapKey() default "";
-	public String mapType() default "";
+//	public String mapType() default "";
 }

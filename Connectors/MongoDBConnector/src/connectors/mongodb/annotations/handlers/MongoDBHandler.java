@@ -149,11 +149,11 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 						holder.filters = tree;
 					}
 					for(int i = 0; i < filters.length; i++) {
-						if(StringUtils.isBlank(filters[i])) 
+						if(StringUtils.isBlank(filters[i]))
 							break;
 						HashTree<String, String> children = null;
 						if(i >= filters.length - 1) {
-							//This is the last one in filter array. 
+							//This is the last one in filter array.
 							value = filters[i];
 							children = tree.getChildren(value.toString(), true);
 						} else {
@@ -183,8 +183,14 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 		@Override
 		public String getFieldKey(Field field) {
 			DocumentField documentField = field.getAnnotation(DocumentField.class);
-			if(documentField != null) 
-				return documentField.key();
+			if(documentField != null) {
+				String key = documentField.key();
+				if(StringUtils.isBlank(key)) {
+					return field.getName();
+				} else {
+					return key;
+				}
+			}
 			return null;
 		}
 		

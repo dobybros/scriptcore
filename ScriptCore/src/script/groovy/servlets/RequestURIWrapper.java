@@ -217,11 +217,17 @@ public class RequestURIWrapper implements GroovyObjectListener{
 				if(handler instanceof HandleRequestAnnotation) {
 					HandleRequestAnnotation annotationHandler = (HandleRequestAnnotation) handler;
 					Annotation annotation = param.getAnnotation(annotationHandler.getAnnotationClass());
-					args[i++] = annotationHandler.handle(param, annotation, requestHolder);
+					args[i] = annotationHandler.handle(param, annotation, requestHolder);
 				} else if(handler instanceof HandleRequestParameterClass) {
-					args[i++] = ((HandleRequestParameterClass) handler).handle(param, requestHolder);
+					args[i] = ((HandleRequestParameterClass) handler).handle(param, requestHolder);
+				}
+			} else {
+				RequestHolder.ParameterHandler parameterHandler = requestHolder.getParameterHandler();
+				if(parameterHandler != null) {
+					args[i] = parameterHandler.valueForParameter(param);
 				}
 			}
+			i++;
 		}
 		return args;
 	}
@@ -254,7 +260,7 @@ public class RequestURIWrapper implements GroovyObjectListener{
 	public void objectPrepared(Object obj) throws CoreException {
 		if(obj instanceof GroovyServlet) {
 			GroovyServlet groovyServlet = (GroovyServlet) obj;
-			groovyServlet.groovyRuntime = groovyObject.getGroovyRuntime();
+//			groovyServlet.groovyRuntime = groovyObject.getGroovyRuntime();
 		} else
 			throw new CoreException(ChatErrorCodes.ERROR_GROOY_CLASSCAST, "Must implement GroovyServlet for " + obj.getClass().getName());
 	}

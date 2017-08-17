@@ -1,5 +1,7 @@
 package script.groovy.runtime;
 
+import chat.utils.TimerEx;
+import chat.utils.TimerTaskEx;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovySystem;
@@ -16,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.FileUtils;
@@ -138,6 +141,16 @@ public class GroovyRuntime extends ScriptRuntime{
 //		}
 	}
 */
+	public static GroovyRuntime getCurrentGroovyRuntime(ClassLoader currentClassLoader) {
+		if(currentClassLoader == null)
+			return null;
+		ClassLoader classLoader = currentClassLoader.getParent();
+		if(classLoader != null && classLoader instanceof GroovyRuntime.MyGroovyClassLoader) {
+			return ((GroovyRuntime.MyGroovyClassLoader) classLoader).getGroovyRuntime();
+		}
+		return null;
+	}
+
 	public MyGroovyClassLoader registerClassLoaderOnThread() {
 		MyGroovyClassLoader loader = classLoader;
 		if (loader == null)
@@ -572,25 +585,32 @@ public class GroovyRuntime extends ScriptRuntime{
 		} finally {
 			if (deploySuccessfully) {
 				if (oldClassLoader != null) {
-					try {
-						MetaClassRegistry metaReg = GroovySystem
-								.getMetaClassRegistry();
-						Class<?>[] classes = oldClassLoader.getLoadedClasses();
-						for (Class<?> c : classes) {
-							LoggerEx.info(TAG, classLoader
-									+ " remove meta class " + c);
-							metaReg.removeMetaClass(c);
-						}
+					TimerEx.schedule(new TimerTaskEx() {
+						@Override
+						public void execute() {
+							LoggerEx.info(TAG, "Old class loader " + oldClassLoader + " is releasing");
+							try {
+								MetaClassRegistry metaReg = GroovySystem
+										.getMetaClassRegistry();
+								Class<?>[] classes = oldClassLoader.getLoadedClasses();
+								for (Class<?> c : classes) {
+									LoggerEx.info(TAG, classLoader
+											+ " remove meta class " + c);
+									metaReg.removeMetaClass(c);
+								}
 
-						oldClassLoader.clearCache();
-						oldClassLoader.close();
-						LoggerEx.info(TAG, "oldClassLoader " + oldClassLoader
-								+ " is closed");
-					} catch (Exception e) {
-						e.printStackTrace();
-						LoggerEx.error(TAG, oldClassLoader + " close failed, "
-								+ e.getMessage());
-					}
+								oldClassLoader.clearCache();
+								oldClassLoader.close();
+								LoggerEx.info(TAG, "oldClassLoader " + oldClassLoader
+										+ " is closed");
+							} catch (Exception e) {
+								e.printStackTrace();
+								LoggerEx.error(TAG, oldClassLoader + " close failed, "
+										+ e.getMessage());
+							}
+						}
+					}, TimeUnit.SECONDS.toMillis(60)); //release old class loader after 60 seconds.
+					LoggerEx.info(TAG, "Old class loader " + oldClassLoader + " will be released after 60 seconds");
 				}
 				long version = latestVersion.incrementAndGet();
 				newClassLoader.version = version;

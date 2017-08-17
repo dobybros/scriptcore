@@ -18,7 +18,7 @@ import chat.utils.ClassFieldsHolder.FieldIdentifier;
 import connectors.solr.annotations.DocumentField;
 import connectors.solr.annotations.SolrDocument;
 
-public class SolrDocumentHandler implements ClassAnnotationHandler {
+public class SolrDocumentHandler extends ClassAnnotationHandler {
 	private static final String TAG = SolrDocumentHandler.class.getSimpleName();
 	private HashMap<Class<?>, SolrClassFieldsHolder> documentMap = new HashMap<>();
 	

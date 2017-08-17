@@ -11,5 +11,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface DBDocument {
 	public String collectionClass() default "";
+//	public String[] collectionClasses() default {};
 	public String[] filters() default "";
 }

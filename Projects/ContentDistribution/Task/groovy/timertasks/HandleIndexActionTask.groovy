@@ -13,6 +13,7 @@ import common.distribution.Article
 import common.distribution.ArticleService
 import common.index.IndexAction
 import common.index.IndexActionService
+import script.groovy.annotation.TimerTask
 
 @TimerTask(period = 10000L)
 class HandleIndexActionTask {

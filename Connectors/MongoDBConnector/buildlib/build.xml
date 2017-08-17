@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<project name="scriptcore" default="compile" basedir=".">
+<project name="mongodbconnector" default="compile" basedir=".">
 	<description>
 		AcuLearn
     </description>

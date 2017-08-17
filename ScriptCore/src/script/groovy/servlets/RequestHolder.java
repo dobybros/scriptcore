@@ -1,5 +1,6 @@
 package script.groovy.servlets;
 
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ public class RequestHolder {
 	private HashMap<String, String> pathVariables;
 	private GroovyObjectEx<RequestIntercepter> interceptor;
 	private GroovyServletManager groovyServletManager;
+	private ParameterHandler parameterHandler;
 
 	RequestHolder(RequestURIWrapper requestUriWrapper,
 				  HttpServletRequest request, HttpServletResponse response,
@@ -31,6 +33,10 @@ public class RequestHolder {
 		this.pathVariables = pathVariables;
 		this.interceptor = interceptor;
 		this.groovyServletManager = groovyServletManager;
+	}
+
+	public interface ParameterHandler {
+		public Object valueForParameter(Parameter parameter);
 	}
 
 	public String getResponseType() {
@@ -254,5 +260,13 @@ public class RequestHolder {
 
 	public void setGroovyServletManager(GroovyServletManager groovyServletManager) {
 		this.groovyServletManager = groovyServletManager;
+	}
+
+	public ParameterHandler getParameterHandler() {
+		return parameterHandler;
+	}
+
+	public void setParameterHandler(ParameterHandler parameterHandler) {
+		this.parameterHandler = parameterHandler;
 	}
 }
