@@ -1,13 +1,9 @@
 package chat.utils;
 
 import chat.logs.LoggerEx;
-import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.CRC32;
 
 /**
@@ -46,8 +42,39 @@ public class ReflectionUtil {
 		return clazz;
 	}
 
+	public static boolean isPrimitiveWrapper(Class<?> clazz) {
+//		Assert.notNull(clazz, "Class must not be null");
+		return primitiveWrapperTypeMap.containsKey(clazz);
+	}
+
+	public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
+//		Assert.notNull(clazz, "Class must not be null");
+		return clazz.isPrimitive() || isPrimitiveWrapper(clazz);
+	}
+
+	public static boolean isPrimitiveArray(Class<?> clazz) {
+//		Assert.notNull(clazz, "Class must not be null");
+		return clazz.isArray() && clazz.getComponentType().isPrimitive();
+	}
+
+	public static boolean isPrimitiveWrapperArray(Class<?> clazz) {
+//		Assert.notNull(clazz, "Class must not be null");
+		return clazz.isArray() && isPrimitiveWrapper(clazz.getComponentType());
+	}
+	private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new HashMap(8);
+	static {
+		primitiveWrapperTypeMap.put(Boolean.class, Boolean.TYPE);
+		primitiveWrapperTypeMap.put(Byte.class, Byte.TYPE);
+		primitiveWrapperTypeMap.put(Character.class, Character.TYPE);
+		primitiveWrapperTypeMap.put(Double.class, Double.TYPE);
+		primitiveWrapperTypeMap.put(Float.class, Float.TYPE);
+		primitiveWrapperTypeMap.put(Integer.class, Integer.TYPE);
+		primitiveWrapperTypeMap.put(Long.class, Long.TYPE);
+		primitiveWrapperTypeMap.put(Short.class, Short.TYPE);
+	}
+
 	public static boolean canBeInitiated(Class<?> clazz) {
-		if(ClassUtils.isPrimitiveOrWrapper(clazz))
+		if(isPrimitiveOrWrapper(clazz))
 			return true;
 		if(clazz.isInterface()) {
 			return false;
@@ -350,9 +377,9 @@ public class ReflectionUtil {
         }
     }
 
-	public static long getCrc(Method method) {
-		return getCrc(method, null);
-	}
+//	public static long getCrc(Method method) {
+//		return getCrc(method, null);
+//	}
 
 	public static long getCrc(Method method, String service) {
 		if(method == null)

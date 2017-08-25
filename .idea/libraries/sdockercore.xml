@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sdockercore">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/SDockerCore/buildlib/deploy/lib/sdockercore.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

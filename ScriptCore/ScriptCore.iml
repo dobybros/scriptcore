@@ -658,5 +658,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="library" exported="" name="fastjson-1.2.32" level="project" />
     <orderEntry type="library" exported="" name="guava-16.0.1" level="project" />
+    <orderEntry type="library" exported="" name="cglib-3.2.5" level="project" />
+    <orderEntry type="library" exported="" name="asm-all-5.2" level="project" />
   </component>
 </module>

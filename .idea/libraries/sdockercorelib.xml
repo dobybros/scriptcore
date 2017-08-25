@@ -1,0 +1,78 @@
+<component name="libraryTable">
+  <library name="sdockercorelib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/antlr-runtime-3.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aopalliance.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/apache-log4j-extras-1.2.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/asm-4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/asm-commons-4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aspectjrt-1.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aspectjtools-1.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aws-java-sdk-1.11.137.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/commons-pool2-2.4.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/elasticsearch-1.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/fastjson-1.2.32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/fluent-hc-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/gson-2.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/guava-16.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpclient-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpclient-cache-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpclient-win-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpcore-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpcore-ab-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpcore-nio-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/httpmime-4.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/ivy-2.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jackson-annotations-2.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jackson-core-2.6.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jackson-databind-2.6.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jackson-dataformat-cbor-2.6.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jcl-over-slf4j-1.7.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jedis-2.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jna-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jna-platform-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/joda-time-2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jsch-0.1.50.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jts-1.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-analyzers-common-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-core-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-expressions-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-grouping-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-highlighter-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-join-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-memory-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-misc-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-queries-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-queryparser-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-sandbox-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-spatial-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-suggest-4.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/mail.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/mongo-java-driver-3.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/netty-all-4.0.23.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/protobuf-java-3.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/pushy-0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-aop-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-aspects-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-beans-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-context-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-context-support-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-core-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-data-commons-1.10.0.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-data-mongodb-1.7.0.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-expression-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-test-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-web-4.0.5.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/spring-webmvc-4.0.5.RELEASE.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aws-java-sdk-1.11.137-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jedis-2.9.0-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/joda-time-2.4-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jsch-0.1.50-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/mongo-java-driver-3.2.2-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/netty-all-4.0.23.Final-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

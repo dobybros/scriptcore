@@ -5,11 +5,8 @@ package chat.errors;
 /**
  */
 public interface ChatErrorCodes {
-   
-	
 	public static final int CODE_CORE = 10000;
-	
-	
+
 	public static final int ERROR_ONLINESERVER_NOT_FOUND = CODE_CORE + 121;
 	public static final int ERROR_ONLINESERVER_UPDATE_FAILED = CODE_CORE + 122;
 	public static final int ERROR_ONLINESERVER_DELETE_FAILED = CODE_CORE + 123;
@@ -51,26 +48,41 @@ public interface ChatErrorCodes {
 	public static final int ERROR_CHARACTER_OVER_MAXIMUM_LIMITS = CODE_CORE + 158;
 	public static final int ERROR_TASKADD_FAILED = CODE_CORE + 159;
 	public static final int ERROR_FILE_EMPTY = CODE_CORE + 160;
-	
-	
-	//Groovy related codes. 
-	public static final int ERROR_GROOVY_CLASSNOTFOUND = CODE_CORE + 8001;
-	public static final int ERROR_GROOY_NEWINSTANCE_FAILED = CODE_CORE + 8002;
-	public static final int ERROR_GROOY_CLASSCAST = CODE_CORE + 8003;
-	public static final int ERROR_GROOVY_INVOKE_FAILED = CODE_CORE + 8004;
-	public static final int ERROR_GROOVYSERVLET_SERVLET_NOT_INITIALIZED = CODE_CORE + 8005;
-	public static final int ERROR_URL_PARAMETER_NULL = CODE_CORE + 8006;
-	public static final int ERROR_URL_VARIABLE_NULL = CODE_CORE + 8007;
-	public static final int ERROR_GROOVY_PARSECLASS_FAILED = CODE_CORE + 8008;
-	public static final int ERROR_GROOVY_UNKNOWN = CODE_CORE + 8009;
-	public static final int ERROR_GROOVY_CLASSLOADERNOTFOUND = CODE_CORE + 8010;
-	public static final int ERROR_JAVASCRIPT_LOADFILE_FAILED = CODE_CORE + 8011;
-	public static final int ERROR_URL_HEADER_NULL = CODE_CORE + 8012;
-
-
-
-
-
-
-
+	public static final int ERROR_RPC_TYPE_NOMAPPING = CODE_CORE + 161;
+	public static final int ERROR_RPC_TYPE_NOSERVERADAPTER = CODE_CORE + 162;
+	public static final int ERROR_RPC_DISCONNECTED = CODE_CORE + 163;
+	public static final int ERROR_RPC_REQUESTTYPE_ILLEGAL = CODE_CORE + 164;
+	public static final int ERROR_RPC_REQUESTDATA_NULL = CODE_CORE + 165;
+	public static final int ERROR_RPC_PERSISTENT_FAILED = CODE_CORE + 166;
+	public static final int ERROR_RPC_RESURRECT_FAILED = CODE_CORE + 167;
+	public static final int ERROR_RMICALL_CONNECT_FAILED = CODE_CORE + 168;
+	public static final int ERROR_RMICALL_FAILED = CODE_CORE + 169;
+	public static final int ERROR_RPC_ILLEGAL = CODE_CORE + 170;
+	public static final int ERROR_RPC_TYPE_REQUEST_NOMAPPING = CODE_CORE + 171;
+	public static final int ERROR_GROOVY_PARSECLASS_FAILED = CODE_CORE + 172;
+	public static final int ERROR_GROOVY_UNKNOWN = CODE_CORE + 173;
+	public static final int ERROR_GROOVYSERVLET_SERVLET_NOT_INITIALIZED = CODE_CORE + 174;
+	public static final int ERROR_URL_VARIABLE_NULL = CODE_CORE + 175;
+	public static final int ERROR_URL_PARAMETER_NULL = CODE_CORE + 176;
+	public static final int ERROR_URL_HEADER_NULL = CODE_CORE + 177;
+	public static final int ERROR_JAVASCRIPT_LOADFILE_FAILED = CODE_CORE + 178;
+	public static final int ERROR_GROOY_CLASSCAST = CODE_CORE + 179;
+	public static final int ERROR_METHODMAPPING_METHOD_NULL = CODE_CORE + 180;
+	public static final int ERROR_METHODMAPPING_INSTANCE_NULL = CODE_CORE + 181;
+	public static final int ERROR_METHODMAPPING_ACCESS_FAILED = CODE_CORE + 182;
+	public static final int ERROR_METHODMAPPING_INVOKE_FAILED = CODE_CORE + 183;
+	public static final int ERROR_METHODMAPPING_INVOKE_UNKNOWNERROR = CODE_CORE + 184;
+	public static final int ERROR_POST_FAILED = CODE_CORE + 185;
+	public static final int ERROR_LANSERVERS_NOSERVERS = CODE_CORE + 186;
+	public static final int ERROR_RPC_CALLREMOTE_FAILED = CODE_CORE + 187;
+	public static final int ERROR_METHODRESPONSE_NULL = CODE_CORE + 188;
+	public static final int ERROR_METHODREQUEST_CRC_ILLEGAL = CODE_CORE + 189;
+	public static final int ERROR_METHODREQUEST_METHODNOTFOUND = CODE_CORE + 190;
+	public static final int ERROR_RPC_DECODE_FAILED = CODE_CORE + 191;
+	public static final int ERROR_RPC_ENCODER_NOTFOUND = CODE_CORE + 192;
+	public static final int ERROR_RPC_ENCODER_NULL = CODE_CORE + 193;
+	public static final int ERROR_RPC_ENCODE_FAILED = CODE_CORE + 194;
+	public static final int ERROR_METHODREQUEST_SERVICE_NOTFOUND = CODE_CORE + 195;
+	public static final int ERROR_METHODREQUEST_SKELETON_NULL = CODE_CORE + 196;
+	public static final int ERROR_METHODREQUEST_SERVICE_NULL = CODE_CORE + 197;
 }

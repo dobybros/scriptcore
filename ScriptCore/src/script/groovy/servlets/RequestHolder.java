@@ -239,7 +239,7 @@ public class RequestHolder {
 		return requestUriWrapper;
 	}
 
-	public void invokeMethod(String groovyMethod,
+	public Object invokeMethod(String groovyMethod,
 			GroovyObjectEx<GroovyServlet> servletObj) throws CoreException {
 		//TODO annotation
 		Object[] args = requestUriWrapper.getActualParameters(this);
@@ -250,8 +250,9 @@ public class RequestHolder {
 			if(permissionIntecepter != null) {
 				permissionIntecepter.getObject().invoke(permissions, requestUriWrapper.getMethod(), request, response);
 			}
-			servletObj.invokeMethod(groovyMethod, args);
+			return servletObj.invokeMethod(groovyMethod, args);
 		}
+		return null;
 	}
 
 	public GroovyServletManager getGroovyServletManager() {

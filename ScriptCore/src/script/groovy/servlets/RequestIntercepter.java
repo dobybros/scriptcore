@@ -4,12 +4,12 @@ import script.groovy.object.GroovyObjectEx;
 import chat.errors.CoreException;
 
 public abstract class RequestIntercepter {
-	protected void proceed(RequestHolder holder) throws CoreException {
+	protected Object proceed(RequestHolder holder) throws CoreException {
 		RequestURIWrapper requestUriWrapper = holder.getRequestUriWrapper();
 		GroovyObjectEx<GroovyServlet> servletObj = requestUriWrapper.getGroovyObject();
 		String groovyMethod = requestUriWrapper.getMethod();
 //		servletObj.invokeMethod(groovyMethod, holder);
-		holder.invokeMethod(groovyMethod, servletObj);
+		return holder.invokeMethod(groovyMethod, servletObj);
 	}
 	
 	void invokeInternal(RequestHolder holder) {

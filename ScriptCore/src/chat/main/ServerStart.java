@@ -139,13 +139,13 @@ public final class ServerStart {
 			server.join();
 		} catch (SAXException e) {
 			System.out.println(e.getMessage());
-			System.exit(-1);
+			System.exit(0);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
-			System.exit(-1);
+			System.exit(0);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			System.exit(-1);
+			System.exit(0);
 		}		
 	}
 	

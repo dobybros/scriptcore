@@ -63,7 +63,7 @@
 
 	<target name="compile" depends="prepare" description="compile project, generate build directory">
 		<echo message="build source..." />
-		<!--copy todir="${source.dir}" failonerror="false" file="${scriptcore.dir}/src/chat/main/Main.java">
+		<!--copy todir="${source.dir}" failonerror="false" file="${scriptcore.dir}/src/docker/main/Main.java">
 			</copy-->
 		<mkdir dir="${dist.dir}/tmp"/>
 		<copy todir="${dist.dir}/bin">

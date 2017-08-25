@@ -9,7 +9,9 @@ public class CoreException extends Exception {
 	private static final long serialVersionUID = -3101325177490138661L;
 	private List<CoreException> moreExceptions;
 	private HashMap<String, Object> infoMap;
-	
+
+	public CoreException() {}
+
 	public CoreException(int code) {
 	    this.code = code;
 	}

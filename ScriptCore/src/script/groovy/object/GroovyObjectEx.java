@@ -1,5 +1,6 @@
 package script.groovy.object;
 
+import chat.errors.GroovyErrorCodes;
 import groovy.lang.GroovyObject;
 
 import java.lang.reflect.Field;
@@ -49,20 +50,20 @@ public class GroovyObjectEx<T> {
 		public Class<T> getGroovyClass() throws CoreException {
 			MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
 			if(classLoader == null) 
-				throw new CoreException(ChatErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
+				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
 			ClassHolder holder = classLoader.getClass(groovyPath);
 			if(holder == null)
-				throw new CoreException(ChatErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
+				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
 			return (Class<T>) holder.getParsedClass();
 		}
 		
 		public T getObject() throws CoreException {
 			MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
 			if(classLoader == null) 
-				throw new CoreException(ChatErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
+				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
 			ClassHolder holder = classLoader.getClass(groovyPath);
 			if(holder == null)
-				throw new CoreException(ChatErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
+				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
 			
 			GroovyObject gObj = holder.getCachedObject();
 			if(gObj == null) {
@@ -119,7 +120,7 @@ public class GroovyObjectEx<T> {
 							holder.setCachedObject(gObj);
 						} catch (Throwable e) {
 							e.printStackTrace();
-							throw new CoreException(ChatErrorCodes.ERROR_GROOY_NEWINSTANCE_FAILED, "New instance for class " + groovyClass + " failed " + e.getMessage() + " in classLoader " + classLoader);
+							throw new CoreException(GroovyErrorCodes.ERROR_GROOY_NEWINSTANCE_FAILED, "New instance for class " + groovyClass + " failed " + e.getMessage() + " in classLoader " + classLoader);
 						}
 						if(objectListener != null) 
 							objectListener.objectPrepared(gObj);
