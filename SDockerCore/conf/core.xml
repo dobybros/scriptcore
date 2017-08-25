@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="springContextUtil" class="com.docker.utils.SpringContextUtil"/>
+
+	<bean name="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+		<constructor-arg index="0" ref="clientConnectionManager" />
+		<constructor-arg index="1">
+			<bean class="com.docker.http.MyHttpParameters">
+				<property name="charset" value="utf8" />
+				<property name="connectionTimeout" value="30000" />
+				<property name="socketTimeout" value="30000" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	<bean name="clientConnectionManager"
+		  class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"
+		  destroy-method="shutdown">
+		<constructor-arg ref="schemeRegistry" />
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="20" />
+	</bean>
+	<bean name="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry">
+		<property name="items">
+			<map>
+				<entry key="http" value-ref="httpScheme" />
+				<entry key="https" value-ref="httpsScheme" />
+			</map>
+		</property>
+	</bean>
+	<bean name="httpScheme" class="org.apache.http.conn.scheme.Scheme">
+		<constructor-arg index="0" value="http" />
+		<constructor-arg index="1" value="80" />
+		<constructor-arg index="2">
+			<bean class="org.apache.http.conn.scheme.PlainSocketFactory"
+				  factory-method="getSocketFactory" />
+		</constructor-arg>
+	</bean>
+	<bean name="httpsScheme" class="org.apache.http.conn.scheme.Scheme">
+		<constructor-arg index="0" value="https" />
+		<constructor-arg index="1" value="443" />
+		<constructor-arg index="2">
+			<bean class="org.apache.http.conn.ssl.SSLSocketFactory"
+				  factory-method="getSocketFactory" />
+		</constructor-arg>
+	</bean>
+</beans>

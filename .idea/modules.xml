@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" filepath="$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Projects/ContentDistribution/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/Projects/ContentDistribution/Distribution/Distribution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JDocker/JDocker.iml" filepath="$PROJECT_DIR$/JDocker/JDocker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" filepath="$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" filepath="$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SDocker/SDocker.iml" filepath="$PROJECT_DIR$/SDocker/SDocker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SDockerCore/SDockerCore.iml" filepath="$PROJECT_DIR$/SDockerCore/SDockerCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScriptCore/ScriptCore.iml" filepath="$PROJECT_DIR$/ScriptCore/ScriptCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Connectors/SolrConnector/SolrConnector.iml" filepath="$PROJECT_DIR$/Connectors/SolrConnector/SolrConnector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SqlConnector/SqlConnector.iml" filepath="$PROJECT_DIR$/SqlConnector/SqlConnector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SqlConnectorSample/SqlConnectorSample.iml" filepath="$PROJECT_DIR$/SqlConnectorSample/SqlConnectorSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Projects/ContentDistribution/Task/Task.iml" filepath="$PROJECT_DIR$/Projects/ContentDistribution/Task/Task.iml" />
+    </modules>
+  </component>
+</project>

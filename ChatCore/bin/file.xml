@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--<bean id="fileAdapter" class="script.file.LocalFileHandler">
+		<property name="rootPath" value="/Users/aplombchen/Dev/files">
+		</property>
+	</bean>-->
+	<bean id="gridfsHelper" class="com.docker.storage.mongodb.MongoHelper"
+		  init-method="init" destroy-method="disconnect">
+		<property name="host" value="${gridfs.dbhost}" />
+		<property name="connectionsPerHost" value="${gridfs.connectionsPerHost}" />
+		<property name="dbName" value="${gridfs.files.dbname}" />
+		<property name="username" value="${gridfs.username}" />
+		<property name="password" value="${gridfs.password}"/>
+	</bean>
+
+	<bean id="fileAdapter" class="com.docker.file.adapters.GridFSFileHandler" init-method="init">
+		<property name="resourceHelper" ref="gridfsHelper"/>
+		<property name="bucketName" value="imfs"/>
+	</bean>
+</beans>

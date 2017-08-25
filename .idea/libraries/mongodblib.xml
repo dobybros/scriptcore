@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="mongodblib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/SDockerCore/mongodblib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ChatCore/mongodblib" recursive="false" />
+  </library>
+</component>

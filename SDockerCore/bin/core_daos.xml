@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="springContextUtil" class="com.docker.utils.SpringContextUtil"/>
+
+	<bean id="dockerStatusHelper" class="com.docker.storage.mongodb.MongoHelper"
+		init-method="init" destroy-method="disconnect">
+		<property name="host" value="${mongo.dbhost}" />
+		<property name="connectionsPerHost" value="${connectionsPerHost}" />
+		<property name="dbName" value="${dockerstatus.dbname}" />
+		<property name="username" value="${mongo.username}" />
+        <property name="password" value="${mongo.password}"/>
+	</bean>
+
+	<bean id="dockerStatusDAO" class="com.docker.storage.mongodb.daos.DockerStatusDAO"
+		init-method="init">
+		<property name="mongoHelper" ref="dockerStatusHelper" />
+	</bean>
+
+</beans>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+           http://www.springframework.org/schema/context   
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <context:annotation-config />
+    <bean id="springContextUtil" class="com.docker.utils.SpringContextUtil"/>
+	<bean id="ipHolder" class="chat.utils.IPHolder" init-method="init">
+		<property name="ipPrefix" value="${server.ip.prefix}"></property>
+		<property name="ethPrefix" value="${server.eth.prefix}"></property>
+	</bean>
+	<bean id="dockerStatusService" class="com.docker.storage.adapters.impl.DockerStatusServiceImpl" ></bean>
+	<bean id="oauth2properties" class="com.docker.utils.AutoReloadProperties"
+		init-method="init">
+		<property name="path" value="${oauth.path}" />
+	</bean>
+	<bean id="onlineServer" class="com.docker.onlineserver.OnlineServerWithStatus" init-method="start" destroy-method="shutdown">
+		<!-- property name="server" value="fixname" /-->
+		<property name="serverType" value="${server.type}" />
+		<property name="internalKey" value="${internal.key}"/>
+		<property name="rpcPort" value="${rpc.port}" />
+		<property name="sslRpcPort" value="${rpc.sslport}" />
+		<property name="tasks">
+			<list>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="rpcServerAdapter" class="com.docker.rpc.impl.RMIServerHandler"
+		  init-method="serverStart">
+		<property name="serverImpl" ref="rpcServer"/>
+		<property name="rmiPort" value="${rpc.port}" />
+		<!--<property name="enableSsl" value="true" />-->
+		<!--<property name="rpcSslClientTrustJksPath" value="${rpc.ssl.clientTrust.jks.path}" />-->
+		<!--<property name="rpcSslServerJksPath" value="${rpc.ssl.server.jks.path}" />-->
+		<!--<property name="rpcSslJksPwd" value="${rpc.ssl.jks.pwd}" />-->
+	</bean>
+	<bean id="rpcServer" class="com.docker.rpc.impl.RMIServerImplWrapper">
+		<constructor-arg value="${rpc.port}"/>
+		<property name="rmiServerHandler" ref="rpcServerAdapter"/>
+	</bean>
+
+	<bean id="rpcServerAdapterSsl" class="com.docker.rpc.impl.RMIServerHandler" init-method="serverStart">
+		<property name="serverImpl" ref="rpcServerSsl"/>
+		<property name="rmiPort" value="${rpc.sslport}"/>
+		<property name="enableSsl" value="true" />
+		<property name="rpcSslClientTrustJksPath" value="${rpc.ssl.clientTrust.jks.path}"/>
+		<property name="rpcSslServerJksPath" value="${rpc.ssl.server.jks.path}"/>
+		<property name="rpcSslJksPwd" value="${rpc.ssl.jks.pwd}"/>
+	</bean>
+	<bean id="rpcServerSsl" class="com.docker.rpc.impl.RMIServerImplWrapper">
+		<constructor-arg value="${rpc.sslport}"/>
+		<property name="rmiServerHandler" ref="rpcServerAdapterSsl"/>
+	</bean>
+
+
+	<bean id="scriptManager" class="com.docker.script.ScriptManager" init-method="init">
+		<property name="localPath" value="${script.local.path}"/>
+		<property name="remotePath" value="${script.remote.path}"/>
+	</bean>
+</beans>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="gb2312"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+			
+	<!-- ******************属性配置工具******************** -->
+	
+	<!-- 依赖的服务属性配置器 -->
+	<bean id="propertyConfigurer" 
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+		<property name="locations">
+			<list>
+				<value>classpath:props/server_params.properties</value>
+				<value>classpath:database.properties</value>
+				<value>classpath:gridfs.properties</value>
+				<value>classpath:private.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

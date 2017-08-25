@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="scriptcorelib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/SDockerCore/scriptcorelib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ChatCore/scriptcorelib" recursive="false" />
+  </library>
+</component>
