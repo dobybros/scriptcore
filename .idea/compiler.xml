@@ -8,12 +8,15 @@
         <outputRelativeToContentRoot value="true" />
         <module name="DiscoveryService" />
         <module name="MyScripts" />
+        <module name="PKUserService" />
+        <module name="PKWalletService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="DiscoveryService" target="1.8" />
-      <module name="MyScripts" target="1.5" />
+      <module name="MyScripts" target="1.8" />
       <module name="PKUserService" target="1.8" />
+      <module name="PKWalletService" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -7,6 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/JDocker/JDocker.iml" filepath="$PROJECT_DIR$/JDocker/JDocker.iml" />
       <module fileurl="file://$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" filepath="$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" />
       <module fileurl="file://$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" filepath="$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PKUserService/PKUserService.iml" filepath="$PROJECT_DIR$/../PKUserService/PKUserService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PKWalletService/PKWalletService.iml" filepath="$PROJECT_DIR$/../PKWalletService/PKWalletService.iml" />
       <module fileurl="file://$PROJECT_DIR$/SDocker/SDocker.iml" filepath="$PROJECT_DIR$/SDocker/SDocker.iml" />
       <module fileurl="file://$PROJECT_DIR$/SDockerCore/SDockerCore.iml" filepath="$PROJECT_DIR$/SDockerCore/SDockerCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScriptCore/ScriptCore.iml" filepath="$PROJECT_DIR$/ScriptCore/ScriptCore.iml" />

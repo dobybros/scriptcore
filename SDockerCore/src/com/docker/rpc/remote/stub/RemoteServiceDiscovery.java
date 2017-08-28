@@ -514,7 +514,7 @@ public class RemoteServiceDiscovery implements Runnable {
                 }
 			}
 		}
-		LoggerEx.info(TAG, RemoteServiceDiscovery.class.getSimpleName() + " is shutted down");
+		LoggerEx.info(TAG, RemoteServiceDiscovery.class.getSimpleName() + " " + service + " is shutted down");
 	}
 
 	public Long getTime() {

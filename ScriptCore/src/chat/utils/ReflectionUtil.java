@@ -76,6 +76,9 @@ public class ReflectionUtil {
 	public static boolean canBeInitiated(Class<?> clazz) {
 		if(isPrimitiveOrWrapper(clazz))
 			return true;
+		if(clazz.isArray()) {
+			return ReflectionUtil.canBeInitiated(clazz.getComponentType());
+		}
 		if(clazz.isInterface()) {
 			return false;
 		}

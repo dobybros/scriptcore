@@ -12,6 +12,8 @@ import com.docker.storage.adapters.DockerStatusService;
 import com.docker.tasks.Task;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import chat.errors.ChatErrorCodes;

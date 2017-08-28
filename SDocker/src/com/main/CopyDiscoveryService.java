@@ -26,7 +26,7 @@ public class CopyDiscoveryService {
         fileHandler.init();
 
 //		File directory = new File("/home/aplomb/dev/github/PKUserService/deploy");
-        File directory = new File("/home/aplomb/dev/github/DiscoveryService/deploy");
+        File directory = new File("/home/aplomb/dev/github/DiscoveryService/build/deploy");
         Collection<File> files = FileUtils.listFiles(directory, new String[]{"zip"}, true);
         if(files != null) {
             for(File file : files) {

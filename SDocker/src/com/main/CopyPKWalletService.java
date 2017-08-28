@@ -1,6 +1,5 @@
 package com.main;
 
-
 import com.docker.file.adapters.GridFSFileHandler;
 import com.docker.storage.DBException;
 import com.docker.storage.mongodb.MongoHelper;
@@ -11,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-public class CopyPKUserService {
+public class CopyPKWalletService {
     public static void main(String[] args) throws IOException, DBException {
         MongoHelper helper = new MongoHelper();
         helper.setHost("mongodb://localhost:7900");
@@ -26,8 +25,8 @@ public class CopyPKUserService {
         fileHandler.setBucketName("imfs");
         fileHandler.init();
 
-		File directory = new File("/home/aplomb/dev/github/PKUserService/build/deploy");
-//        File directory = new File("/home/aplomb/dev/github/DiscoveryService/deploy");
+//		File directory = new File("/home/aplomb/dev/github/PKUserService/deploy");
+        File directory = new File("/home/aplomb/dev/github/PKWalletService/build/deploy");
         Collection<File> files = FileUtils.listFiles(directory, new String[]{"zip"}, true);
         if(files != null) {
             for(File file : files) {

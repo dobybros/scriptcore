@@ -8,10 +8,7 @@
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/asm-commons-4.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aspectjrt-1.7.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aspectjtools-1.7.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aws-java-sdk-1.11.137.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/commons-pool2-2.4.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/elasticsearch-1.5.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/fastjson-1.2.32.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/fluent-hc-4.4.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/gson-2.7.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/guava-16.0.1.jar!/" />
@@ -34,19 +31,6 @@
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/joda-time-2.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jsch-0.1.50.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jts-1.13.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-analyzers-common-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-core-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-expressions-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-grouping-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-highlighter-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-join-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-memory-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-misc-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-queries-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-queryparser-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-sandbox-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-spatial-4.10.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/lucene-suggest-4.10.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/mail.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/mongo-java-driver-3.2.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/netty-all-4.0.23.Final.jar!/" />
@@ -67,7 +51,6 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/SDockerCore/lib/aws-java-sdk-1.11.137-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jedis-2.9.0-SNAPSHOT-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/joda-time-2.4-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/SDockerCore/lib/jsch-0.1.50-sources.jar!/" />
