@@ -14,3 +14,6 @@ Projects/ContentDistribution/Distribution/data/**
 Projects/ContentDistribution/Task/data/**
 
 Projects/ContentDistribution/Distribution/war/WEB-INF/lib/scriptcore_intellij.jar
+
+**/buildlib/deploy
+**/buildlib/local
