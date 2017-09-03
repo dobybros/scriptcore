@@ -4,7 +4,10 @@ import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
 import com.docker.rpc.RPCClientAdapterMap;
 import com.docker.rpc.remote.MethodMapping;
+import groovy.lang.GroovyObject;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +32,7 @@ public class ServiceStubManager {
     private String jksPwd;
     private String host;
     private boolean inited = false;
+    private Class<?> serviceStubProxyClass;
 
     public static ServiceStubManager getInstance() {
         if(instance == null) {
@@ -39,6 +43,11 @@ public class ServiceStubManager {
             }
         }
         return instance;
+    }
+
+    public void clearCache() {
+        methodMap.clear();
+        remoteServiceMap.clear();
     }
 
     public MethodMapping getMethodMapping(Long crc) {
@@ -154,15 +163,46 @@ public class ServiceStubManager {
         if(adapterService == null) {
             synchronized (adapterClass) {
                 if(adapterService == null) {
-                    try {
-                        scanClass(adapterClass, service);
+                    scanClass(adapterClass, service);
+                    if(serviceStubProxyClass != null) {
+                        try {
+                            Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class);
+                            if(getProxyMethod != null) {
+                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service), adapterClass);
+                            } else {
+                                LoggerEx.error(TAG, "getProxy method doesn't be found for " + adapterClass + " in service " + service);
+                            }
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                            LoggerEx.error(TAG, "Generate proxy object for " + adapterClass + " in service " + service + " failed, " + t.getMessage());
+                        }
+
+//                        Class<?> newServiceStubProxyClass;
+//                        String proxyClassStr =
+//                                "class ServiceStubProxy extends com.docker.rpc.remote.stub.Proxy implements GroovyInterceptable{\n" +
+//                                        "    private Class<?> remoteServiceStub;\n" +
+//                                        "    ServiceStubProxy(RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub) {\n" +
+//                                        "        super(remoteServiceDiscovery)\n" +
+//                                        "        this.remoteServiceStub = remoteServiceStub;\n" +
+//                                        "    }\n" +
+//                                        "    def methodMissing(String methodName,methodArgs) {\n" +
+//                                        "        Long crc = chat.utils.ReflectionUtil.getCrc(remoteServiceStub, methodName, remoteServiceDiscovery.getService());\n" +
+//                                        "        return invoke(crc, methodArgs);\n" +
+//                                        "    }\n" +
+//                                        "}";
+//                        newServiceStubProxyClass = getGroovyRuntime().getClassLoader().parseClass(proxyClassStr,
+//                                "/script/groovy/runtime/proxy/ServiceStubProxy.groovy");
+
+                    } else {
+                        try {
 //                        if(service == null)
 //                            throw new NullPointerException("Service for adapterClass " + key + " doesn't be found");
-                        RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service));
-                        adapterService = (T) proxy.getProxy(adapterClass);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        LoggerEx.warn(TAG, "Initiate moduleClass " + adapterClass + " failed, " + e.getMessage());
+                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service));
+                            adapterService = (T) proxy.getProxy(adapterClass);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            LoggerEx.warn(TAG, "Initiate moduleClass " + adapterClass + " failed, " + e.getMessage());
+                        }
                     }
 
                     if(adapterService != null) {
@@ -206,5 +246,13 @@ public class ServiceStubManager {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public Class<?> getServiceStubProxyClass() {
+        return serviceStubProxyClass;
+    }
+
+    public void setServiceStubProxyClass(Class<?> serviceStubProxyClass) {
+        this.serviceStubProxyClass = serviceStubProxyClass;
     }
 }

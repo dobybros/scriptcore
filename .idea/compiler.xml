@@ -6,10 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="DiscoveryService" />
         <module name="MyScripts" />
-        <module name="PKUserService" />
-        <module name="PKWalletService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

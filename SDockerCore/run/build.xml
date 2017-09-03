@@ -43,7 +43,6 @@
 		<filter token="log" value="true" />
 		<filter token="verbose" value="true" />
 
-
 		<!-- run classpath -->
 		<path id="run.classpath">
 			<fileset dir="${lib.dir}" includes="**/*.jar" />

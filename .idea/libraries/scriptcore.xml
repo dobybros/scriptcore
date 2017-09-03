@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="scriptcore">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/SDocker/buildlib/deploy/war/WEB-INF/lib/scriptcore.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

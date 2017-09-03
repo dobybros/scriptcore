@@ -385,10 +385,14 @@ public class ReflectionUtil {
 //	}
 
 	public static long getCrc(Method method, String service) {
-		if(method == null)
+		return getCrc(method.getDeclaringClass(), method.getName(), service);
+	}
+
+	public static long getCrc(Class<?> clazz, String methodName, String service) {
+		if(methodName == null || clazz == null || service == null)
 			return -1;
-		String name = method.getName();
-		String className = method.getDeclaringClass().getSimpleName();
+		String name = methodName;
+		String className = clazz.getSimpleName();
 		CRC32 crc = new CRC32();
 		String str = name + "#" + className;
 		if(service != null) {

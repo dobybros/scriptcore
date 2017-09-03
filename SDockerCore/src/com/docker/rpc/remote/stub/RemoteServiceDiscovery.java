@@ -175,8 +175,8 @@ public class RemoteServiceDiscovery implements Runnable {
                 }
             }
         } catch (CoreException e) {
-            e.printStackTrace();
-            LoggerEx.error(TAG, "Get gateway servers from failed, " + e.getMessage());
+//            e.printStackTrace();
+            LoggerEx.error(TAG, "Get remote servers for service " + service + " on host " + host + " failed, " + e.getMessage());
         } finally {
             if(remoteServers != null) {
                 remoteServers.calculate();

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project name="sdocker" default="publish_tar" basedir=".">
+	<description>
+		AcuLearn
+    </description>
+
+	<target name="init" description="Initialize the target...">
+		<property environment="env" />
+		<property name="name" value="sdocker" />
+		<property name="version" value="v0.1.0.4" />
+		<property name="year" value="2014" />
+		<echo message="Building ${ant.project.name} ${version}...." />
+		<property name="build.compiler" value="modern" />
+		<property name="debug" value="false" />
+		<property name="optimize" value="on" />
+		<property name="deprecation" value="on" />
+		<property name="encoding" value="utf-8" />
+		<property name="core.dir" location="${basedir}/../../SDockerCore" />
+		<property name="scriptcore.dir" location="${basedir}/../../ScriptCore" />
+		<property name="mongodbconnector.dir" location="${basedir}/../../Connectors/MongoDBConnector" />
+		<property name="core.dir" location="${basedir}/../../SDockerCore" />
+		<property name="deployment.dir" location="../IMDeployment" />
+		<property name="dist.dir" location="${basedir}/deploy" />
+		<property name="conf.dir" value="${basedir}/../conf" />
+		<property name="i18n.dir" value="${core.dir}/i18n" />
+		<property name="src.dir" value="${basedir}/../src" />
+		<property name="affiliate.dir" value="${deployment.dir}/affiliates" />
+		<property name="lib.web.dir" value="${dist.dir}/war/WEB-INF/lib" />
+		<property name="build.dir" value="${dist.dir}/war/WEB-INF/classes" />
+		<property name="buildlib.dir" value="${core.dir}/buildlib" />
+		<property name="static.dir" value="${dist.dir}/war/WEB-INF/static" />
+		<property name="source.dir" value="${dist.dir}/src" />
+		<property name="classes.dir" value="${dist.dir}/classes" />
+		<property name="log.dir" value="${dist.dir}/logs" />
+		<property name="groovy.dir" value="${dist.dir}/groovy" />
+		<property name="dist.tar.gz" value="sdocker.tar.gz" />
+		<property name="jar.name" value="a.jar" />
+		<property name="jar.obfuscated.name" value="ao.jar" />
+
+		<filter token="year" value="${year}" />
+		<filter token="version" value="${version}" />
+		<filter token="log" value="true" />
+		<filter token="verbose" value="true" />
+
+		<!-- run classpath -->
+		<path id="build.classpath">
+			<fileset dir="${lib.web.dir}" includes="**/*.jar" />
+			<pathelement location="${build.dir}" />
+		</path>
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${buildlib.dir}/ant-contrib-1.0b3.jar" />
+	</target>
+
+
+	<!--Prepare the build directory.-->
+	<target name="prepare" depends="init">
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="clean" depends="init">
+		<delete dir="${build.dir}" failonerror="false" />
+		<delete dir="${source.dir}" failonerror="falste"/>
+		<delete failonerror="false">
+			<fileset dir="${dist.dir}">
+				<include name="**" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="compile" depends="prepare" description="compile project, generate build directory">
+		<echo message="build source..." />
+		<ant antfile="${scriptcore.dir}/buildlib/build.xml" inheritall="false"/>
+		<ant antfile="${mongodbconnector.dir}/buildlib/build.xml" inheritall="false"/>
+		<ant antfile="${core.dir}/buildlib/build.xml" inheritall="false"/>
+		<echo message="lib.web.dir is ${lib.web.dir}"/>
+		<copy todir="${lib.web.dir}">
+			<fileset dir="${basedir}/../war/WEB-INF/lib" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${core.dir}/lib" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${scriptcore.dir}/buildlib/deploy/lib" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${mongodbconnector.dir}/buildlib/deploy/lib" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${core.dir}/buildlib/deploy/lib" excludes="*.svn">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${source.dir}" failonerror="false">
+			<!--<fileset dir="${basedir}/src">-->
+				<!--<include name="**/*.java" />-->
+			<!--</fileset>-->
+			<fileset dir="${scriptcore.dir}/src">
+				<include name="*chat/main/Main.java" />
+			</fileset>
+			<fileset dir="${i18n.dir}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		<mkdir dir="${dist.dir}/tmp"/>
+		<copy todir="${dist.dir}/bin">
+			<fileset dir="${basedir}/../bin" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${core.dir}/run" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+
+		<copy todir="${dist.dir}/war/WEB-INF">
+			<fileset dir="${basedir}/../war/WEB-INF" excludes="*.svn">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${classes.dir}" />
+		<javac includeantruntime="false" srcdir="${source.dir}" destdir="${classes.dir}" deprecation="${deprecation}" optimize="${optimize}" debug="${debug}" encoding="${encoding}" source="1.8" target="1.8" compiler="javac1.8">
+			<exclude name="**/Test*" />
+			<classpath refid="build.classpath" />
+		</javac>
+
+		<move file="${classes.dir}/chat/main/Main.class" todir="${build.dir}/chat/main/" overwrite="true" failonerror="true" />
+		<jar basedir="${classes.dir}" destfile="${lib.web.dir}/${jar.name}">
+		</jar>
+
+		<delete dir="${source.dir}" failonerror="false" />
+		<delete dir="${classes.dir}" failonerror="false" />
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}/../src">
+				<include name="**/*.xml" />
+				<include name="**/*.txt" />
+				<include name="**/*.properties" />
+				<include name="**/*.csv" />
+			</fileset>
+			<fileset dir="${conf.dir}">
+				<!--include name="**/*.xml" />
+				<include name="**/*.p12" />
+				<include name="**/*.properties" />
+				<include name="**/*.html" />
+				<include name="**/*.jpeg" />
+				<include name="**/*.jpg" />
+				<include name="**/*.png" />
+				<include name="**/*.gif" /-->
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${core.dir}/conf">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${i18n.dir}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!--target name="publish_tar" depends="clean,compile,affiliates.prepare,obfuscate,configweb" description="Make distribution tar file."-->
+	<target name="publish_tar" depends="clean,compile,affiliates.prepare" description="Make distribution tar file.">
+		<delete dir="${log.dir}" failonerror="false" />
+		<mkdir dir="${log.dir}" />
+		<tar destfile="${dist.dir}/${dist.tar.gz}" compression="gzip">
+			<tarfileset dir="${dist.dir}" excludes="*.svn">
+				<include name="bin/**" />
+				<include name="war/**" />
+				<include name="lib/**" />
+				<include name="logs/" />
+				<include name="tmp/" />
+			</tarfileset>
+		</tar>
+		<delete dir="${dist.dir}/bin" failonerror="false" />
+		<delete dir="${dist.dir}/war" failonerror="false" />
+		<delete dir="${dist.dir}/lib" failonerror="false" />
+		<delete dir="${dist.dir}/logs" failonerror="false" />
+		<delete dir="${dist.dir}/groovy" failonerror="false" />
+		<delete dir="${dist.dir}/tmp" failonerror="false" />
+	</target>
+
+	<target name="svn" depends="init">
+		<exec dir="C:\CaseRoom\NEWSVN\CaseRoomCommon\" command="C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe /command:update /path:./ /closeonend:1">
+		</exec>
+		<exec dir="C:\CaseRoom\NEWSVN\CaseRoomCore\" command="C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe /command:update /path:./ /closeonend:1">
+		</exec>
+	</target>
+
+	<target name="affiliates.prepare">
+		<copy todir="${build.dir}" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/${name}/conf" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/bin" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/${name}/bin" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${build.dir}" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/core" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${web.static.dir}/res/download" overwrite="true" verbose="true" failonerror="false">
+			<fileset dir="${affiliate.dir}/${affiliate}/servers/${name}/download" excludes="*.svn">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+</project>
