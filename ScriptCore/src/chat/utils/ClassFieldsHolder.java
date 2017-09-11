@@ -3,6 +3,7 @@ package chat.utils;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 
 import chat.logs.LoggerEx;
@@ -58,7 +59,7 @@ public class ClassFieldsHolder {
 		try {
 			if(!field.isAccessible())
 				field.setAccessible(true);
-			field.set(obj, value);
+			field.set(obj, ConvertUtils.convert(value, field.getType()));
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 			LoggerEx.error(TAG, "Assign value " + value + " to field " + field + " for object " + obj);

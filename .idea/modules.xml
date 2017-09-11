@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" filepath="$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" />
       <module fileurl="file://$PROJECT_DIR$/Projects/ContentDistribution/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/Projects/ContentDistribution/Distribution/Distribution.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/temp/sdocker/sdocker/services/IMUserService/IMUserService.iml" filepath="$USER_HOME$/Desktop/temp/sdocker/sdocker/services/IMUserService/IMUserService.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDocker/JDocker.iml" filepath="$PROJECT_DIR$/JDocker/JDocker.iml" />
       <module fileurl="file://$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" filepath="$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" />
       <module fileurl="file://$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" filepath="$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" />
