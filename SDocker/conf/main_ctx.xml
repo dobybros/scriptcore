@@ -60,5 +60,6 @@
 	<bean id="scriptManager" class="com.docker.script.ScriptManager" init-method="init">
 		<property name="localPath" value="${script.local.path}"/>
 		<property name="remotePath" value="${script.remote.path}"/>
+		<property name="dockerStatusService" ref="dockerStatusService"/>
 	</bean>
 </beans>

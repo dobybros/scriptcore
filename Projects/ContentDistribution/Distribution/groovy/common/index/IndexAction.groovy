@@ -5,7 +5,7 @@ import connectors.mongodb.annotations.DocumentField
 import connectors.mongodb.codec.DataObject
 import groovy.json.JsonBuilder
 
-@DBDocument(collectionClass = IndexActionService.class)
+@DBDocument(collectionClass = "common.index.IndexActionService")
 class IndexAction extends DataObject{
 	public static final String FIELD_CREATETIME = "ctime";
 	

@@ -488,7 +488,16 @@ public class GroovyRuntime extends ScriptRuntime{
 		return new MyGroovyClassLoader(parentClassLoader, cc);
 	}
 
+	public void beforeDeploy() {
+
+	}
 	public synchronized void redeploy() throws CoreException {
+		try {
+			beforeDeploy();
+		} catch(Throwable t) {
+			LoggerEx.warn(TAG, "beforeDeploy failed, " + t.getMessage());
+		}
+
 		MyGroovyClassLoader newClassLoader = null;
 		MyGroovyClassLoader oldClassLoader = classLoader;
 		boolean deploySuccessfully = false;

@@ -16,7 +16,7 @@ import script.groovy.annotation.Bean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
-@DBCollection(name = "article", databaseClass = ArticleDatabase.class)
+@DBCollection(name = "article", databaseClass = "common.distribution.ArticleDatabase")
 @Bean
 class ArticleService extends MongoCollectionHelper {
 	public static final int ERRORCODE_ARTICLE_DELETE_FAILED = 600;

@@ -28,8 +28,11 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	private String service;
 
+	private Properties config;
+
 	public void prepare(String service, Properties properties, String rootPath) {
 	    this.service = service;
+	    this.config = properties;
         String enableGroovyMVC = null;
         if(properties != null) {
             enableGroovyMVC = properties.getProperty("web.groovymvc.enable");
@@ -140,5 +143,21 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	public void clear() {
 		memoryCache.clear();
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public Properties getConfig() {
+		return config;
+	}
+
+	public void setConfig(Properties config) {
+		this.config = config;
 	}
 }

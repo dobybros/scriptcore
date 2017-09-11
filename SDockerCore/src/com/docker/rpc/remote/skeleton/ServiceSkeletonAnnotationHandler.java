@@ -7,6 +7,7 @@ import chat.utils.ReflectionUtil;
 import com.docker.rpc.remote.MethodMapping;
 import com.docker.rpc.remote.RemoteService;
 import com.docker.rpc.MethodResponse;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
@@ -111,6 +112,11 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
                 returnObj = remoteService.invokeRootMethod(method.getName(), args);
 //                returnObj = method.invoke(obj, args);
             } catch (Throwable t) {
+                if(t instanceof InvokerInvocationException) {
+                    Throwable theT = ((InvokerInvocationException) t).getCause();
+                    if(theT != null)
+                        t = theT;
+                }
                 if(t instanceof CoreException)
                     exception = (CoreException) t;
                 else

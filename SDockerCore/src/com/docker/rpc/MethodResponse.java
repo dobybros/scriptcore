@@ -5,6 +5,7 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.GZipUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.docker.rpc.remote.MethodMapping;
 import com.docker.rpc.remote.stub.ServiceStubManager;
 import org.apache.commons.io.IOUtils;
@@ -67,7 +68,11 @@ public class MethodResponse extends RPCResponse {
 							if(returnBytes.length > 0) {
 								byte[] data = GZipUtils.decompress(returnBytes);
 								String json = new String(data, "utf8");
-								returnObject = JSON.parseObject(json, methodMapping.getReturnClass());
+								if(methodMapping.getReturnClass().equals(Object.class)) {
+									returnObject = JSON.parseObject(json);
+								} else {
+									returnObject = JSON.parseObject(json, methodMapping.getGenericReturnClass());
+								}
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -81,7 +86,11 @@ public class MethodResponse extends RPCResponse {
 							if(exceptionBytes.length > 0) {
 								byte[] data = GZipUtils.decompress(exceptionBytes);
 								String json = new String(data, "utf8");
-								exception = JSON.parseObject(json, CoreException.class);
+								JSONObject jsonObj = (JSONObject) JSON.parse(json);
+								if(jsonObj != null) {
+									exception = new CoreException(jsonObj.getInteger("code"), jsonObj.getString("message"));
+								}
+//								exception = JSON.parseObject(json, CoreException.class);
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -133,7 +142,10 @@ public class MethodResponse extends RPCResponse {
 
 				byte[] exceptionBytes = null;
 				if(exception != null) {
-					String errorStr = JSON.toJSONString(exception);
+					JSONObject json = new JSONObject();
+					json.put("code", exception.getCode());
+					json.put("message", exception.getMessage());
+					String errorStr = json.toJSONString();//JSON.toJSONString(exception);
 					try {
 						exceptionBytes = GZipUtils.compress(errorStr.getBytes("utf8"));
 					} catch (IOException e) {

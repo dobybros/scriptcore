@@ -185,15 +185,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="groovy-all-2.4.7-indy.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/groovy-all-2.4.7-indy.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
       <library name="javax-websocket-client-impl-9.3.9.v20160517.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/javax-websocket-client-impl-9.3.9.v20160517.jar!/" />
@@ -473,33 +464,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library name="mongo-java-driver-3.2.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/mongo-java-driver-3.2.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="mongodbconnector.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/mongodbconnector.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="noggit-0.6.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/noggit-0.6.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
       <library name="servlet-api-3.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/servlet-api-3.1.jar!/" />
@@ -512,33 +476,6 @@
       <library name="slf4j-api-1.7.7.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/slf4j-api-1.7.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="solr-core-5.5.0.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/solr-core-5.5.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="solr-solrj-5.5.0.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/solr-solrj-5.5.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="solrconnector.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/scriptcore/solrconnector.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -700,5 +637,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="ScriptCore" exported="" />
+    <orderEntry type="module" module-name="MongoDBConnector" exported="" />
+    <orderEntry type="module" module-name="SolrConnector" exported="" />
   </component>
 </module>

@@ -5,7 +5,7 @@ import connectors.mongodb.annotations.DocumentField
 import connectors.mongodb.codec.DataObject
 import groovy.json.JsonBuilder
 
-@DBDocument(collectionClass = ArticleService.class)
+@DBDocument(collectionClass = "common.distribution.ArticleService")
 class Article extends DataObject{
 	public static final String FIELD_COMPANYID = "cid";
 	public static final String FIELD_USERID = "uid";

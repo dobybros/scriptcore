@@ -15,7 +15,7 @@ import com.mongodb.client.MongoCursor
 import connectors.mongodb.MongoCollectionHelper
 import connectors.mongodb.annotations.DBCollection
 
-@DBCollection(name = "user", databaseClass = UserDatabase.class)
+@DBCollection(name = "user", databaseClass = "common.accounts.databases.UserDatabase")
 @Bean
 class UserService extends MongoCollectionHelper {
 	private User findUser(Bson query) {

@@ -26,7 +26,7 @@ public class ScriptManager {
 
 	@Resource
 	private FileAdapter fileAdapter;
-	@Resource
+
 	private DockerStatusService dockerStatusService;
 
 	private IRuntimeNullHandler runtimeNullHandler;
@@ -119,7 +119,8 @@ public class ScriptManager {
 										localScriptPath = localPath + serverTypePath + service + "/" + language;
 										runtime.setPath(localScriptPath + "/");
 									}
-									dockerStatusService.addService(OnlineServer.getInstance().getServer(), service);
+									if(dockerStatusService != null)
+										dockerStatusService.addService(OnlineServer.getInstance().getServer(), service);
 								}
 								
 								if(runtime != null && needRedeploy) {
@@ -145,6 +146,7 @@ public class ScriptManager {
 
 										scriptRuntimeMap.put(service, runtime);
 									}
+
 									runtime.redeploy();
 									runtime.setVersion(file.getLastModificationTime());
 								}
@@ -168,7 +170,8 @@ public class ScriptManager {
                                 t.printStackTrace();
                             } finally {
                                 try {
-                                    dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), key);
+                                	if(dockerStatusService != null)
+                                    	dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), key);
                                 } catch (CoreException e) {
                                     e.printStackTrace();
                                     LoggerEx.error(TAG, "Delete service " + key + " from docker " + OnlineServer.getInstance().getServer() + " failed, " + e.getMessage());
@@ -235,5 +238,13 @@ public class ScriptManager {
 
 	public void setRuntimeNullHandler(IRuntimeNullHandler runtimeNullHandler) {
 		this.runtimeNullHandler = runtimeNullHandler;
+	}
+
+	public DockerStatusService getDockerStatusService() {
+		return dockerStatusService;
+	}
+
+	public void setDockerStatusService(DockerStatusService dockerStatusService) {
+		this.dockerStatusService = dockerStatusService;
 	}
 }

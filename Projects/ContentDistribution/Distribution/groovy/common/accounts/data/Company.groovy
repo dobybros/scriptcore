@@ -6,7 +6,7 @@ import connectors.mongodb.annotations.DocumentField
 import connectors.mongodb.codec.DataObject
 import groovy.json.JsonBuilder
 
-@DBDocument(collectionClass = CompanyService.class)
+@DBDocument(collectionClass = "common.accounts.services.CompanyService")
 class Company extends DataObject{
 	public static final String FIELD_CREATETIME = "ctime";
 	public static final String FIELD_UPDATETIME = "utime";

@@ -6,7 +6,7 @@ import connectors.mongodb.annotations.DocumentField
 import connectors.mongodb.codec.DataObject
 import groovy.json.JsonBuilder
 
-@DBDocument(collectionClass = UserService.class)
+@DBDocument(collectionClass = "common.accounts.services.UserService")
 class User extends DataObject{
 	public static final String FIELD_TYPE = "type";
 	public static final String FIELD_ACCOUNTS = "accs";

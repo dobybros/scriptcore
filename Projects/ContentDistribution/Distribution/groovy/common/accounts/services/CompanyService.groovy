@@ -15,7 +15,7 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import script.groovy.annotation.Bean
 
-@DBCollection(name = "company", databaseClass = CompanyDatabase.class)
+@DBCollection(name = "company", databaseClass = "common.accounts.services.CompanyDatabase")
 @Bean
 class CompanyService extends MongoCollectionHelper {
 	public static final int ERRORCODE_COMPANY_DELETE_FAILED = 500;

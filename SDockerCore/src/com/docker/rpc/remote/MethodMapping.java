@@ -1,11 +1,14 @@
 package com.docker.rpc.remote;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 public class MethodMapping {
     protected Method method;
     protected Class<?>[] parameterTypes;
+    protected Type[] genericParameterTypes;
     protected Class<?> returnClass;
+    protected Type genericReturnClass;
 
     public MethodMapping(Method method) {
         this.method = method;
@@ -31,4 +34,19 @@ public class MethodMapping {
         this.returnClass = returnClass;
     }
 
+    public Type getGenericReturnClass() {
+        return genericReturnClass;
+    }
+
+    public void setGenericReturnClass(Type genericReturnClass) {
+        this.genericReturnClass = genericReturnClass;
+    }
+
+    public Type[] getGenericParameterTypes() {
+        return genericParameterTypes;
+    }
+
+    public void setGenericParameterTypes(Type[] genericParameterTypes) {
+        this.genericParameterTypes = genericParameterTypes;
+    }
 }

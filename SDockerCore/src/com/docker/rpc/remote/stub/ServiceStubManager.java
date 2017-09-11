@@ -9,6 +9,7 @@ import groovy.lang.GroovyObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -72,6 +73,7 @@ public class ServiceStubManager {
                     continue;
                 }
                 Class<?>[] parameterTypes = method.getParameterTypes();
+                Type[] genericParamterTypes = method.getGenericParameterTypes();
                 if(parameterTypes != null) {
                     boolean failed = false;
                     for(int i = 0; i < parameterTypes.length; i++) {
@@ -87,10 +89,12 @@ public class ServiceStubManager {
                         continue;
                 }
                 mm.setParameterTypes(parameterTypes);
+                mm.setGenericParameterTypes(genericParamterTypes);
 
                 Class<?> returnType = method.getReturnType();
                 returnType = ReflectionUtil.getInitiatableClass(returnType);
                 mm.setReturnClass(returnType);
+                mm.setGenericReturnClass(method.getGenericReturnType());
                 methodMap.put(value, mm);
 //                RemoteProxy.cacheMethodCrc(method, value);
                 LoggerEx.info("SCAN", "Mapping crc " + value + " for class " + clazz.getName() + " method " + method.getName() + " for service " + service);

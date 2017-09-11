@@ -139,6 +139,124 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="ScriptCore" exported="" />
     <orderEntry type="module" module-name="MongoDBConnector" exported="" />
-    <orderEntry type="library" exported="" name="sdockercorelib" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/scriptcorelib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/scriptcorelib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/mail.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/asm-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/gson-2.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jts-1.13.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/ivy-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jna-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pushy-0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aopalliance.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jedis-2.9.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.50.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/guava-16.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/joda-time-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpcore-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpmime-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/asm-commons-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aspectjrt-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/fluent-hc-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpclient-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/antlr-runtime-3.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpcore-ab-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aspectjtools-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpcore-nio-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-core-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jna-platform-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/commons-pool2-2.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.50-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/protobuf-java-3.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpclient-win-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jcl-over-slf4j-1.7.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/joda-time-2.4-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpclient-cache-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-databind-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/netty-all-4.0.23.Final.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-aop-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-web-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-annotations-2.6.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-core-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-test-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/apache-log4j-extras-1.2.17.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-beans-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-webmvc-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jedis-2.9.0-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-aspects-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-context-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-dataformat-cbor-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/netty-all-4.0.23.Final-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-expression-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-data-mongodb-1.7.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-data-commons-1.10.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-context-support-4.0.5.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/mail.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/asm-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/gson-2.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jts-1.13.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/ivy-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jna-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pushy-0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aopalliance.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jedis-2.9.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.50.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/guava-16.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/joda-time-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpcore-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpmime-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/asm-commons-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aspectjrt-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/fluent-hc-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpclient-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/antlr-runtime-3.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpcore-ab-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aspectjtools-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpcore-nio-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-core-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jna-platform-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/commons-pool2-2.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jsch-0.1.50-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/protobuf-java-3.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpclient-win-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jcl-over-slf4j-1.7.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/joda-time-2.4-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/httpclient-cache-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-databind-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/netty-all-4.0.23.Final.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-aop-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-web-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-annotations-2.6.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-core-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-test-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/apache-log4j-extras-1.2.17.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-beans-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-webmvc-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jedis-2.9.0-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-aspects-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-context-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jackson-dataformat-cbor-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/netty-all-4.0.23.Final-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-expression-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-data-mongodb-1.7.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-data-commons-1.10.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/spring-context-support-4.0.5.RELEASE.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

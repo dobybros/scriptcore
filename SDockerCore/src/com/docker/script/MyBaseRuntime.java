@@ -12,7 +12,7 @@ import java.util.*;
 
 public class MyBaseRuntime extends BaseRuntime {
 	private static final String TAG = MyBaseRuntime.class.getSimpleName();
-
+	private String remoteServiceHost;
 	@Override
 	public void prepare(String service, Properties properties, String localScriptPath) {
 		super.prepare(service, properties, localScriptPath);
@@ -21,10 +21,14 @@ public class MyBaseRuntime extends BaseRuntime {
 		serviceSkeletonAnnotationHandler.setService(service);
 		addClassAnnotationHandler(serviceSkeletonAnnotationHandler);
 
-		String remoteServiceHost = properties.getProperty("remote.service.host");
+		remoteServiceHost = properties.getProperty("remote.service.host");
 		if(remoteServiceHost != null) {
 			ServiceStubManager serviceStubManager = ServiceStubManager.getInstance();
 			serviceStubManager.setHost(remoteServiceHost);
+		}
+	}
+	public void beforeDeploy() {
+		if(remoteServiceHost != null) {
 			String code =
 					"package script.groovy.runtime\n" +
 					"@script.groovy.annotation.RedeployMain\n" +
@@ -57,14 +61,12 @@ public class MyBaseRuntime extends BaseRuntime {
 				FileUtils.writeStringToFile(new File(path + "/script/groovy/runtime/ServiceStubProxy.groovy"), code, "utf8");
 			} catch (IOException e) {
 				e.printStackTrace();
-				LoggerEx.error(TAG, "write ServiceStubProxy.groovy file on " + (path + "/script/groovy/runtime/ServiceStubProxy.groovy") + " in service " + service + " failed, " + e.getMessage());
+				LoggerEx.error(TAG, "write ServiceStubProxy.groovy file on " + (path + "/script/groovy/runtime/ServiceStubProxy.groovy") + " in service " + getService() + " failed, " + e.getMessage());
 			}
 		}
 	}
-
 	@Override
 	public void close() {
 		super.close();
-
 	}
 }

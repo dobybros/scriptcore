@@ -39,10 +39,7 @@ public class RemoteServiceDiscovery implements Runnable {
 
 	private boolean isStarted = true;
 
-	private boolean needUpdate;
-
 	private Object lock = new Object();
-	private TimerTaskEx expireTimerTask = null;
 
 	public String toString() {
 		return super.toString();
@@ -301,12 +298,18 @@ public class RemoteServiceDiscovery implements Runnable {
                     if(ip != null && port != null) {
                         RPCClientAdapter clientAdapter = rpcClientAdapterMap.registerServer(ip, port, server.getServer());
                         MethodResponse response = (MethodResponse) clientAdapter.call(request);
+                        if(response.getException() != null) {
+                            LoggerEx.info(TAG, "Failed to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException() + " on server " + server + " " + count + "/" + maxCount);
+                             throw response.getException();
+                        }
                         LoggerEx.info(TAG, "Successfully call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException() + " on server " + server + " " + count + "/" + maxCount);
                         return response;
                     } else {
                         LoggerEx.info(TAG, "No ip " + ip + " or port " + port + ", fail to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount);
                     }
                 } catch(Throwable t) {
+                    if(t instanceof CoreException)
+                        throw t;
                     LoggerEx.error(TAG, "Fail to Call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount + " available size " + keptSortedServers.size() + " error " + t.getMessage());
                 }
             }
