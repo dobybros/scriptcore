@@ -1,12 +1,11 @@
 package chat.utils;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-
+import chat.logs.LoggerEx;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 
-import chat.logs.LoggerEx;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 public class ClassFieldsHolder {
 	public static abstract class FieldIdentifier {
@@ -53,13 +52,19 @@ public class ClassFieldsHolder {
 		FieldEx field = fieldMap.get(fieldKey);
 		assignField(obj, field.getField(), value);
 	}
+
+	public Object convert(Object value, Field field) {
+		return ConvertUtils.convert(value, field.getType());
+	}
+
 	public void assignField(Object obj, Field field, Object value) {
 		if(field == null || value == null || obj == null)
 			return;
 		try {
 			if(!field.isAccessible())
 				field.setAccessible(true);
-			field.set(obj, ConvertUtils.convert(value, field.getType()));
+
+			field.set(obj, convert(value, field));
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 			LoggerEx.error(TAG, "Assign value " + value + " to field " + field + " for object " + obj);

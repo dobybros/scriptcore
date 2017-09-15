@@ -1,29 +1,12 @@
 package connectors.mongodb.annotations.handlers;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
-
-import script.groovy.runtime.ClassAnnotationHandler;
-import script.groovy.runtime.GroovyRuntime;
-import script.groovy.runtime.GroovyRuntime.ClassHolder;
-import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ClassFieldsHolder;
 import chat.utils.ClassFieldsHolder.FieldEx;
 import chat.utils.ClassFieldsHolder.FieldIdentifier;
 import chat.utils.HashTree;
-
 import com.mongodb.MongoClient;
-
 import connectors.mongodb.MongoClientHelper;
 import connectors.mongodb.annotations.DBCollection;
 import connectors.mongodb.annotations.DBDocument;
@@ -32,6 +15,18 @@ import connectors.mongodb.annotations.DocumentField;
 import connectors.mongodb.codec.BaseObjectCodecProvider;
 import connectors.mongodb.codec.DataObject;
 import connectors.mongodb.codec.DataObjectCodecProvider;
+import org.apache.commons.lang.StringUtils;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import script.groovy.runtime.ClassAnnotationHandler;
+import script.groovy.runtime.GroovyRuntime;
+import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MongoDBHandler extends ClassAnnotationHandler{
 	public static final String VALUE = "VALUE";
@@ -163,11 +158,11 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 					}
 					tree.setParameter(CLASS, documentClass);
 					tree.setParameter(VALUE, value);
-					ClassFieldsHolder fieldHolder = new ClassFieldsHolder(documentClass, new MyFieldIdentifier());
+					ClassFieldsHolder fieldHolder = new MongodbClassFieldsHolder(documentClass, new MyFieldIdentifier());
 //					tree.setParameter(FIELDS, fieldHolder);
 					newDocumentMap.put(documentClass, fieldHolder);
 				} else {
-					ClassFieldsHolder fieldHolder = new ClassFieldsHolder(documentClass, new MyFieldIdentifier());
+					ClassFieldsHolder fieldHolder = new MongodbClassFieldsHolder(documentClass, new MyFieldIdentifier());
 					newDocumentMap.put(documentClass, fieldHolder);
 				}
 			}
