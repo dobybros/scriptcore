@@ -4,10 +4,11 @@ import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.json.Result;
 import chat.logs.LoggerEx;
-import chat.utils.ConcurrentHashSet;
-import chat.utils.TimerTaskEx;
 import com.alibaba.fastjson.JSON;
-import com.docker.rpc.*;
+import com.docker.rpc.MethodRequest;
+import com.docker.rpc.MethodResponse;
+import com.docker.rpc.RPCClientAdapter;
+import com.docker.rpc.RPCClientAdapterMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,7 +18,6 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -148,6 +148,8 @@ public class RemoteServiceDiscovery implements Runnable {
                             newOnline = true;
                             server = serverElement;
                             servers.putIfAbsent(serverName, server);
+                            if(newOnline)
+                                LoggerEx.info(TAG, "New server " + server + " is online ");
                         } else {
                             server.setHttpPort(serverElement.getHttpPort());
                             server.setHealth(serverElement.getHealth());
@@ -159,13 +161,15 @@ public class RemoteServiceDiscovery implements Runnable {
                             server.setPublicDomain(serverElement.getPublicDomain());
                         }
 //                                server.setServer(serverObj.getString("server"));
-                        if(newOnline)
-                            LoggerEx.info(TAG, "New server " + server + " is online ");
                     }
                     Collection<String> keys = servers.keySet();
                     for (String key : keys) {
                         if(!activeServers.contains(key)) {
                             Server deletedServer = servers.remove(key);
+                            RPCClientAdapter clientAdapter = rpcClientAdapterMap.getClientAdapter(key);
+                            if(clientAdapter != null) {
+                                clientAdapter.clientDestroy();
+                            }
                             LoggerEx.info(TAG, "Server " + deletedServer + " is offline");
                         }
                     }
