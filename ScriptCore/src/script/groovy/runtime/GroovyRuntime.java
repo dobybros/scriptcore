@@ -7,10 +7,7 @@ import groovy.lang.GroovyObject;
 import groovy.lang.GroovySystem;
 import groovy.lang.MetaClassRegistry;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -21,7 +18,12 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -501,8 +503,25 @@ public class GroovyRuntime extends ScriptRuntime{
 		MyGroovyClassLoader newClassLoader = null;
 		MyGroovyClassLoader oldClassLoader = classLoader;
 		boolean deploySuccessfully = false;
+        ByteArrayOutputStream baos = null;
 		final Map<ClassAnnotationHandler, Map<String, Class<?>>> handlerMap = new LinkedHashMap<ClassAnnotationHandler, Map<String, Class<?>>>();
 		try {
+			File importPath = new File(path + "/config/imports.groovy");
+			if(importPath.isFile() && importPath.exists()) {
+				LoggerEx.info(TAG, "Start imports " + importPath.getAbsolutePath());
+				final CommandLine cmdLine = CommandLine.parse("groovy " + importPath.getAbsolutePath());
+				ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(5));//设置超时时间
+				DefaultExecutor executor = new DefaultExecutor();
+                baos = new ByteArrayOutputStream();
+                executor.setStreamHandler(new PumpStreamHandler(baos, baos));
+                executor.setWatchdog(watchdog);
+				executor.setExitValue(0);//由于ping被到时间终止，所以其默认退出值已经不是0，而是1，所以要设置它
+				int exitValue = executor.execute(cmdLine);
+                final String result = baos.toString().trim();
+                LoggerEx.info(TAG, "import log " + result);
+                LoggerEx.info(TAG, "Imported " + importPath.getAbsolutePath());
+			}
+
 			newClassLoader = getNewClassLoader();
 			Collection<File> files = FileUtils.listFiles(new File(path),
 					FileFilterUtils.suffixFileFilter(".groovy"),
@@ -592,6 +611,7 @@ public class GroovyRuntime extends ScriptRuntime{
 				throw new CoreException(ChatErrorCodes.ERROR_GROOVY_UNKNOWN,
 						"Groovy unknown error " + t.getMessage());
 		} finally {
+            IOUtils.closeQuietly(baos);
 			if (deploySuccessfully) {
 				if (oldClassLoader != null) {
 					TimerEx.schedule(new TimerTaskEx() {

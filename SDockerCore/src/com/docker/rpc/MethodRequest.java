@@ -9,6 +9,7 @@ import com.docker.rpc.remote.MethodMapping;
 import com.docker.rpc.remote.skeleton.ServiceSkeletonAnnotationHandler;
 import com.docker.rpc.remote.stub.ServiceStubManager;
 import com.docker.script.BaseRuntime;
+import com.docker.script.MyBaseRuntime;
 import com.docker.script.ScriptManager;
 import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.IOUtils;
@@ -33,6 +34,10 @@ public class MethodRequest extends RPCRequest {
 
     private Integer argCount;
 
+    /**
+     * 只用于内存, 不错传输序列化
+     */
+    private String fromService;
 
 	public MethodRequest() {
 		super(RPCTYPE);
@@ -139,7 +144,12 @@ public class MethodRequest extends RPCRequest {
                 dis.writeLong(crc);
                 dis.writeUTF(service);
 
-                MethodMapping methodMapping = ServiceStubManager.getInstance().getMethodMapping(crc);
+                ScriptManager scriptManager = (ScriptManager) SpringContextUtil.getBean("scriptManager");
+                MyBaseRuntime baseRuntime = (MyBaseRuntime) scriptManager.getBaseRuntime(fromService);
+                if(baseRuntime == null)
+                    throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_SERVICE_NOTFOUND, "Service " + service + " not found for crc " + crc);
+
+                MethodMapping methodMapping = baseRuntime.getServiceStubManager().getMethodMapping(crc);
                 if(methodMapping == null)
                     throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
                 Class<?>[] parameterTypes = methodMapping.getParameterTypes();
@@ -216,5 +226,13 @@ public class MethodRequest extends RPCRequest {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public String getFromService() {
+        return fromService;
+    }
+
+    public void setFromService(String fromService) {
+        this.fromService = fromService;
     }
 }

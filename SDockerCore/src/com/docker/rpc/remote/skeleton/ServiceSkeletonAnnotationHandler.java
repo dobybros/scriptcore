@@ -4,6 +4,7 @@ import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
+import com.docker.rpc.MethodRequest;
 import com.docker.rpc.remote.MethodMapping;
 import com.docker.rpc.remote.RemoteService;
 import com.docker.rpc.MethodResponse;
@@ -76,7 +77,9 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
             super(method);
         }
 
-        public MethodResponse invoke(Long crc, Object[] rawArgs) throws CoreException {
+        public MethodResponse invoke(MethodRequest request) throws CoreException {
+            Object[] rawArgs = request.getArgs();
+            Long crc = request.getCrc();
             if(method == null)
                 throw new CoreException(ChatErrorCodes.ERROR_METHODMAPPING_METHOD_NULL, "Invoke method is null");
             int argLength = rawArgs != null ? rawArgs.length : 0;
@@ -123,6 +126,8 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
                     exception = new CoreException(ChatErrorCodes.ERROR_METHODMAPPING_INVOKE_UNKNOWNERROR, t.getMessage());
             }
             MethodResponse response = new MethodResponse(returnObj, exception);
+//            response.setService(service);
+            response.setRequest(request);
             response.setEncode(MethodResponse.ENCODE_JAVABINARY);
             response.setCrc(crc);
             return response;

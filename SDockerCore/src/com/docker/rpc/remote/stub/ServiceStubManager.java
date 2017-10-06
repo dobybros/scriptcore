@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceStubManager {
 	private static final String TAG = ServiceStubManager.class.getSimpleName();
-	private static ServiceStubManager instance;
 //	private OnlineServer onlineServer = (OnlineServer) SpringContextUtil.getBean("onlineServer");
 //	private RMIServerImpl rpcServer = (RMIServerImpl) SpringContextUtil.getBean("rpcServer");
     private ConcurrentHashMap<Long, MethodMapping> methodMap = new ConcurrentHashMap<>();
@@ -35,15 +34,9 @@ public class ServiceStubManager {
     private boolean inited = false;
     private Class<?> serviceStubProxyClass;
 
-    public static ServiceStubManager getInstance() {
-        if(instance == null) {
-            synchronized (ServiceStubManager.class) {
-                if(instance == null) {
-                    instance = new ServiceStubManager();
-                }
-            }
-        }
-        return instance;
+    private String service;
+    public ServiceStubManager(String service) {
+        this.service = service;
     }
 
     public void clearCache() {
@@ -101,10 +94,6 @@ public class ServiceStubManager {
             }
         }
     }
-
-	private ServiceStubManager() {
-
-	}
 
 	public synchronized void init() {
         if(inited)
@@ -170,9 +159,9 @@ public class ServiceStubManager {
                     scanClass(adapterClass, service);
                     if(serviceStubProxyClass != null) {
                         try {
-                            Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class);
+                            Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class, String.class);
                             if(getProxyMethod != null) {
-                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service), adapterClass);
+                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service), adapterClass, this.service);
                             } else {
                                 LoggerEx.error(TAG, "getProxy method doesn't be found for " + adapterClass + " in service " + service);
                             }
@@ -201,7 +190,7 @@ public class ServiceStubManager {
                         try {
 //                        if(service == null)
 //                            throw new NullPointerException("Service for adapterClass " + key + " doesn't be found");
-                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service));
+                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service), this.service);
                             adapterService = (T) proxy.getProxy(adapterClass);
                         } catch (Throwable e) {
                             e.printStackTrace();

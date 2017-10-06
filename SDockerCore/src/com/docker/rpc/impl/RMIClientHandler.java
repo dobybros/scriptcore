@@ -347,6 +347,7 @@ public class RMIClientHandler extends RPCClientAdapter {
             }
             RPCEntity entity = getRPCEntityForClient(requestType, request);
             RPCResponse response = entity.responseClass.newInstance();
+            response.setRequest(request);
             response.setData(data);
             response.setEncode(request.getEncode());
             response.setType(request.getType());
