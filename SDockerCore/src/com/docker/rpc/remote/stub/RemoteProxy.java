@@ -16,8 +16,8 @@ public class RemoteProxy extends Proxy implements MethodInterceptor {
 
     Enhancer enhancer = new Enhancer();
 
-    public RemoteProxy(RemoteServiceDiscovery remoteServiceDiscovery, String service) {
-        super(remoteServiceDiscovery, service);
+    public RemoteProxy(RemoteServiceDiscovery remoteServiceDiscovery, ServiceStubManager serviceStubManager) {
+        super(remoteServiceDiscovery, serviceStubManager);
     }
 
 

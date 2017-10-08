@@ -40,16 +40,16 @@ public class MyBaseRuntime extends BaseRuntime {
 					"    ServiceStubProxy() {\n" +
 					"        super(null, null);\n" +
 					"    }\n" +
-					"    ServiceStubProxy(com.docker.rpc.remote.stub.RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub, String service) {\n" +
-					"        super(remoteServiceDiscovery, service)\n" +
+					"    ServiceStubProxy(com.docker.rpc.remote.stub.RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub, com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager) {\n" +
+					"        super(remoteServiceDiscovery, serviceStubManager)\n" +
 					"        this.remoteServiceStub = remoteServiceStub;\n" +
 					"    }\n" +
 					"    def methodMissing(String methodName,methodArgs) {\n" +
 					"        Long crc = chat.utils.ReflectionUtil.getCrc(remoteServiceStub, methodName, remoteServiceDiscovery.getService());\n" +
 					"        return invoke(crc, methodArgs);\n" +
 					"    }\n" +
-					"    public static def getProxy(com.docker.rpc.remote.stub.RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub, String service) {\n" +
-					"        ServiceStubProxy proxy = new ServiceStubProxy(remoteServiceDiscovery, remoteServiceStub, service)\n" +
+					"    public static def getProxy(com.docker.rpc.remote.stub.RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub, com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager) {\n" +
+					"        ServiceStubProxy proxy = new ServiceStubProxy(remoteServiceDiscovery, remoteServiceStub, serviceStubManager)\n" +
 					"        def theProxy = proxy.asType(proxy.remoteServiceStub)\n" +
 					"        return theProxy\n" +
 					"    }\n" +

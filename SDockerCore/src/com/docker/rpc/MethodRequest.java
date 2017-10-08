@@ -39,6 +39,8 @@ public class MethodRequest extends RPCRequest {
      */
     private String fromService;
 
+    private ServiceStubManager serviceStubManager;
+
 	public MethodRequest() {
 		super(RPCTYPE);
 	}
@@ -144,12 +146,17 @@ public class MethodRequest extends RPCRequest {
                 dis.writeLong(crc);
                 dis.writeUTF(service);
 
-                ScriptManager scriptManager = (ScriptManager) SpringContextUtil.getBean("scriptManager");
-                MyBaseRuntime baseRuntime = (MyBaseRuntime) scriptManager.getBaseRuntime(fromService);
-                if(baseRuntime == null)
-                    throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_SERVICE_NOTFOUND, "Service " + service + " not found for crc " + crc);
+                ServiceStubManager serviceStubManager = this.serviceStubManager;
+                if(serviceStubManager == null) {
+                    ScriptManager scriptManager = (ScriptManager) SpringContextUtil.getBean("scriptManager");
+                    MyBaseRuntime baseRuntime = (MyBaseRuntime) scriptManager.getBaseRuntime(fromService);
+                    if(baseRuntime == null)
+                        throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_SERVICE_NOTFOUND, "Service " + service + " not found for crc " + crc);
 
-                MethodMapping methodMapping = baseRuntime.getServiceStubManager().getMethodMapping(crc);
+                    serviceStubManager = baseRuntime.getServiceStubManager();
+                }
+
+                MethodMapping methodMapping = serviceStubManager.getMethodMapping(crc);
                 if(methodMapping == null)
                     throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
                 Class<?>[] parameterTypes = methodMapping.getParameterTypes();
@@ -234,5 +241,15 @@ public class MethodRequest extends RPCRequest {
 
     public void setFromService(String fromService) {
         this.fromService = fromService;
+    }
+
+    public ServiceStubManager getServiceStubManager() {
+        return serviceStubManager;
+    }
+
+    public void setServiceStubManager(ServiceStubManager serviceStubManager) {
+        this.serviceStubManager = serviceStubManager;
+        if(this.serviceStubManager.getService() != null)
+            fromService = this.serviceStubManager.getService();
     }
 }

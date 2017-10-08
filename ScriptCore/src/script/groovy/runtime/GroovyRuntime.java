@@ -510,7 +510,7 @@ public class GroovyRuntime extends ScriptRuntime{
 			if(importPath.isFile() && importPath.exists()) {
 				LoggerEx.info(TAG, "Start imports " + importPath.getAbsolutePath());
 				final CommandLine cmdLine = CommandLine.parse("groovy " + importPath.getAbsolutePath());
-				ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(5));//设置超时时间
+				ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(15));//设置超时时间
 				DefaultExecutor executor = new DefaultExecutor();
                 baos = new ByteArrayOutputStream();
                 executor.setStreamHandler(new PumpStreamHandler(baos, baos));

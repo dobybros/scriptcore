@@ -35,6 +35,9 @@ public class ServiceStubManager {
     private Class<?> serviceStubProxyClass;
 
     private String service;
+    public ServiceStubManager() {
+    }
+
     public ServiceStubManager(String service) {
         this.service = service;
     }
@@ -159,9 +162,9 @@ public class ServiceStubManager {
                     scanClass(adapterClass, service);
                     if(serviceStubProxyClass != null) {
                         try {
-                            Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class, String.class);
+                            Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class, ServiceStubManager.class);
                             if(getProxyMethod != null) {
-                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service), adapterClass, this.service);
+                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service), adapterClass, this);
                             } else {
                                 LoggerEx.error(TAG, "getProxy method doesn't be found for " + adapterClass + " in service " + service);
                             }
@@ -190,7 +193,7 @@ public class ServiceStubManager {
                         try {
 //                        if(service == null)
 //                            throw new NullPointerException("Service for adapterClass " + key + " doesn't be found");
-                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service), this.service);
+                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service), this);
                             adapterService = (T) proxy.getProxy(adapterClass);
                         } catch (Throwable e) {
                             e.printStackTrace();
@@ -247,5 +250,13 @@ public class ServiceStubManager {
 
     public void setServiceStubProxyClass(Class<?> serviceStubProxyClass) {
         this.serviceStubProxyClass = serviceStubProxyClass;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
 }

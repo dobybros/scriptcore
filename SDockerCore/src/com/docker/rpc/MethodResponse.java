@@ -7,6 +7,7 @@ import chat.utils.GZipUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.docker.rpc.remote.MethodMapping;
+import com.docker.rpc.remote.stub.ServiceStubManager;
 import com.docker.script.MyBaseRuntime;
 import com.docker.script.ScriptManager;
 import com.docker.utils.SpringContextUtil;
@@ -58,13 +59,20 @@ public class MethodResponse extends RPCResponse {
 						if(crc == null || crc == 0 || crc == -1)
 							throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_CRC_ILLEGAL, "CRC is illegal for MethodRequest");
 
-						MethodRequest methodRequest = (MethodRequest) getRequest();
-						ScriptManager scriptManager = (ScriptManager) SpringContextUtil.getBean("scriptManager");
-						MyBaseRuntime baseRuntime = (MyBaseRuntime) scriptManager.getBaseRuntime(methodRequest.getFromService());
-						if(baseRuntime == null)
-							throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_SERVICE_NOTFOUND, "Service " + methodRequest.getFromService() + " not found for crc " + crc);
+						ServiceStubManager serviceStubManager = null;
+						MethodRequest methodRequest = (MethodRequest) request;
+						if(request != null) {
+							serviceStubManager = methodRequest.getServiceStubManager();
+						}
+						if(serviceStubManager == null) {
+							ScriptManager scriptManager = (ScriptManager) SpringContextUtil.getBean("scriptManager");
+							MyBaseRuntime baseRuntime = (MyBaseRuntime) scriptManager.getBaseRuntime(methodRequest.getFromService());
+							if(baseRuntime == null)
+								throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_SERVICE_NOTFOUND, "Service " + methodRequest.getFromService() + " not found for crc " + crc);
+							serviceStubManager = baseRuntime.getServiceStubManager();
+						}
 
-						MethodMapping methodMapping = baseRuntime.getServiceStubManager().getMethodMapping(crc);
+						MethodMapping methodMapping = serviceStubManager.getMethodMapping(crc);
 						if(methodMapping == null)
 							throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
 

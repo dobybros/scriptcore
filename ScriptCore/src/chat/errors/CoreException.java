@@ -9,6 +9,7 @@ public class CoreException extends Exception {
 	private static final long serialVersionUID = -3101325177490138661L;
 	private List<CoreException> moreExceptions;
 	private HashMap<String, Object> infoMap;
+	private Object data;
 
 	public CoreException() {}
 
@@ -20,6 +21,12 @@ public class CoreException extends Exception {
 		this(code, message);
 		this.parameters = parameters;
 	}
+
+	public CoreException(int code, Object data, String message) {
+		this(code, message);
+		this.data = data;
+	}
+
 	public CoreException(int code, String message) {
 		super(message);
 		this.code = code;
@@ -78,5 +85,13 @@ public class CoreException extends Exception {
 		if(infoMap == null)
 			return null;
 		return infoMap.get(key);
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
 	}
 }

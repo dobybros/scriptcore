@@ -2,7 +2,7 @@ package com.docker.rpc;
 
 
 public abstract class RPCResponse extends RPCBase {
-	private RPCRequest request;
+	protected RPCRequest request;
 
 	public RPCResponse(String type) {
 		super(type);
