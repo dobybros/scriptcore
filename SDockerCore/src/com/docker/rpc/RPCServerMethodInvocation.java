@@ -39,8 +39,7 @@ public class RPCServerMethodInvocation implements RPCServerAdapter<MethodRequest
             throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
 //        if(methodMapping == null)
 //            throw new CoreException(CoreErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
-        Object[] args = request.getArgs();
-        MethodResponse response = methodMapping.invoke(request.getCrc(), args);
+        MethodResponse response = methodMapping.invoke(request);
         LoggerEx.info(TAG, "Successfully call Method " + methodMapping.getMethod().getName() + "#" + methodMapping.getRemoteService().getGroovyClass().getSimpleName() + " crc " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException());
         return response;
     }

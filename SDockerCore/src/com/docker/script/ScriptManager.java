@@ -147,8 +147,8 @@ public class ScriptManager {
 										scriptRuntimeMap.put(service, runtime);
 									}
 
-									runtime.redeploy();
 									runtime.setVersion(file.getLastModificationTime());
+									runtime.redeploy();
 								}
 							}
 						}

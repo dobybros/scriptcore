@@ -14,9 +14,10 @@ import java.lang.reflect.Method;
 public class Proxy  {
     private static final String TAG = Proxy.class.getSimpleName();
     protected RemoteServiceDiscovery remoteServiceDiscovery;
-
-    public Proxy(RemoteServiceDiscovery remoteServiceDiscovery) {
+    private ServiceStubManager serviceStubManager;
+    public Proxy(RemoteServiceDiscovery remoteServiceDiscovery, ServiceStubManager serviceStubManager) {
         this.remoteServiceDiscovery = remoteServiceDiscovery;
+        this.serviceStubManager = serviceStubManager;
     }
 
     public Object invoke(Long crc, Object[] args) throws Throwable {
@@ -28,6 +29,7 @@ public class Proxy  {
 
         request.setCrc(crc);
         request.setService(remoteServiceDiscovery.getService());
+        request.setServiceStubManager(serviceStubManager);
         RemoteServiceDiscovery.RemoteServers lanServers = remoteServiceDiscovery.getRemoteServers();
         if(lanServers == null)
             throw new CoreException(ChatErrorCodes.ERROR_LANSERVERS_NOSERVERS, "RemoteService " + remoteServiceDiscovery.getService() + " doesn't be found while invoke method " + crc);
