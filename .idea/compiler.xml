@@ -6,20 +6,28 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="AdminService" />
         <module name="DiscoveryService" />
-        <module name="IMUserService" />
         <module name="MyScripts" />
         <module name="PKRoomService" />
+        <module name="PKRoomService (1)" />
+        <module name="PKShopService" />
         <module name="PKUserService" />
+        <module name="PKUserService (1)" />
         <module name="PKWalletService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="AdminService" target="1.8" />
+      <module name="APNService" target="1.8" />
       <module name="DiscoveryService" target="1.8" />
       <module name="IMUserService" target="1.8" />
       <module name="MyScripts" target="1.8" />
       <module name="PKRoomService" target="1.8" />
+      <module name="PKRoomService (1)" target="1.5" />
+      <module name="PKShopService" target="1.8" />
       <module name="PKUserService" target="1.8" />
+      <module name="PKUserService (1)" target="1.5" />
       <module name="PKWalletService" target="1.8" />
     </bytecodeTargetLevel>
   </component>

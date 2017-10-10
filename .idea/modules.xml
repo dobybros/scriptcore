@@ -2,14 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../PKAdminService/AdminService.iml" filepath="$PROJECT_DIR$/../PKAdminService/AdminService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" filepath="$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Projects/ContentDistribution/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/Projects/ContentDistribution/Distribution/Distribution.iml" />
-      <module fileurl="file://$USER_HOME$/Desktop/temp/sdocker/sdocker/services/IMUserService/IMUserService.iml" filepath="$USER_HOME$/Desktop/temp/sdocker/sdocker/services/IMUserService/IMUserService.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDocker/JDocker.iml" filepath="$PROJECT_DIR$/JDocker/JDocker.iml" />
       <module fileurl="file://$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" filepath="$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" />
       <module fileurl="file://$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" filepath="$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/../DiscoveryService/MyScripts.iml" filepath="$PROJECT_DIR$/../DiscoveryService/MyScripts.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKRoomService/PKRoomService.iml" filepath="$PROJECT_DIR$/../PKRoomService/PKRoomService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PKShopService/PKShopService.iml" filepath="$PROJECT_DIR$/../PKShopService/PKShopService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKUserService/PKUserService.iml" filepath="$PROJECT_DIR$/../PKUserService/PKUserService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKWalletService/PKWalletService.iml" filepath="$PROJECT_DIR$/../PKWalletService/PKWalletService.iml" />
       <module fileurl="file://$PROJECT_DIR$/SDocker/SDocker.iml" filepath="$PROJECT_DIR$/SDocker/SDocker.iml" />

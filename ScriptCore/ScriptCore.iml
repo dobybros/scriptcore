@@ -64,7 +64,7 @@
     <libelement value="jar://$MODULE_DIR$/libs/spring-test-4.0.5.RELEASE.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/spring-web-4.0.5.RELEASE.jar!/" />
     <libelement value="jar://$MODULE_DIR$/libs/spring-webmvc-4.0.5.RELEASE.jar!/" />
-    <libelement value="jar://$MODULE_DIR$/libs/groovy-all-2.4.8.jar!/" />
+    <libelement value="file://libs/groovy-all-2.4.8.jar" />
     <src_description expected_position="0">
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
       <src_folder value="file://$MODULE_DIR$/test" expected_position="1" />
@@ -79,7 +79,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
