@@ -37,7 +37,6 @@ public class OnlineServer {
     @Resource
     private IPHolder ipHolder;
 
-    @Resource
     private DockerStatusService dockerStatusService;
 
     private static OnlineServer instance;
@@ -271,4 +270,11 @@ public class OnlineServer {
         this.status = status;
     }
 
+    public DockerStatusService getDockerStatusService() {
+        return dockerStatusService;
+    }
+
+    public void setDockerStatusService(DockerStatusService dockerStatusService) {
+        this.dockerStatusService = dockerStatusService;
+    }
 }

@@ -33,7 +33,8 @@ public class DeployServiceUtils {
 //			.addOption("a",true, "async servlet map")
                 .addOption("d",true, "Docker name")
                 .addOption("s",true, "Service name")
-                .addOption("f",true, "Mongodb GridFS host, or other dfs host");
+                .addOption("f",true, "Mongodb GridFS host, or other dfs host")
+                .addOption("v",true, "Version");
 
         org.apache.commons.cli.CommandLine line = parser.parse(opt, args);
         System.out.println("commandLine " + Arrays.toString(args));
@@ -47,6 +48,7 @@ public class DeployServiceUtils {
         String dockerName = null;
         String serviceName = null;
         String gridfsHost = null;
+        String versionStr = null;
 
         if(line.hasOption('p')){
             servicePath = line.getOptionValue('p');
@@ -76,11 +78,23 @@ public class DeployServiceUtils {
             hf.printHelp("DeployServiceUtils[options:]", opt, false);
             return;
         }
+        int version = 1;
+        if(line.hasOption('v')){
+            versionStr = line.getOptionValue('v');
+            try {
+                version = Integer.valueOf(versionStr);
+            } catch(Exception e) {}
+        }else {
+            HelpFormatter hf = new HelpFormatter();
+            hf.printHelp("DeployServiceUtils[options:]", opt, false);
+            return;
+        }
 
-        deploy(servicePath, dockerName, serviceName, gridfsHost);
+        deploy(servicePath, dockerName, serviceName, gridfsHost, version);
     }
-    public static void deploy(String servicePath, String dockerName, String serviceName, String gridfsHost) throws Exception {
-        final CommandLine cmdLine = CommandLine.parse("sh " + servicePath + "/build/build.sh " + dockerName + " " + serviceName);
+
+    public static void deploy(String servicePath, String dockerName, String serviceName, String gridfsHost, int version) throws Exception {
+        final CommandLine cmdLine = CommandLine.parse("sh " + servicePath + "/build/build.sh " + dockerName + " " + serviceName + "_v" + version);
         ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(5));//设置超时时间
         DefaultExecutor executor = new DefaultExecutor();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

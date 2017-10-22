@@ -28,6 +28,9 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	private String service;
 
+	private String serviceName;
+	private Integer serviceVersion;
+
 	private Properties config;
 
 	public void prepare(String service, Properties properties, String rootPath) {
@@ -159,5 +162,21 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	public void setConfig(Properties config) {
 		this.config = config;
+	}
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
+	public Integer getServiceVersion() {
+		return serviceVersion;
+	}
+
+	public void setServiceVersion(Integer serviceVersion) {
+		this.serviceVersion = serviceVersion;
 	}
 }

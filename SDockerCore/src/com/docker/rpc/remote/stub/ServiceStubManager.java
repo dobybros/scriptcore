@@ -4,13 +4,10 @@ import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
 import com.docker.rpc.RPCClientAdapterMap;
 import com.docker.rpc.remote.MethodMapping;
-import groovy.lang.GroovyObject;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceStubManager {
@@ -34,12 +31,15 @@ public class ServiceStubManager {
     private boolean inited = false;
     private Class<?> serviceStubProxyClass;
 
-    private String service;
+    /**
+     *
+     */
+    private String fromService;
     public ServiceStubManager() {
     }
 
-    public ServiceStubManager(String service) {
-        this.service = service;
+    public ServiceStubManager(String fromService) {
+        this.fromService = fromService;
     }
 
     public void clearCache() {
@@ -108,11 +108,14 @@ public class ServiceStubManager {
         inited = true;
     }
 
-    private RemoteServiceDiscovery getRemoteServiceDiscovery(String service) {
-        RemoteServiceDiscovery remoteServiceDiscovery = discoveryMap.get(service);
+    private RemoteServiceDiscovery getRemoteServiceDiscovery(String service, Integer version) {
+        String serviceName = service;
+        final String theService = serviceName + "_v" + version;
+
+        RemoteServiceDiscovery remoteServiceDiscovery = discoveryMap.get(theService);
         if(remoteServiceDiscovery == null) {
             synchronized (discoveryMap) {
-                remoteServiceDiscovery = discoveryMap.get(service);
+                remoteServiceDiscovery = discoveryMap.get(theService);
                 if(remoteServiceDiscovery == null) {
                     remoteServiceDiscovery = new RemoteServiceDiscovery();
                     remoteServiceDiscovery.setHost(host);
@@ -123,16 +126,35 @@ public class ServiceStubManager {
                         clientAdapterMap.setRpcSslJksPwd(jksPwd);
                         clientAdapterMap.setRpcSslServerJksPath(serverJksPath);
                     }
-                    remoteServiceDiscovery.setService(service);
+                    remoteServiceDiscovery.setService(theService);
+                    remoteServiceDiscovery.setServiceName(serviceName);
+                    remoteServiceDiscovery.setVersion(version);
                     remoteServiceDiscovery.setRpcClientAdapterMap(clientAdapterMap);
                     remoteServiceDiscovery.setShutdownListener(new RemoteServiceDiscovery.ShutdownListener() {
                         @Override
                         public void shutdownNow() {
-                            discoveryMap.remove(service);
+                            synchronized (discoveryMap) {
+                                RemoteServiceDiscovery serviceDiscovery = discoveryMap.remove(theService);
+                                LoggerEx.info(TAG, "Remove service " + theService + " by shutdown, " + serviceDiscovery);
+                                Set<String> keys = remoteServiceMap.keySet();
+                                Set<String> deletedKeys = new HashSet<>();
+                                for(String key : keys) {
+                                    if(key.endsWith(theService)) {
+                                        deletedKeys.add(key);
+                                    }
+                                }
+                                LoggerEx.info(TAG, "Remove service " + Arrays.toString(deletedKeys.toArray()) + " from remoteServiceMap by shutdown");
+                                for(String deletedKey : deletedKeys) {
+                                    Object value = remoteServiceMap.remove(deletedKey);
+                                    LoggerEx.info(TAG, "Removed service " + deletedKey + " from remoteServiceMap by shutdown, " + value);
+                                }
+                            }
                         }
                     });
                     remoteServiceDiscovery.update();
                     new Thread(remoteServiceDiscovery).start();
+
+                    discoveryMap.put(theService, remoteServiceDiscovery);
                 }
             }
         }
@@ -150,21 +172,25 @@ public class ServiceStubManager {
     }
 
     public <T> T getService(String service, Class<T> adapterClass) {
+        return getService(service, adapterClass, 1);
+    }
+
+    public <T> T getService(String service, Class<T> adapterClass, Integer version) {
         if(!inited)
             throw new NullPointerException("ServiceSubManager hasn't been initialized yet, please call init method first.");
         if(service == null)
             throw new NullPointerException("Service can not be nulll");
-        String key = adapterClass.getSimpleName() + "#" + service;
+        String key = adapterClass.getSimpleName() + "#" + service + "_v" + version;
         T adapterService = (T) remoteServiceMap.get(key);
         if(adapterService == null) {
-            synchronized (adapterClass) {
+            synchronized (discoveryMap) {
                 if(adapterService == null) {
                     scanClass(adapterClass, service);
                     if(serviceStubProxyClass != null) {
                         try {
                             Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class, ServiceStubManager.class);
                             if(getProxyMethod != null) {
-                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service), adapterClass, this);
+                                adapterService = (T) getProxyMethod.invoke(null, getRemoteServiceDiscovery(service, version), adapterClass, this);
                             } else {
                                 LoggerEx.error(TAG, "getProxy method doesn't be found for " + adapterClass + " in service " + service);
                             }
@@ -193,7 +219,7 @@ public class ServiceStubManager {
                         try {
 //                        if(service == null)
 //                            throw new NullPointerException("Service for adapterClass " + key + " doesn't be found");
-                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service), this);
+                            RemoteProxy proxy = new RemoteProxy(getRemoteServiceDiscovery(service, version), this);
                             adapterService = (T) proxy.getProxy(adapterClass);
                         } catch (Throwable e) {
                             e.printStackTrace();
@@ -252,11 +278,11 @@ public class ServiceStubManager {
         this.serviceStubProxyClass = serviceStubProxyClass;
     }
 
-    public String getService() {
-        return service;
+    public String getFromService() {
+        return fromService;
     }
 
-    public void setService(String service) {
-        this.service = service;
+    public void setFromService(String fromService) {
+        this.fromService = fromService;
     }
 }

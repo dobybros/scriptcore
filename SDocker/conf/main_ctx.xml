@@ -23,6 +23,7 @@
 		<property name="internalKey" value="${internal.key}"/>
 		<property name="rpcPort" value="${rpc.port}" />
 		<property name="sslRpcPort" value="${rpc.sslport}" />
+		<property name="dockerStatusService" ref="dockerStatusService"/>
 		<property name="tasks">
 			<list>
 			</list>

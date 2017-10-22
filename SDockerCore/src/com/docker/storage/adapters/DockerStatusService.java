@@ -3,6 +3,7 @@ package com.docker.storage.adapters;
 import chat.errors.CoreException;
 
 import com.docker.data.DockerStatus;
+import com.docker.data.Service;
 
 
 /**
@@ -20,10 +21,10 @@ public interface DockerStatusService {
 	void addDockerStatus(DockerStatus serverStatus)
 			throws CoreException;
 
-	void addService(String server, String service)
+	void addService(String server, Service service)
 			throws CoreException;
 
-	void deleteService(String server, String service) throws CoreException;
+	void deleteService(String server, String service, Integer version) throws CoreException;
 
 	void update(String server, DockerStatus serverStatus)
 			throws CoreException;
