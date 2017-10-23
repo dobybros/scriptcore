@@ -14,7 +14,6 @@ import com.docker.script.ScriptManager;
 import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.IOUtils;
 
-import javax.xml.ws.Service;
 import java.io.*;
 import java.util.List;
 
@@ -249,7 +248,7 @@ public class MethodRequest extends RPCRequest {
 
     public void setServiceStubManager(ServiceStubManager serviceStubManager) {
         this.serviceStubManager = serviceStubManager;
-        if(this.serviceStubManager.getService() != null)
-            fromService = this.serviceStubManager.getService();
+        if(this.serviceStubManager.getFromService() != null)
+            fromService = this.serviceStubManager.getFromService();
     }
 }

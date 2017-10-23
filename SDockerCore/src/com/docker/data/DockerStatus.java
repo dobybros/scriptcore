@@ -2,6 +2,7 @@ package com.docker.data;
 
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +54,7 @@ public class DockerStatus extends DataObject{
 	 */
 	private String lanId;
 
-	private List<String> services;
+	private List<Service> services;
 
 	/**
 	 * 状态， OK是可以正常工作， Standby是服务器刚启动后的待命状态， 此时还不能提供服务器， 到OK状态之后开始服务。
@@ -142,11 +143,11 @@ public class DockerStatus extends DataObject{
         this.sslRpcPort = sslRpcPort;
     }
 
-	public List<String> getServices() {
+	public List<Service> getServices() {
 		return services;
 	}
 
-	public void setServices(List<String> services) {
+	public void setServices(List<Service> services) {
 		this.services = services;
 	}
 
@@ -163,7 +164,15 @@ public class DockerStatus extends DataObject{
 		lanId = dbObj.getString(FIELD_DOCKERSTATUS_LANID);
 		status = dbObj.getInteger(FIELD_DOCKERSTATUS_STATUS);
 		health = dbObj.getInteger(FIELD_DOCKERSTATUS_HEALTH);
-		services = (List<String>) dbObj.get(FIELD_DOCKERSTATUS_SERVICES);
+		List<Document> servicesList = (List<Document>) dbObj.get(FIELD_DOCKERSTATUS_SERVICES);
+		if(servicesList != null) {
+			services = new ArrayList<>();
+			for(Document serviceDoc : servicesList) {
+				Service service = new Service();
+				service.fromDocument(serviceDoc);
+				services.add(service);
+			}
+		}
 	}
 	
 	@Override
@@ -190,8 +199,14 @@ public class DockerStatus extends DataObject{
 			dbObj.put(FIELD_DOCKERSTATUS_STATUS, status);
 		if(health != null)
 			dbObj.put(FIELD_DOCKERSTATUS_HEALTH, health);
-		if(services != null)
-			dbObj.put(FIELD_DOCKERSTATUS_SERVICES, services);
+		if(services != null) {
+			List<Document> serviceList = new ArrayList<>();
+			for(Service service : services) {
+				Document serviceDoc = service.toDocument();
+				serviceList.add(serviceDoc);
+			}
+			dbObj.put(FIELD_DOCKERSTATUS_SERVICES, serviceList);
+		}
 		return dbObj;
 	}
 

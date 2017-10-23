@@ -14,7 +14,13 @@ public class ServerLifeCircleHandler extends ClassAnnotationHandler {
 	private static final String TAG = ServerLifeCircleHandler.class.getSimpleName();
 	private ConcurrentHashMap<String, GroovyObjectEx> handlerMap = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<String, Long> startedHandlerMap = new ConcurrentHashMap<>();
-		
+
+	@Override
+	public void hanlderShutdown() {
+		handlerMap.clear();
+		startedHandlerMap.clear();
+	}
+
 	public ServerLifeCircleHandler() {
 	}
 	

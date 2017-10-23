@@ -251,6 +251,7 @@ public class RMIClientHandler extends RPCClientAdapter {
             touch();
             clientMonitorThread = new ClientMonitorThread(startConnected);
             clientMonitorThread.start();
+            resetSslProp();
         }
     }
 
@@ -264,7 +265,13 @@ public class RMIClientHandler extends RPCClientAdapter {
         System.setProperty("javax.net.ssl.keyStore", rpcSslServerJksPath);
         System.setProperty("javax.net.ssl.keyStorePassword", rpcSslJksPwd);
     }
-
+    private void resetSslProp() {
+        System.getProperties().remove("javax.net.ssl.debug");
+        System.getProperties().remove("javax.net.ssl.trustStore");
+        System.getProperties().remove("javax.net.ssl.trustStorePassword");
+        System.getProperties().remove("javax.net.ssl.keyStore");
+        System.getProperties().remove("javax.net.ssl.keyStorePassword");
+    }
 
     @Override
     public synchronized void clientDestroy() {

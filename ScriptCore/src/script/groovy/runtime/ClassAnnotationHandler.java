@@ -22,4 +22,6 @@ public abstract class ClassAnnotationHandler {
 	public Object getKey() {
 		return this.getClass();
 	}
+
+	public void hanlderShutdown() {}
 }

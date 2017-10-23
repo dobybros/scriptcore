@@ -47,6 +47,9 @@ public class GroovyServletDispatcher extends HttpServlet {
 			if(matchStr != null) {
 				GroovyServletManagerEx servletManagerEx = groovyServletMap.get(matchStr);
 				if(servletManagerEx != null) {
+					int index = matchStr.lastIndexOf("_v");
+					if(index > 0)
+						uriStrs[1] = matchStr.substring(0, index);
 					holder = servletManagerEx.parseUri(request, response, uriStrs);
 				}
 			}

@@ -19,10 +19,11 @@ public class MongoDatabaseAnnotationHolder extends ClassAnnotationHandler {
 	public MongoDatabaseAnnotationHolder() {
 //		instance = this;
 	}
-	
-//	public static MongoDatabaseAnnotationHolder getInstance() {
-//		return instance;
-//	}
+
+	@Override
+	public void hanlderShutdown() {
+		dbClassMap.clear();
+	}
 	
 	public void init() {
 	}

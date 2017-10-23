@@ -31,7 +31,12 @@ public class SolrDocumentHandler extends ClassAnnotationHandler {
 	public static SolrDocumentHandler getInstance() {
 		return instance;
 	}
-	
+
+	@Override
+	public void hanlderShutdown() {
+		documentMap.clear();
+	}
+
 	public void init() {
 	}
 	

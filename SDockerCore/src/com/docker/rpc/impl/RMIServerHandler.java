@@ -88,6 +88,8 @@ public class RMIServerHandler {
             LoggerEx.fatal(TAG, "RMIClientHandler server start failed. Server will be shutdown... " + t.getMessage());
             OnlineServer.shutdownNow();
             System.exit(0);
+        } finally {
+            resetSslProp();
         }
     }
 
@@ -100,6 +102,14 @@ public class RMIServerHandler {
 //        System.setProperty("javax.net.ssl.keyStore", "/Users/liyazhou/workspace/tcpssl/certificate/server.jks");
         System.setProperty("javax.net.ssl.keyStore", rpcSslServerJksPath);
         System.setProperty("javax.net.ssl.keyStorePassword", rpcSslJksPwd);
+    }
+
+    private void resetSslProp() {
+        System.getProperties().remove("javax.net.ssl.debug");
+        System.getProperties().remove("javax.net.ssl.trustStore");
+        System.getProperties().remove("javax.net.ssl.trustStorePassword");
+        System.getProperties().remove("javax.net.ssl.keyStore");
+        System.getProperties().remove("javax.net.ssl.keyStorePassword");
     }
 
     public synchronized void serverDestroy() {

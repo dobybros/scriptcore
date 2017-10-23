@@ -36,7 +36,7 @@ public class RemoteProxy extends Proxy implements MethodInterceptor {
         if(method.getDeclaringClass().equals(Object.class)) {
             return method.invoke(obj, args);
         }
-        Long crc = ReflectionUtil.getCrc(method, remoteServiceDiscovery.getService());
+        Long crc = ReflectionUtil.getCrc(method, remoteServiceDiscovery.getServiceName());
         return invoke(crc, args);
     }
 }

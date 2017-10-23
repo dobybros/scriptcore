@@ -10,7 +10,8 @@
         <option value="$PROJECT_DIR$/../PKUserService/pom.xml" />
         <option value="$PROJECT_DIR$/../PKRoomService/pom.xml" />
         <option value="$PROJECT_DIR$/../PKWalletService/pom.xml" />
-        <option value="$USER_HOME$/Desktop/temp/sdocker/sdocker/services/IMUserService/pom.xml" />
+        <option value="$PROJECT_DIR$/../PKShopService/pom.xml" />
+        <option value="$PROJECT_DIR$/../PKAdminService/pom.xml" />
       </list>
     </option>
   </component>

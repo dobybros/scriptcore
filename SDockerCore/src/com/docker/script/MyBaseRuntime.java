@@ -20,7 +20,7 @@ public class MyBaseRuntime extends BaseRuntime {
 	public void prepare(String service, Properties properties, String localScriptPath) {
 		super.prepare(service, properties, localScriptPath);
 		ServiceSkeletonAnnotationHandler serviceSkeletonAnnotationHandler = new ServiceSkeletonAnnotationHandler();
-		serviceSkeletonAnnotationHandler.setService(service);
+		serviceSkeletonAnnotationHandler.setService(getServiceName());
 		addClassAnnotationHandler(serviceSkeletonAnnotationHandler);
 
 		remoteServiceHost = properties.getProperty("remote.service.host");
@@ -38,6 +38,7 @@ public class MyBaseRuntime extends BaseRuntime {
 					"class ServiceStubProxy extends com.docker.rpc.remote.stub.Proxy implements GroovyInterceptable{\n" +
 					"    private Class<?> remoteServiceStub;\n" +
 					"    ServiceStubProxy() {\n" +
+
 					"        super(null, null);\n" +
 					"    }\n" +
 					"    ServiceStubProxy(com.docker.rpc.remote.stub.RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub, com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager) {\n" +
@@ -45,7 +46,7 @@ public class MyBaseRuntime extends BaseRuntime {
 					"        this.remoteServiceStub = remoteServiceStub;\n" +
 					"    }\n" +
 					"    def methodMissing(String methodName,methodArgs) {\n" +
-					"        Long crc = chat.utils.ReflectionUtil.getCrc(remoteServiceStub, methodName, remoteServiceDiscovery.getService());\n" +
+					"        Long crc = chat.utils.ReflectionUtil.getCrc(remoteServiceStub, methodName, remoteServiceDiscovery.getServiceName());\n" +
 					"        return invoke(crc, methodArgs);\n" +
 					"    }\n" +
 					"    public static def getProxy(com.docker.rpc.remote.stub.RemoteServiceDiscovery remoteServiceDiscovery, Class<?> remoteServiceStub, com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager) {\n" +

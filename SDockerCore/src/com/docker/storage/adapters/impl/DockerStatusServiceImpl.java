@@ -2,6 +2,7 @@ package com.docker.storage.adapters.impl;
 
 import com.docker.data.DataObject;
 import com.docker.data.DockerStatus;
+import com.docker.data.Service;
 import com.docker.storage.DBException;
 import com.docker.utils.SpringContextUtil;
 import com.mongodb.client.model.Filters;
@@ -17,10 +18,12 @@ import com.mongodb.client.result.DeleteResult;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.mongodb.daos.DockerStatusDAO;
 
+import javax.annotation.Resource;
+
 public class DockerStatusServiceImpl implements DockerStatusService {
 	private static final String TAG = DockerStatusServiceImpl.class.getSimpleName();
-	private DockerStatusDAO dockerStatusDAO = (DockerStatusDAO) SpringContextUtil.getBean("dockerStatusDAO");
-
+	@Resource
+	private DockerStatusDAO dockerStatusDAO;
 	@Override
 	public void deleteDockerStatus(String server) throws CoreException {
 		try {
@@ -51,19 +54,19 @@ public class DockerStatusServiceImpl implements DockerStatusService {
 	}
 
 	@Override
-	public void addService(String server, String service)
+	public void addService(String server, Service service)
 			throws CoreException {
 		try {
-			dockerStatusDAO.updateOne(Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server), Updates.addToSet(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, service), false);
+			dockerStatusDAO.updateOne(Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server), Updates.addToSet(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, service.toDocument()), false);
 		} catch (DBException e) {
 			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_UPDATE_FAILED, "Add service " + service + " to server " + server + " failed, " + e.getMessage());
 		}
 	}
 
 	@Override
-	public void deleteService(String server, String service) throws CoreException {
+	public void deleteService(String server, String service, Integer version) throws CoreException {
 		try {
-			dockerStatusDAO.updateOne(Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server), Updates.pull(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, service), false);
+			dockerStatusDAO.updateOne(Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server), new Document().append("$pull", new Document().append(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, new Document().append(Service.FIELD_SERVICE_SERVICE, service).append(Service.FIELD_SERVICE_VERSION, version))), false);
 		} catch (DBException e) {
 			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_UPDATE_FAILED, "Delete service " + service + " to server " + server + " failed, " + e.getMessage());
 		}

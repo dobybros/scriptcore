@@ -28,6 +28,9 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	private String service;
 
+	private String serviceName;
+	private Integer serviceVersion;
+
 	private Properties config;
 
 	public void prepare(String service, Properties properties, String rootPath) {
@@ -98,24 +101,26 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	@Override
     public void close() {
-	    super.close();
-	    if(service != null)
-	        GroovyServletDispatcher.removeGroovyServletManagerEx(service.toLowerCase());
-	    try {
+	    if(service != null) {
+			GroovyServletDispatcher.removeGroovyServletManagerEx(service.toLowerCase());
+		}
+		try {
 			if(mongoDBHandler != null) {
 				MongoClientHelper helper = mongoDBHandler.getMongoClientHelper();
-				if(helper != null)
+				if(helper != null) {
 					helper.disconnect();
+				}
 			}
 		} catch(Throwable t) {
 		}
-	    try {
+		try {
 			if(redisHandler != null) {
 				redisHandler.disconnect();
 			}
 		} catch(Throwable t) {
 		}
-    }
+		super.close();
+	}
 
 	public MongoDBHandler getMongoDBHandler() {
 		return mongoDBHandler;
@@ -159,5 +164,21 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	public void setConfig(Properties config) {
 		this.config = config;
+	}
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
+	public Integer getServiceVersion() {
+		return serviceVersion;
+	}
+
+	public void setServiceVersion(Integer serviceVersion) {
+		this.serviceVersion = serviceVersion;
 	}
 }

@@ -4,6 +4,7 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.TimerEx;
 import chat.utils.TimerTaskEx;
+import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
@@ -34,7 +35,9 @@ public class ScriptManager {
 	private String remotePath;
 	private String localPath;
 	private ConcurrentHashMap<String, BaseRuntime> scriptRuntimeMap = new ConcurrentHashMap<>();
-	
+
+	private Class<?> baseRuntimeClass;
+
 	public void init() {
 //		dslFileAdapter.getFilesInDirectory(arg0)
 		TimerEx.schedule(new TimerTaskEx() {
@@ -42,7 +45,7 @@ public class ScriptManager {
 			public void execute() {
 				reload();
 			}
-		}, 0, TimeUnit.SECONDS.toMillis(10));//30
+		}, 5000, TimeUnit.SECONDS.toMillis(10));//30
 	}
 	
 	public BaseRuntime getBaseRuntime(String service) {
@@ -57,7 +60,43 @@ public class ScriptManager {
 	public Set<Map.Entry<String, BaseRuntime>> getBaseRunTimes() {
 		return scriptRuntimeMap.entrySet();
 	}
-	
+
+	private String getServiceName(String service) {
+		Integer version = null;
+		String versionSeperator = "_v";
+		int lastIndex = service.lastIndexOf(versionSeperator);
+		if(lastIndex > 0) {
+			String curVerStr = service.substring(lastIndex + versionSeperator.length());
+			if(curVerStr != null) {
+				try {
+					version = Integer.parseInt(curVerStr);
+				} catch (Exception e) {}
+			}
+			if(version != null) {
+				String serviceName = service.substring(0, lastIndex);
+				return serviceName;
+			}
+		}
+		return service;
+	}
+
+	private Integer getServiceVersion(String service) {
+		Integer version = null;
+		String versionSeperator = "_v";
+		int lastIndex = service.lastIndexOf(versionSeperator);
+		if(lastIndex > 0) {
+			String curVerStr = service.substring(lastIndex + versionSeperator.length());
+			if(curVerStr != null) {
+				try {
+					version = Integer.parseInt(curVerStr);
+				} catch (Exception e) {}
+			}
+		}
+		if(version == null)
+			version = 1;
+		return version;
+	}
+
 	private void reload() {
 		try {
 			Collection<FileEntity> files = fileAdapter.getFilesInDirectory(new PathEx(remotePath), new String[]{"zip"}, true);
@@ -101,7 +140,11 @@ public class ScriptManager {
 									language = zipFile.substring(0, zipFile.length() - ".zip".length()).toLowerCase();
 									switch(language) {
 									case "groovy":
-										runtime = new MyBaseRuntime();
+										if(baseRuntimeClass != null) {
+											runtime = (BaseRuntime) baseRuntimeClass.newInstance();
+										} else {
+											runtime = new MyBaseRuntime();
+										}
 //										switch(serverType) {
 //											case "gateway":
 //												runtime = new GatewayGroovyRuntime();
@@ -119,8 +162,6 @@ public class ScriptManager {
 										localScriptPath = localPath + serverTypePath + service + "/" + language;
 										runtime.setPath(localScriptPath + "/");
 									}
-									if(dockerStatusService != null)
-										dockerStatusService.addService(OnlineServer.getInstance().getServer(), service);
 								}
 								
 								if(runtime != null && needRedeploy) {
@@ -142,7 +183,31 @@ public class ScriptManager {
 											properties = new Properties();
 											properties.load(FileUtils.openInputStream(propertiesFile));
 										}
+
+										String minVersionStr = properties != null ? properties.getProperty("service.minversion") : null;
+										Integer minVersion = null;
+										if(minVersionStr != null) {
+											try {
+												minVersion = Integer.parseInt(minVersionStr);
+											} catch (Exception e) {}
+										}
+										if(minVersion == null) {
+											minVersion = 0;
+										}
+										Integer version = getServiceVersion(service);
+										String serviceName = getServiceName(service);
+
+										runtime.setServiceName(serviceName);
+										runtime.setServiceVersion(version);
 										runtime.prepare(service, properties, localScriptPath);
+
+										Service theService = new Service();
+										theService.setService(serviceName);
+										theService.setMinVersion(minVersion);
+										theService.setVersion(version);
+
+										if(dockerStatusService != null)
+											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
 
 										scriptRuntimeMap.put(service, runtime);
 									}
@@ -170,8 +235,11 @@ public class ScriptManager {
                                 t.printStackTrace();
                             } finally {
                                 try {
-                                	if(dockerStatusService != null)
-                                    	dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), key);
+                                	if(dockerStatusService != null) {
+										String serviceName = getServiceName(key);
+										Integer version = getServiceVersion(key);
+										dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), serviceName, version);
+									}
                                 } catch (CoreException e) {
                                     e.printStackTrace();
                                     LoggerEx.error(TAG, "Delete service " + key + " from docker " + OnlineServer.getInstance().getServer() + " failed, " + e.getMessage());
@@ -246,5 +314,13 @@ public class ScriptManager {
 
 	public void setDockerStatusService(DockerStatusService dockerStatusService) {
 		this.dockerStatusService = dockerStatusService;
+	}
+
+	public Class<?> getBaseRuntimeClass() {
+		return baseRuntimeClass;
+	}
+
+	public void setBaseRuntimeClass(Class<?> baseRuntimeClass) {
+		this.baseRuntimeClass = baseRuntimeClass;
 	}
 }

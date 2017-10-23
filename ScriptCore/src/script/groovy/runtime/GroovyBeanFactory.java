@@ -18,12 +18,12 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 
 	private ConcurrentHashMap<String, GroovyObjectEx> beanMap = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<String, Class<?>> proxyClassMap = new ConcurrentHashMap<>();
-	
-//	private static GroovyBeanFactory instance;
 
-//	public static GroovyBeanFactory getInstance() {
-//		return instance;
-//	}
+	@Override
+	public void hanlderShutdown() {
+		beanMap.clear();
+		proxyClassMap.clear();
+	}
 
 	public GroovyBeanFactory() {
 //		instance = this;

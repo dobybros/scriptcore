@@ -51,6 +51,9 @@ public class RemoteServiceDiscovery implements Runnable {
 
 	private String service;
 
+	private String serviceName;
+	private Integer version;
+
 	private long touch;
 
 	private long expireShutdownTime = TimeUnit.MINUTES.toMillis(15);
@@ -129,7 +132,9 @@ public class RemoteServiceDiscovery implements Runnable {
                 remoteServers = new RemoteServers();
             }
 
-            ServersResult result = (ServersResult) post("http://" + host + "/rest/discovery/service/" + service, ServersResult.class);
+            if(version == null)
+                version = 1;
+            ServersResult result = (ServersResult) post("http://" + host + "/rest/discovery/service/" + serviceName + "/version/" + version, ServersResult.class);
             if(result != null) {
                 List<Server> theServers = result.getData();
                 if(theServers != null) {
@@ -159,8 +164,9 @@ public class RemoteServiceDiscovery implements Runnable {
                             server.setLanId(serverElement.getLanId());
                             server.setRpcPort(serverElement.getRpcPort());
                             server.setSslRpcPort(serverElement.getSslRpcPort());
-                            server.setStatus(serverElement.getStatus());
                             server.setPublicDomain(serverElement.getPublicDomain());
+                            server.setVersion(serverElement.getVersion());
+                            server.setMinVersion(serverElement.getMinVersion());
                         }
 //                                server.setServer(serverObj.getString("server"));
                     }
@@ -168,10 +174,11 @@ public class RemoteServiceDiscovery implements Runnable {
                     for (String key : keys) {
                         if(!activeServers.contains(key)) {
                             Server deletedServer = servers.remove(key);
-                            RPCClientAdapter clientAdapter = rpcClientAdapterMap.getClientAdapter(key);
-                            if(clientAdapter != null) {
-                                clientAdapter.clientDestroy();
-                            }
+                            rpcClientAdapterMap.unregisterServer(key);
+//                            RPCClientAdapter clientAdapter = rpcClientAdapterMap.getClientAdapter(key);
+//                            if(clientAdapter != null) {
+//                                clientAdapter.clientDestroy();
+//                            }
                             LoggerEx.info(TAG, "Server " + deletedServer + " is offline");
                         }
                     }
@@ -311,6 +318,7 @@ public class RemoteServiceDiscovery implements Runnable {
                     } else {
                         port = server.getRpcPort();
                     }
+                    request.setService(serviceName + "_v" + server.version);
                     if(ip != null && port != null) {
                         RPCClientAdapter clientAdapter = rpcClientAdapterMap.registerServer(ip, port, server.getServer());
                         MethodResponse response = (MethodResponse) clientAdapter.call(request);
@@ -374,14 +382,8 @@ public class RemoteServiceDiscovery implements Runnable {
          */
         private String lanId;
 
-        /**
-         * 状态， OK是可以正常工作， Standby是服务器刚启动后的待命状态， 此时还不能提供服务器， 到OK状态之后开始服务。
-         */
-        private Integer status;
-        public static final int STATUS_OK = 1;
-        public static final int STATUS_PREPARING = 50;
-        public static final int STATUS_STANDBY = 100;
-        public static final int STATUS_DELETED = 200;
+        private Integer version;
+        private Integer minVersion;
 
         /**
          * 一台服务器的健康值， 0分是最健康的， 100分是最不健康的。 100分封顶。
@@ -392,6 +394,38 @@ public class RemoteServiceDiscovery implements Runnable {
         public static final int HEALTH_MAX = 100;
 
         private int score = 100;
+
+        public static class Service {
+            private String service;
+            private Integer version;
+            private Integer minVersion;
+
+            public String getService() {
+                return service;
+            }
+
+            public void setService(String service) {
+                this.service = service;
+            }
+
+            public Integer getVersion() {
+                return version;
+            }
+
+            public void setVersion(Integer version) {
+                this.version = version;
+            }
+
+            public Integer getMinVersion() {
+                return minVersion;
+            }
+
+            public void setMinVersion(Integer minVersion) {
+                this.minVersion = minVersion;
+            }
+        }
+
+        private List<Service> services;
 
         public int getScore() {
             return score;
@@ -457,20 +491,36 @@ public class RemoteServiceDiscovery implements Runnable {
             this.lanId = lanId;
         }
 
-        public Integer getStatus() {
-            return status;
-        }
-
-        public void setStatus(Integer status) {
-            this.status = status;
-        }
-
         public Integer getHealth() {
             return health;
         }
 
         public void setHealth(Integer health) {
             this.health = health;
+        }
+
+        public List<Service> getServices() {
+            return services;
+        }
+
+        public void setServices(List<Service> services) {
+            this.services = services;
+        }
+
+        public Integer getVersion() {
+            return version;
+        }
+
+        public void setVersion(Integer version) {
+            this.version = version;
+        }
+
+        public Integer getMinVersion() {
+            return minVersion;
+        }
+
+        public void setMinVersion(Integer minVersion) {
+            this.minVersion = minVersion;
         }
     }
 
@@ -566,5 +616,20 @@ public class RemoteServiceDiscovery implements Runnable {
 
     public void setUsePublicDomain(Boolean usePublicDomain) {
         this.usePublicDomain = usePublicDomain;
+    }
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 }

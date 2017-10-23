@@ -28,7 +28,6 @@ public class Proxy  {
         //TODO should consider how to optimize get CRC too often.
 
         request.setCrc(crc);
-        request.setService(remoteServiceDiscovery.getService());
         request.setServiceStubManager(serviceStubManager);
         RemoteServiceDiscovery.RemoteServers lanServers = remoteServiceDiscovery.getRemoteServers();
         if(lanServers == null)
