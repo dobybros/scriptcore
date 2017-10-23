@@ -1,27 +1,23 @@
 package com.docker.server;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
-import com.docker.data.DockerStatus;
-import com.docker.errors.CoreErrorCodes;
-import com.docker.storage.adapters.DockerStatusService;
-import com.docker.tasks.Task;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.main.ServerStart;
 import chat.utils.ChatUtils;
 import chat.utils.IPHolder;
+import com.docker.data.DockerStatus;
+import com.docker.errors.CoreErrorCodes;
+import com.docker.storage.adapters.DockerStatusService;
+import com.docker.tasks.Task;
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
 
 
 public class OnlineServer {
@@ -69,6 +65,31 @@ public class OnlineServer {
     public void prepare() {
     }
 
+    protected DockerStatus generateDockerStatus(Integer port) {
+        DockerStatus dockerStatus = new DockerStatus();
+        dockerStatus.setServer(server);
+        dockerStatus.setIp(ipHolder.getIp());
+        if (rpcPort != null) {
+            try {
+                dockerStatus.setRpcPort(Integer.parseInt(rpcPort));
+            } catch (Throwable t) {
+            }
+        }
+        if (sslRpcPort != null) {
+            try {
+                dockerStatus.setSslRpcPort(Integer.parseInt(sslRpcPort));
+            } catch (Throwable t) {
+            }
+        }
+        dockerStatus.setHttpPort(port);
+        dockerStatus.setLanId(lanId);
+        dockerStatus.setHealth(0);
+        if(status == null)
+            status = DockerStatus.STATUS_OK;
+        dockerStatus.setStatus(status);
+        return dockerStatus;
+    }
+
     public void start() {
         try {
             ClassPathResource resource = new ClassPathResource("lan.properties");
@@ -94,27 +115,7 @@ public class OnlineServer {
                 server = ChatUtils.generateFixedRandomString();
             prepare();
             if (dockerStatusService != null) {
-                dockerStatus = new DockerStatus();
-                dockerStatus.setServer(server);
-                dockerStatus.setIp(ipHolder.getIp());
-                if (rpcPort != null) {
-                    try {
-                        dockerStatus.setRpcPort(Integer.parseInt(rpcPort));
-                    } catch (Throwable t) {
-                    }
-                }
-                if (sslRpcPort != null) {
-                    try {
-                        dockerStatus.setSslRpcPort(Integer.parseInt(sslRpcPort));
-                    } catch (Throwable t) {
-                    }
-                }
-                dockerStatus.setHttpPort(port);
-                dockerStatus.setLanId(lanId);
-                dockerStatus.setHealth(0);
-                if(status == null)
-                    status = DockerStatus.STATUS_OK;
-                dockerStatus.setStatus(status);
+                dockerStatus = generateDockerStatus(port);
                 dockerStatusService.addDockerStatus(dockerStatus);
             }
 

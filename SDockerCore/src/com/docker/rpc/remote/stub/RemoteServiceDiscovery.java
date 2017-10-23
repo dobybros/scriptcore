@@ -57,6 +57,8 @@ public class RemoteServiceDiscovery implements Runnable {
 
 	private ShutdownListener shutdownListener;
 
+    private Boolean usePublicDomain = false;
+
 	public RemoteServiceDiscovery() {
 	}
 
@@ -297,8 +299,18 @@ public class RemoteServiceDiscovery implements Runnable {
                 if(count++ > maxCount)
                     break;
                 try {
-                    String ip = server.getIp();
-                    Integer port = server.getRpcPort();
+                    String ip = null;
+                    if(usePublicDomain) {
+                        ip = server.getPublicDomain();
+                    } else {
+                        ip = server.getIp();
+                    }
+                    Integer port = null;
+                    if(rpcClientAdapterMap.isEnableSsl()) {
+                        port = server.getSslRpcPort();
+                    } else {
+                        port = server.getRpcPort();
+                    }
                     if(ip != null && port != null) {
                         RPCClientAdapter clientAdapter = rpcClientAdapterMap.registerServer(ip, port, server.getServer());
                         MethodResponse response = (MethodResponse) clientAdapter.call(request);
@@ -546,5 +558,13 @@ public class RemoteServiceDiscovery implements Runnable {
 
     public void setShutdownListener(ShutdownListener shutdownListener) {
         this.shutdownListener = shutdownListener;
+    }
+
+    public Boolean getUsePublicDomain() {
+        return usePublicDomain;
+    }
+
+    public void setUsePublicDomain(Boolean usePublicDomain) {
+        this.usePublicDomain = usePublicDomain;
     }
 }

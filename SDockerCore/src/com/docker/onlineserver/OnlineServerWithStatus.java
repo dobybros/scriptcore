@@ -1,5 +1,6 @@
 package com.docker.onlineserver;
 
+import com.docker.data.DockerStatus;
 import com.docker.server.OnlineServer;
 
 public class OnlineServerWithStatus extends OnlineServer {
@@ -12,7 +13,13 @@ public class OnlineServerWithStatus extends OnlineServer {
 	OnlineServerWithStatus() {
 		super();
 	}
-	
+
+	@Override
+	protected DockerStatus generateDockerStatus(Integer port) {
+		DockerStatus dockerStatus = super.generateDockerStatus(port);
+		dockerStatus.setPublicDomain(publicDomain);
+		return dockerStatus;
+	}
 	
 	public Integer getMaxUsers() {
 		return maxUsers;

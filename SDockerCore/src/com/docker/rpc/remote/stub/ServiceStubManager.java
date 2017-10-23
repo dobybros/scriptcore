@@ -4,10 +4,7 @@ import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
 import com.docker.rpc.RPCClientAdapterMap;
 import com.docker.rpc.remote.MethodMapping;
-import groovy.lang.GroovyObject;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -33,6 +30,7 @@ public class ServiceStubManager {
     private String host;
     private boolean inited = false;
     private Class<?> serviceStubProxyClass;
+    private Boolean usePublicDomain;
 
     private String service;
     public ServiceStubManager() {
@@ -116,6 +114,7 @@ public class ServiceStubManager {
                 if(remoteServiceDiscovery == null) {
                     remoteServiceDiscovery = new RemoteServiceDiscovery();
                     remoteServiceDiscovery.setHost(host);
+                    remoteServiceDiscovery.setUsePublicDomain(usePublicDomain);
                     RPCClientAdapterMap clientAdapterMap = new RPCClientAdapterMap();
                     if(clientTrustJksPath != null && serverJksPath != null &&  jksPwd != null) {
                         clientAdapterMap.setEnableSsl(true);
@@ -258,5 +257,13 @@ public class ServiceStubManager {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public Boolean getUsePublicDomain() {
+        return usePublicDomain;
+    }
+
+    public void setUsePublicDomain(Boolean usePublicDomain) {
+        this.usePublicDomain = usePublicDomain;
     }
 }

@@ -23,6 +23,7 @@
 		<property name="internalKey" value="${internal.key}"/>
 		<property name="rpcPort" value="${rpc.port}" />
 		<property name="sslRpcPort" value="${rpc.sslport}" />
+		<property name="publicDomain" value="${public.domain}" />
 		<property name="tasks">
 			<list>
 			</list>
