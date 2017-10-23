@@ -30,7 +30,7 @@ public class ServiceStubManager {
     private String host;
     private boolean inited = false;
     private Class<?> serviceStubProxyClass;
-    private Boolean usePublicDomain;
+    private Boolean usePublicDomain = false;
 
     /**
      *
