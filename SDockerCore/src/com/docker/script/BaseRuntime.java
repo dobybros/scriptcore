@@ -101,24 +101,26 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	@Override
     public void close() {
-	    super.close();
-	    if(service != null)
-	        GroovyServletDispatcher.removeGroovyServletManagerEx(service.toLowerCase());
-	    try {
+	    if(service != null) {
+			GroovyServletDispatcher.removeGroovyServletManagerEx(service.toLowerCase());
+		}
+		try {
 			if(mongoDBHandler != null) {
 				MongoClientHelper helper = mongoDBHandler.getMongoClientHelper();
-				if(helper != null)
+				if(helper != null) {
 					helper.disconnect();
+				}
 			}
 		} catch(Throwable t) {
 		}
-	    try {
+		try {
 			if(redisHandler != null) {
 				redisHandler.disconnect();
 			}
 		} catch(Throwable t) {
 		}
-    }
+		super.close();
+	}
 
 	public MongoDBHandler getMongoDBHandler() {
 		return mongoDBHandler;

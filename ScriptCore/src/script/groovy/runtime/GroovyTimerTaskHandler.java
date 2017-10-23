@@ -17,7 +17,18 @@ public class GroovyTimerTaskHandler extends ClassAnnotationHandler {
 
 	private static final String TAG = GroovyTimerTaskHandler.class.getSimpleName();
 	private ConcurrentHashMap<String, MyTimerTask> timerTasks;
-	
+
+	@Override
+	public void hanlderShutdown() {
+		if(timerTasks != null) {
+			Collection<MyTimerTask> theTimerTasks = timerTasks.values();
+			for(MyTimerTask timerTask : theTimerTasks) {
+				timerTask.cancel();
+			}
+			timerTasks.clear();
+		}
+	}
+
 	@Override
 	public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime groovyRuntime) {
 		return TimerTask.class;

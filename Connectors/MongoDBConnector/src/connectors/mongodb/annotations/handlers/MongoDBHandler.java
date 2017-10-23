@@ -38,7 +38,12 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 	private HashMap<Class<?>, ClassFieldsHolder> documentMap = new HashMap<>();
 	
 	private MongoClientHelper mongoClientHelper;
-	
+	@Override
+	public void hanlderShutdown() {
+		databaseMap.clear();
+		collectionMap.clear();
+		documentMap.clear();
+	}
 	public static class CollectionHolder {
 		private com.mongodb.client.MongoCollection<DataObject> collection;
 		private HashTree<String, String> filters;

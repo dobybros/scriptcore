@@ -789,6 +789,18 @@ public class GroovyRuntime extends ScriptRuntime{
 
 	@Override
 	public void close() {
+		Collection<ClassAnnotationHandler> handlers = annotationHandlers;
+		for(ClassAnnotationHandler annotationHandler : handlers) {
+			try {
+				annotationHandler.hanlderShutdown();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				LoggerEx.fatal(TAG,
+						"Handle annotated classes shutdown failed, class loader "
+								+ classLoader
+								+ " the handler " + annotationHandler + " error " + t.getMessage());
+			}
+		}
 		if (classLoader != null) {
 			try {
 				MetaClassRegistry metaReg = GroovySystem

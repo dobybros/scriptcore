@@ -39,9 +39,12 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 	
 	private GroovyObjectEx<PermissionIntercepter> permissionIntercepter;
 
-//	public static GroovyServletManager getInstance() {
-//		return instance;
-//	}
+	@Override
+	public void hanlderShutdown() {
+		permissionIntercepter = null;
+		interceptorMap = null;
+		servletTree = null;
+	}
 
 	public GroovyServletManager() {
 //		instance = this;

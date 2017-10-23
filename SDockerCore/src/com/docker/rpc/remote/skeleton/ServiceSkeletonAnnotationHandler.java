@@ -24,7 +24,10 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
     private ConcurrentHashMap<Long, SkelectonMethodMapping> methodMap = new ConcurrentHashMap<>();
 
 	private String service;
-
+    @Override
+    public void hanlderShutdown() {
+        methodMap.clear();
+    }
     public ServiceSkeletonAnnotationHandler() {
     }
 

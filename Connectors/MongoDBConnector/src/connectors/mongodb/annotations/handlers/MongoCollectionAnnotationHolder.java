@@ -14,7 +14,12 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	private static final String TAG = MongoCollectionAnnotationHolder.class.getSimpleName();
 
 	private Map<Class<?>, DBCollection> collectionClassMap = new LinkedHashMap<>();
-	
+
+	@Override
+	public void hanlderShutdown() {
+		collectionClassMap.clear();
+	}
+
 //	private static MongoCollectionAnnotationHolder instance;
 	public MongoCollectionAnnotationHolder() {
 //		instance = this;

@@ -21,7 +21,12 @@ public class JsonFilterFactory extends ClassAnnotationHandler{
 	
 //	protected static JsonFilterFactory instance;
 	private Map<String, GroovyObjectEx<JsonFilter>> filterMap;
-	
+
+	@Override
+	public void hanlderShutdown() {
+		filterMap.clear();
+	}
+
 	public JsonFilterFactory() {
 //		instance = this;
 	}
