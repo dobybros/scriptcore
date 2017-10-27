@@ -95,8 +95,12 @@ public class DeployServiceUtils {
         File deploy = new File(servicePath + "/build/deploy");
 
         FileUtils.deleteDirectory(deploy);
-        FileUtils.copyDirectory(new File(servicePath + "/src/main/groovy"), deploy);
-        FileUtils.copyDirectory(new File(servicePath + "/src/main/resources"), deploy);
+        File groovyFile = new File(servicePath + "/src/main/groovy");
+        if(groovyFile.isFile() && groovyFile.exists())
+            FileUtils.copyDirectory(groovyFile, deploy);
+        File resourceFile = new File(servicePath + "/src/main/resources");
+        if(resourceFile.exists() && resourceFile.isFile())
+            FileUtils.copyDirectory(resourceFile, deploy);
         if(version != null)
             serviceName = serviceName + "_v" + version;
         doZip(new File(deploy.getAbsolutePath() + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
