@@ -7,7 +7,10 @@ import com.docker.rpc.remote.MethodMapping;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceStubManager {
@@ -110,6 +113,9 @@ public class ServiceStubManager {
     }
 
     private RemoteServiceDiscovery getRemoteServiceDiscovery(String service, Integer version) {
+
+        LoggerEx.info(TAG, "getRemoteServiceDiscovery with params service: " + service + ", version: " + version);
+
         String serviceName = service;
         final String theService = serviceName + "_v" + version;
 

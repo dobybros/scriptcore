@@ -1,10 +1,7 @@
 package com.docker.rpc.remote.stub;
 
-import chat.errors.ChatErrorCodes;
-import chat.errors.CoreException;
+import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
-import com.docker.rpc.MethodResponse;
-import com.docker.rpc.MethodRequest;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -18,6 +15,7 @@ public class RemoteProxy extends Proxy implements MethodInterceptor {
 
     public RemoteProxy(RemoteServiceDiscovery remoteServiceDiscovery, ServiceStubManager serviceStubManager) {
         super(remoteServiceDiscovery, serviceStubManager);
+        LoggerEx.info(TAG, "new remoteProxy with params remoteServiceDiscovery: " + remoteServiceDiscovery + ", serviceStubManager: " + serviceStubManager);
     }
 
 
@@ -34,7 +32,7 @@ public class RemoteProxy extends Proxy implements MethodInterceptor {
                             MethodProxy proxy) throws Throwable {
         // TODO Auto-generated method stub
         if(method.getDeclaringClass().equals(Object.class)) {
-            return method.invoke(obj, args);
+            return proxy.invokeSuper(obj, args);
         }
         Long crc = ReflectionUtil.getCrc(method, remoteServiceDiscovery.getServiceName());
         return invoke(crc, args);

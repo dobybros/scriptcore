@@ -2,25 +2,24 @@ package com.docker.rpc.remote.stub;
 
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
-import chat.utils.ReflectionUtil;
+import chat.logs.LoggerEx;
 import com.docker.rpc.MethodRequest;
 import com.docker.rpc.MethodResponse;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-
-import java.lang.reflect.Method;
 
 public class Proxy  {
     private static final String TAG = Proxy.class.getSimpleName();
     protected RemoteServiceDiscovery remoteServiceDiscovery;
     private ServiceStubManager serviceStubManager;
     public Proxy(RemoteServiceDiscovery remoteServiceDiscovery, ServiceStubManager serviceStubManager) {
+        LoggerEx.info(TAG, "new proxy with params RemoteServiceDiscovery: " + remoteServiceDiscovery + ", ServiceStubManager: " + serviceStubManager);
         this.remoteServiceDiscovery = remoteServiceDiscovery;
         this.serviceStubManager = serviceStubManager;
     }
 
     public Object invoke(Long crc, Object[] args) throws Throwable {
+
+        LoggerEx.info(TAG, "proxy invoke");
+
         // TODO Auto-generated method stub
         MethodRequest request = new MethodRequest();
         request.setEncode(MethodRequest.ENCODE_JAVABINARY);
