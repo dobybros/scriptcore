@@ -113,9 +113,6 @@ public class ServiceStubManager {
     }
 
     private RemoteServiceDiscovery getRemoteServiceDiscovery(String service, Integer version) {
-
-        LoggerEx.info(TAG, "getRemoteServiceDiscovery with params service: " + service + ", version: " + version);
-
         String serviceName = service;
         final String theService = serviceName + "_v" + version;
 

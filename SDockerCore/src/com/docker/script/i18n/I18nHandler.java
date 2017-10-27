@@ -1,13 +1,15 @@
 package com.docker.script.i18n;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by zhanjing on 2017/7/17.
  */
 public class I18nHandler {
 
-    private Map<String, MessageProperties> msgPropertyMap;
+    private Map<String, MessageProperties> msgPropertyMap = new ConcurrentHashMap<>();
 
     public String getI18nMessage(String locale, String key, String[] parameters, String defaultValue) {
         if (key != null) {

@@ -61,7 +61,6 @@ public abstract class BaseRuntime extends GroovyRuntime {
 			String name = properties.getProperty("i18n.name");
 			if (i18nFolder != null && name != null) {
 				i18nHandler = new I18nHandler();
-				i18nHandler.setMsgPropertyMap(new HashMap<>());
 				File messageFile = new File(rootPath + i18nFolder);
 				if (messageFile != null) {
 					File[] files = messageFile.listFiles();
@@ -119,6 +118,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 			}
 		} catch(Throwable t) {
 		}
+		clear();
 		super.close();
 	}
 

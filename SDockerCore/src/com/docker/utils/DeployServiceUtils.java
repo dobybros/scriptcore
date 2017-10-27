@@ -14,15 +14,17 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FileFileFilter;
 import script.file.FileAdapter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class DeployServiceUtils {
     public static void main(String[] args) throws Exception {
@@ -78,32 +80,36 @@ public class DeployServiceUtils {
             hf.printHelp("DeployServiceUtils[options:]", opt, false);
             return;
         }
-        int version = 1;
+        Integer version = null;
         if(line.hasOption('v')){
             versionStr = line.getOptionValue('v');
             try {
                 version = Integer.valueOf(versionStr);
             } catch(Exception e) {}
-        }else {
-            HelpFormatter hf = new HelpFormatter();
-            hf.printHelp("DeployServiceUtils[options:]", opt, false);
-            return;
         }
 
         deploy(servicePath, dockerName, serviceName, gridfsHost, version);
     }
 
-    public static void deploy(String servicePath, String dockerName, String serviceName, String gridfsHost, int version) throws Exception {
-        final CommandLine cmdLine = CommandLine.parse("sh " + servicePath + "/build/build.sh " + dockerName + " " + serviceName + "_v" + version);
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(5));//设置超时时间
-        DefaultExecutor executor = new DefaultExecutor();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        executor.setStreamHandler(new PumpStreamHandler(baos, baos));
-        executor.setWatchdog(watchdog);
-        executor.setExitValue(0);//由于ping被到时间终止，所以其默认退出值已经不是0，而是1，所以要设置它
-        int exitValue = executor.execute(cmdLine);
-        final String result = baos.toString().trim();
-        System.out.println("import log " + result);
+    public static void deploy(String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version) throws Exception {
+        File deploy = new File(servicePath + "/build/deploy");
+
+        FileUtils.deleteDirectory(deploy);
+        FileUtils.copyDirectory(new File(servicePath + "/src/main/groovy"), deploy);
+        FileUtils.copyDirectory(new File(servicePath + "/src/main/resources"), deploy);
+        if(version != null)
+            serviceName = serviceName + "_v" + version;
+        doZip(new File(deploy.getAbsolutePath() + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
+        clean(deploy, ".zip");
+
+        File[] toRemoveEmptyFolders = deploy.listFiles();
+        for(File findEmptyFolder : toRemoveEmptyFolders) {
+            if(getAllEmptyFoldersOfDir(findEmptyFolder)) {
+                FileUtils.deleteDirectory(findEmptyFolder);
+            }
+        }
+//        if(true)
+//            return;
 
         MongoHelper helper = new MongoHelper();
         helper.setHost(gridfsHost);
@@ -132,6 +138,107 @@ public class DeployServiceUtils {
                 fileHandler.saveFile(FileUtils.openInputStream(new File(filePath)), path, FileAdapter.FileReplaceStrategy.REPLACE);
 
                 System.out.println("File " + thePath + " saved!");
+            }
+        }
+    }
+
+
+    static boolean getAllEmptyFoldersOfDir(File current){
+        if(current.isDirectory()){
+            File[] files = current.listFiles();
+            if(files.length == 0){ //There is no file in this folder - safe to delete
+                System.out.println("Safe to delete - empty folder: " + current.getAbsolutePath());
+                return true;
+            } else {
+                int totalFolderCount = 0;
+                int emptyFolderCount = 0;
+                for(File f : files){
+                    if(f.isDirectory()){
+                        totalFolderCount++;
+                        if(getAllEmptyFoldersOfDir(f)){ //safe to delete
+                            emptyFolderCount++;
+                        }
+                    }
+
+                }
+                if(totalFolderCount == files.length && emptyFolderCount == totalFolderCount){ //only if all folders are safe to delete then this folder is also safe to delete
+                    System.out.println("Safe to delete - all subfolders are empty: " + current.getAbsolutePath());
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void clean(File folder, String endWith) {
+        Collection<File> fList = FileUtils.listFiles(folder, null, true);
+        for (File file : fList) {
+            if (file.isFile() && !file.getName().endsWith(endWith)) {
+                file.delete();
+            }
+        }
+        FileUtils.listFiles(folder, new FileFileFilter(){}, new DirectoryFileFilter(){
+            public boolean accept(File file) {
+                if(file.isDirectory()) {
+                    Collection<File> hasFiles = FileUtils.listFiles(file, null, true);
+                    if(hasFiles == null || hasFiles.isEmpty()) {
+                        file.delete();
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    //压缩文件夹内的文件
+    public static void doZip(File zipFile, File zipDirectory){//zipDirectoryPath:需要压缩的文件夹名
+        File file;
+        File zipDir;
+
+        zipDir = zipDirectory;
+
+        try{
+            ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(zipFile)));
+            handleDir(zipDir, zipDir, zipOut, zipFile);
+            zipOut.close();
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
+
+    //由doZip调用,递归完成目录文件读取
+    private static void handleDir(File root, File dir , ZipOutputStream zipOut, File zipFile)throws IOException{
+        FileInputStream fileIn;
+        File[] files;
+
+        files = dir.listFiles();
+
+        if(files.length == 0){//如果目录为空,则单独创建之.
+            //ZipEntry的isDirectory()方法中,目录以"/"结尾.
+            zipOut.putNextEntry(new ZipEntry(dir.toString() + "/"));
+            zipOut.closeEntry();
+        }
+        else{//如果目录不为空,则分别处理目录和文件.
+            for(File fileName : files){
+                //System.out.println(fileName);
+                int readedBytes;
+                byte[] buf = new byte[64 * 1024];
+                if(fileName.isDirectory()){
+                    handleDir(root, fileName , zipOut, zipFile);
+                }
+                else if(!fileName.getAbsolutePath().equals(zipFile.getAbsolutePath())){
+                    fileIn = new FileInputStream(fileName);
+                    String zipPath = fileName.getAbsolutePath().substring(root.getAbsolutePath().length());
+                    if(zipPath.startsWith("/"))
+                        zipPath = zipPath.substring(1);
+                    zipOut.putNextEntry(new ZipEntry(zipPath));
+
+                    while((readedBytes = fileIn.read(buf))>0){
+                        zipOut.write(buf , 0 , readedBytes);
+                    }
+
+                    zipOut.closeEntry();
+                }
             }
         }
     }

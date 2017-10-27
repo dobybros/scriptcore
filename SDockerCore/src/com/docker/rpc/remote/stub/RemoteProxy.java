@@ -15,7 +15,7 @@ public class RemoteProxy extends Proxy implements MethodInterceptor {
 
     public RemoteProxy(RemoteServiceDiscovery remoteServiceDiscovery, ServiceStubManager serviceStubManager) {
         super(remoteServiceDiscovery, serviceStubManager);
-        LoggerEx.info(TAG, "new remoteProxy with params remoteServiceDiscovery: " + remoteServiceDiscovery + ", serviceStubManager: " + serviceStubManager);
+//        LoggerEx.info(TAG, "new remoteProxy with params remoteServiceDiscovery: " + remoteServiceDiscovery + ", serviceStubManager: " + serviceStubManager);
     }
 
 

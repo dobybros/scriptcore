@@ -11,15 +11,12 @@ public class Proxy  {
     protected RemoteServiceDiscovery remoteServiceDiscovery;
     private ServiceStubManager serviceStubManager;
     public Proxy(RemoteServiceDiscovery remoteServiceDiscovery, ServiceStubManager serviceStubManager) {
-        LoggerEx.info(TAG, "new proxy with params RemoteServiceDiscovery: " + remoteServiceDiscovery + ", ServiceStubManager: " + serviceStubManager);
+//        LoggerEx.info(TAG, "new proxy with params RemoteServiceDiscovery: " + remoteServiceDiscovery + ", ServiceStubManager: " + serviceStubManager);
         this.remoteServiceDiscovery = remoteServiceDiscovery;
         this.serviceStubManager = serviceStubManager;
     }
 
     public Object invoke(Long crc, Object[] args) throws Throwable {
-
-        LoggerEx.info(TAG, "proxy invoke");
-
         // TODO Auto-generated method stub
         MethodRequest request = new MethodRequest();
         request.setEncode(MethodRequest.ENCODE_JAVABINARY);

@@ -261,4 +261,8 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 		this.permissionIntercepter = permissionIntercepter;
 	}
 
+	public HashTree<String, RequestURIWrapper> getServletTree() {
+		return servletTree;
+	}
+
 }
