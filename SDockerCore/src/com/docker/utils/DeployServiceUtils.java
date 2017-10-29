@@ -101,10 +101,10 @@ public class DeployServiceUtils {
 
         FileUtils.deleteDirectory(deploy);
         File groovyFile = new File(servicePath + "/src/main/groovy");
-        if(groovyFile.isFile() && groovyFile.exists())
+        if(groovyFile.isDirectory() && groovyFile.exists())
             FileUtils.copyDirectory(groovyFile, deploy);
         File resourceFile = new File(servicePath + "/src/main/resources");
-        if(resourceFile.exists() && resourceFile.isFile())
+        if(resourceFile.exists() && resourceFile.isDirectory())
             FileUtils.copyDirectory(resourceFile, deploy);
         if(version != null)
             serviceName = serviceName + "_v" + version;
