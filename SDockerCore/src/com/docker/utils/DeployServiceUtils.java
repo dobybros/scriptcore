@@ -33,6 +33,7 @@ public class DeployServiceUtils {
         opt.addOption("h", "help", false, "help")
                 .addOption("p",true, "Service path")
 //			.addOption("a",true, "async servlet map")
+                .addOption("x",true, "Prefix name")
                 .addOption("d",true, "Docker name")
                 .addOption("s",true, "Service name")
                 .addOption("f",true, "Mongodb GridFS host, or other dfs host")
@@ -46,12 +47,16 @@ public class DeployServiceUtils {
             hf.printHelp("DeployServiceUtils[options:]", opt, false);
             return;
         }
+        String prefix = null;
         String servicePath = null;
         String dockerName = null;
         String serviceName = null;
         String gridfsHost = null;
         String versionStr = null;
 
+        if(line.hasOption('x')){
+            prefix = line.getOptionValue('x');
+        }
         if(line.hasOption('p')){
             servicePath = line.getOptionValue('p');
         }else{
@@ -88,10 +93,10 @@ public class DeployServiceUtils {
             } catch(Exception e) {}
         }
 
-        deploy(servicePath, dockerName, serviceName, gridfsHost, version);
+        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version);
     }
 
-    public static void deploy(String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version) throws Exception {
+    public static void deploy(String prefix, String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version) throws Exception {
         File deploy = new File(servicePath + "/build/deploy");
 
         FileUtils.deleteDirectory(deploy);
@@ -103,7 +108,7 @@ public class DeployServiceUtils {
             FileUtils.copyDirectory(resourceFile, deploy);
         if(version != null)
             serviceName = serviceName + "_v" + version;
-        doZip(new File(deploy.getAbsolutePath() + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
+        doZip(new File(deploy.getAbsolutePath() + (prefix != null ? "/" + prefix : "") + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
         clean(deploy, ".zip");
 
         File[] toRemoveEmptyFolders = deploy.listFiles();
