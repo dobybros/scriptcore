@@ -5,3 +5,7 @@
 
 **/buildlib/deploy
 **/buildlib/local
+
+/.idea/
+*.iml
+/logs/

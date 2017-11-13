@@ -6,12 +6,12 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/../DiscoveryService/pom.xml" />
-        <option value="$PROJECT_DIR$/../PKUserService/pom.xml" />
         <option value="$PROJECT_DIR$/../PKRoomService/pom.xml" />
+        <option value="$PROJECT_DIR$/../DiscoveryServiceForServiceVersioning/pom.xml" />
         <option value="$PROJECT_DIR$/../PKWalletService/pom.xml" />
-        <option value="$PROJECT_DIR$/../PKShopService/pom.xml" />
+        <option value="$PROJECT_DIR$/../PKUserService/pom.xml" />
         <option value="$PROJECT_DIR$/../PKAdminService/pom.xml" />
+        <option value="$PROJECT_DIR$/../PKShopService/pom.xml" />
       </list>
     </option>
   </component>

@@ -4,3 +4,7 @@
 ChatCore.iml
 ChatCore.iml2
 .settings
+bin
+/.idea/
+*.iml
+/logs/

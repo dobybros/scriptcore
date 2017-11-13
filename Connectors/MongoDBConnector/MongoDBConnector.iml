@@ -29,5 +29,193 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/mail.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/asm-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/gson-2.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jts-1.13.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/ivy-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jna-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/pushy-0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/aopalliance.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jedis-2.9.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jsch-0.1.50.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/guava-16.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/joda-time-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpcore-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpmime-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/asm-commons-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/aspectjrt-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/fluent-hc-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpclient-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/antlr-runtime-3.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpcore-ab-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/aspectjtools-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpcore-nio-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-core-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jna-platform-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/commons-pool2-2.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jsch-0.1.50-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/protobuf-java-3.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpclient-win-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jcl-over-slf4j-1.7.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/joda-time-2.4-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpclient-cache-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-databind-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/netty-all-4.0.23.Final.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-aop-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-web-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-annotations-2.6.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-core-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-test-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/apache-log4j-extras-1.2.17.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-beans-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-webmvc-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jedis-2.9.0-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-aspects-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-context-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-dataformat-cbor-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/netty-all-4.0.23.Final-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-expression-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-data-mongodb-1.7.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-data-commons-1.10.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-context-support-4.0.5.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/mail.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/asm-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/gson-2.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jts-1.13.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/ivy-2.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jna-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/pushy-0.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/aopalliance.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jedis-2.9.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jsch-0.1.50.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/guava-16.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/joda-time-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpcore-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpmime-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/asm-commons-4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/aspectjrt-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/fluent-hc-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpclient-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/antlr-runtime-3.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpcore-ab-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/aspectjtools-1.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpcore-nio-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-core-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jna-platform-4.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/commons-pool2-2.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jsch-0.1.50-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/protobuf-java-3.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpclient-win-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jcl-over-slf4j-1.7.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/joda-time-2.4-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/httpclient-cache-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-databind-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/netty-all-4.0.23.Final.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-aop-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-web-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-annotations-2.6.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-core-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-test-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/apache-log4j-extras-1.2.17.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-beans-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-webmvc-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jedis-2.9.0-SNAPSHOT-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-aspects-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-context-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/jackson-dataformat-cbor-2.6.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/netty-all-4.0.23.Final-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-expression-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-data-mongodb-1.7.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-data-commons-1.10.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/lib/spring-context-support-4.0.5.RELEASE.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/scriptcore.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/aopalliance.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/asm-all-5.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/cglib-3.2.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/guava-16.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/log4j-1.2.17.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/httpcore-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/httpmime-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-cli-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/fastjson-1.2.32.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/servlet-api-3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/slf4j-api-1.7.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spatial4j-0.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-exec-1.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-io-2.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-lang-2.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/httpclient-4.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-codec-1.9.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-schemas-3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/logback-core-1.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-logging-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/logback-classic-1.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/log4j-over-slf4j-1.7.7.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-beanutils-1.9.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-validator-1.3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/groovy-all-2.5.0-beta-1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/javax.websocket-api-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-fileupload-1.3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-httpclient-3.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-io-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-aop-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-web-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-collections-3.2.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/commons-configuration-1.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-jmx-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-xml-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-core-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-test-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-http-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-jaas-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-jndi-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-plus-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-util-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-beans-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-nosql-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-proxy-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-webmvc-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-client-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-deploy-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-server-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-webapp-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-aspects-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-context-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-monitor-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-rewrite-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-servlet-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/websocket-api-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-security-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-servlets-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-expression-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-quickstart-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/websocket-client-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/websocket-common-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/websocket-server-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-alpn-server-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-annotations-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/websocket-servlet-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/jetty-continuation-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/spring-context-support-4.0.5.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/javax-websocket-client-impl-9.3.9.v20160517.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../SDockerCore/scriptcorelib/javax-websocket-server-impl-9.3.9.v20160517.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

@@ -3,11 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../PKAdminService/AdminService.iml" filepath="$PROJECT_DIR$/../PKAdminService/AdminService.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" filepath="$PROJECT_DIR$/../DiscoveryService/DiscoveryService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../DiscoveryServiceForServiceVersioning/DiscoveryService.iml" filepath="$PROJECT_DIR$/../DiscoveryServiceForServiceVersioning/DiscoveryService.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDocker/JDocker.iml" filepath="$PROJECT_DIR$/JDocker/JDocker.iml" />
       <module fileurl="file://$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" filepath="$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" />
       <module fileurl="file://$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" filepath="$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../DiscoveryService/MyScripts.iml" filepath="$PROJECT_DIR$/../DiscoveryService/MyScripts.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKRoomService/PKRoomService.iml" filepath="$PROJECT_DIR$/../PKRoomService/PKRoomService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKShopService/PKShopService.iml" filepath="$PROJECT_DIR$/../PKShopService/PKShopService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKUserService/PKUserService.iml" filepath="$PROJECT_DIR$/../PKUserService/PKUserService.iml" />

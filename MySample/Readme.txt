@@ -1,1 +1,0 @@
-./mongod --dbpath /Volumes/Data/Users/aplomb/Aplomb/Dev/DB/data/ --logpath /Volumes/Data/Users/aplomb/Aplomb/Dev/DB/log/mongo.log --logappend --port 7900 --directoryperdb &
