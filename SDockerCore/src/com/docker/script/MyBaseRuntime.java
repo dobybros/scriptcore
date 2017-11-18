@@ -1,20 +1,88 @@
 package com.docker.script;
 
+import chat.errors.CoreException;
 import chat.logs.LoggerEx;
+import com.docker.data.Lan;
 import com.docker.rpc.remote.skeleton.ServiceSkeletonAnnotationHandler;
 import com.docker.rpc.remote.stub.ServiceStubManager;
+import com.docker.server.OnlineServer;
+import com.docker.storage.adapters.LansService;
+import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import script.groovy.runtime.GroovyRuntime;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MyBaseRuntime extends BaseRuntime {
 	private static final String TAG = MyBaseRuntime.class.getSimpleName();
 	private String remoteServiceHost;
 	private ServiceStubManager serviceStubManager;
+	private ConcurrentHashMap<String, ServiceStubManager> stubManagerForLanIdMap = new ConcurrentHashMap<>();
+
+	private LansService lansService = (LansService) SpringContextUtil.getBean("lansService");
+
+	public void resetServiceStubManager(Class<?> proxyClass) {
+		if(serviceStubManager != null) {
+			serviceStubManager.setServiceStubProxyClass(proxyClass);
+			serviceStubManager.clearCache();
+			serviceStubManager.init();
+		}
+	}
+
+	public void resetServiceStubManagerForLans(Class<?> proxyClass) {
+		Collection<ServiceStubManager> managers = stubManagerForLanIdMap.values();
+		for(ServiceStubManager manager : managers) {
+			manager.setServiceStubProxyClass(proxyClass);
+			manager.clearCache();
+			manager.init();
+		}
+	}
+
+	public ServiceStubManager getServiceStubManager(String lanId) {
+		ServiceStubManager manager = stubManagerForLanIdMap.get(lanId);
+		if (manager == null) {
+			if (lanId.equals(OnlineServer.getInstance().getLanId())) {
+				// 本地访问
+				return serviceStubManager;
+			}
+			synchronized (stubManagerForLanIdMap) {
+				manager = stubManagerForLanIdMap.get(lanId);
+				if(manager == null) {
+					manager = new ServiceStubManager();
+					manager.setUsePublicDomain(true);
+					OnlineServer onlineServer = OnlineServer.getInstance();
+					manager.setClientTrustJksPath(onlineServer.getRpcSslClientTrustJksPath());
+					manager.setJksPwd(onlineServer.getRpcSslJksPwd());
+					manager.setServerJksPath(onlineServer.getRpcSslServerJksPath());
+					manager.setServiceStubProxyClass(serviceStubManager.getServiceStubProxyClass());
+
+					if(lansService == null)
+					    return null;
+					Lan lan = null;
+					try {
+						lan = lansService.getLan(lanId);
+					} catch (CoreException e) {
+						e.printStackTrace();
+						LoggerEx.error(TAG, "Read lan " + lanId + " information failed, " + e.getMessage());
+					}
+					if(lan == null)
+						throw new NullPointerException("Lan is null for lanId " + lanId);
+					if(lan.getDomain() != null && lan.getPort() != null && lan.getProtocol() != null)
+						throw new NullPointerException("Lan " + lan + " is illegal for lanId " + lanId);
+					manager.setHost(lan.getProtocol() + "://" + lan.getDomain() + ":" + lan.getPort());
+                    manager.init();
+					stubManagerForLanIdMap.putIfAbsent(lanId, manager);
+					manager = stubManagerForLanIdMap.get(lanId);
+				}
+			}
+		}
+		return manager;
+	}
 
 	@Override
 	public void prepare(String service, Properties properties, String localScriptPath) {
@@ -56,10 +124,12 @@ public class MyBaseRuntime extends BaseRuntime {
 					"    }\n" +
 					"    public void main() {\n" +
 					"        com.docker.script.MyBaseRuntime baseRuntime = (com.docker.script.MyBaseRuntime) GroovyRuntime.getCurrentGroovyRuntime(this.getClass().getClassLoader());\n" +
-					"        com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager = baseRuntime.getServiceStubManager();\n" +
-					"        serviceStubManager.setServiceStubProxyClass(script.groovy.runtime.ServiceStubProxy.class)\n" +
-					"        serviceStubManager.clearCache()\n" +
-					"        serviceStubManager.init()\n" +
+					"        baseRuntime.resetServiceStubManagerForLans(script.groovy.runtime.ServiceStubProxy.class); " +
+					"        baseRuntime.resetServiceStubManager(script.groovy.runtime.ServiceStubProxy.class); " +
+// 					"        com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager = baseRuntime.getServiceStubManager();\n" +
+//					"        serviceStubManager.setServiceStubProxyClass(script.groovy.runtime.ServiceStubProxy.class)\n" +
+//					"        serviceStubManager.clearCache()\n" +
+//					"        serviceStubManager.init()\n" +
 					"    }\n" +
 					"}";
 			try {
@@ -73,6 +143,15 @@ public class MyBaseRuntime extends BaseRuntime {
 	@Override
 	public void close() {
 		super.close();
+        if(serviceStubManager != null) {
+            serviceStubManager.shutdown();
+        }
+        if(stubManagerForLanIdMap != null) {
+            Collection<ServiceStubManager> managers = stubManagerForLanIdMap.values();
+            for(ServiceStubManager manager : managers) {
+                manager.shutdown();
+            }
+        }
 	}
 
 	public ServiceStubManager getServiceStubManager() {

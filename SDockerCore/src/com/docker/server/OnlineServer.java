@@ -9,6 +9,8 @@ import chat.utils.IPHolder;
 import com.docker.data.DockerStatus;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.storage.adapters.DockerStatusService;
+import com.docker.storage.adapters.LansService;
+import com.docker.storage.adapters.ServersService;
 import com.docker.tasks.Task;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -46,6 +48,11 @@ public class OnlineServer {
     private Integer status;
 
     private String lanId;
+
+    /** rpc ssl certificate */
+    private String rpcSslClientTrustJksPath;
+    private String rpcSslServerJksPath;
+    private String rpcSslJksPwd;
 
     public static interface OnlineServerStartHandler {
         public void serverWillStart(OnlineServer onlineServer) throws CoreException;
@@ -277,5 +284,29 @@ public class OnlineServer {
 
     public void setDockerStatusService(DockerStatusService dockerStatusService) {
         this.dockerStatusService = dockerStatusService;
+    }
+
+    public String getRpcSslClientTrustJksPath() {
+        return rpcSslClientTrustJksPath;
+    }
+
+    public void setRpcSslClientTrustJksPath(String rpcSslClientTrustJksPath) {
+        this.rpcSslClientTrustJksPath = rpcSslClientTrustJksPath;
+    }
+
+    public String getRpcSslServerJksPath() {
+        return rpcSslServerJksPath;
+    }
+
+    public void setRpcSslServerJksPath(String rpcSslServerJksPath) {
+        this.rpcSslServerJksPath = rpcSslServerJksPath;
+    }
+
+    public String getRpcSslJksPwd() {
+        return rpcSslJksPwd;
+    }
+
+    public void setRpcSslJksPwd(String rpcSslJksPwd) {
+        this.rpcSslJksPwd = rpcSslJksPwd;
     }
 }

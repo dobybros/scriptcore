@@ -16,6 +16,7 @@ import connectors.mongodb.codec.BaseObjectCodecProvider;
 import connectors.mongodb.codec.DataObject;
 import connectors.mongodb.codec.DataObjectCodecProvider;
 import org.apache.commons.lang.StringUtils;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import script.groovy.runtime.ClassAnnotationHandler;
@@ -46,10 +47,17 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 	}
 	public static class CollectionHolder {
 		private com.mongodb.client.MongoCollection<DataObject> collection;
+		private com.mongodb.client.MongoCollection<Document> documentCollection;
 		private HashTree<String, String> filters;
+
 		public com.mongodb.client.MongoCollection<DataObject> getCollection() {
 			return collection;
 		}
+
+		public com.mongodb.client.MongoCollection<Document> getDocumentCollection() {
+			return documentCollection;
+		}
+
 		public void setCollection(com.mongodb.client.MongoCollection<DataObject> collection) {
 			this.collection = collection;
 		}
@@ -124,8 +132,10 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 						CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromProviders(new DataObjectCodecProvider(collectionClass, this), new BaseObjectCodecProvider(this)), MongoClient.getDefaultCodecRegistry());
 						
 						com.mongodb.client.MongoCollection<DataObject> collection = database.getCollection(collectionName, DataObject.class).withCodecRegistry(codecRegistry);
+						com.mongodb.client.MongoCollection<Document> documentCollection = database.getCollection(collectionName);
 						CollectionHolder cHolder = new CollectionHolder();
 						cHolder.collection = collection;
+						cHolder.documentCollection = documentCollection;
 						newCollectionMap.put(collectionClass, cHolder);
 					}
 				}

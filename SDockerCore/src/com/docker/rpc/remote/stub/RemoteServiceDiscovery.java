@@ -103,7 +103,11 @@ public class RemoteServiceDiscovery implements Runnable {
 	}
 
     public void setHost(String host) {
-        this.host = host;
+        if(host.startsWith("http")) {
+            this.host = host;
+        } else {
+            this.host = "http://" + host;
+        }
     }
 
     public String getService() {
@@ -134,7 +138,8 @@ public class RemoteServiceDiscovery implements Runnable {
 
             if(version == null)
                 version = 1;
-            ServersResult result = (ServersResult) post("http://" + host + "/rest/discovery/service/" + serviceName + "/version/" + version, ServersResult.class);
+
+            ServersResult result = (ServersResult) post(host + "/rest/discovery/service/" + serviceName + "/version/" + version, ServersResult.class);
             if(result != null) {
                 List<Server> theServers = result.getData();
                 if(theServers != null) {

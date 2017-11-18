@@ -25,6 +25,11 @@
 		<property name="sslRpcPort" value="${rpc.sslport}" />
 		<property name="publicDomain" value="${public.domain}" />
 		<property name="dockerStatusService" ref="dockerStatusService"/>
+
+		<property name="rpcSslClientTrustJksPath" value="${rpc.ssl.clientTrust.jks.path}"/>
+		<property name="rpcSslServerJksPath" value="${rpc.ssl.server.jks.path}"/>
+		<property name="rpcSslJksPwd" value="${rpc.ssl.jks.pwd}"/>
+
 		<property name="tasks">
 			<list>
 			</list>

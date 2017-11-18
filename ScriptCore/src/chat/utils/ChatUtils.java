@@ -168,7 +168,7 @@ public class ChatUtils {
 				iface = (NetworkInterface)ifaces.nextElement();
 				ethr = iface.getDisplayName();
 
-				if (faceStartWith == null || ethr.startsWith(faceStartWith))
+				if (faceStartWith == null || isStartWith(ethr, faceStartWith))
 				{
 					InetAddress ia = null;
 					for(Enumeration<InetAddress> ips = iface.getInetAddresses();ips.hasMoreElements();)
@@ -187,7 +187,25 @@ public class ChatUtils {
 		catch (SocketException e){}
 		return myip;
 	}
-	
+
+	private static boolean isStartWith(String str, String faceStartWith) {
+		if(faceStartWith != null && str != null) {
+			if(faceStartWith.contains("|")) {
+				String[] compares = faceStartWith.split("|");
+				for(String compare : compares) {
+					if(str.startsWith(compare)) {
+						return true;
+					}
+				}
+			} else {
+				if(str.startsWith(faceStartWith)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	static SimpleDateFormat gmtFormatter = new SimpleDateFormat("yyyy/MM/dd"); 
 	static {
 		gmtFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));

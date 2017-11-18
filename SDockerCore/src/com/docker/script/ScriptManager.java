@@ -8,8 +8,11 @@ import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
+import com.docker.storage.adapters.LansService;
+import com.docker.storage.adapters.ServersService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.bson.Document;
 import script.file.FileAdapter;
 import script.file.FileAdapter.FileEntity;
 import script.file.FileAdapter.PathEx;
@@ -27,6 +30,9 @@ public class ScriptManager {
 
 	@Resource
 	private FileAdapter fileAdapter;
+
+	@Resource
+	private ServersService serversService;
 
 	private DockerStatusService dockerStatusService;
 
@@ -199,6 +205,32 @@ public class ScriptManager {
 
 										runtime.setServiceName(serviceName);
 										runtime.setServiceVersion(version);
+
+										try {
+											if(serversService != null) {
+												Document configDoc = serversService.getServerConfig(serviceName);
+												if(configDoc != null) {
+													LoggerEx.info(TAG, "Read server " + serviceName + " config " + configDoc);
+													Set<String> keys = configDoc.keySet();
+													for(String key : keys) {
+														String theValue = configDoc.getString(key);
+														String value = properties.getProperty(key);
+														if(value == null) {
+															key = key.replaceAll("_", ".");
+															value = properties.getProperty(key);
+														}
+														if(value != null) {
+															properties.put(key, theValue);
+														}
+													}
+												}
+											} else {
+												LoggerEx.info(TAG, "serversService is null, will not read config from database for service " + serviceName);
+											}
+										} catch(Throwable t) {
+											LoggerEx.error(TAG, "Read server " + serviceName + " config failed, " + t.getMessage());
+										}
+
 										runtime.prepare(service, properties, localScriptPath);
 
 										Service theService = new Service();
