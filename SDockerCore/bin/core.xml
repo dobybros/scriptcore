@@ -46,4 +46,7 @@
 				  factory-method="getSocketFactory" />
 		</constructor-arg>
 	</bean>
+
+	<bean id="serversService" class="com.docker.storage.adapters.impl.ServersServiceImpl" ></bean>
+	<bean id="lansService" class="com.docker.storage.adapters.impl.LansServiceImpl" ></bean>
 </beans>

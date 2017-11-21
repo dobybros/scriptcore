@@ -13,10 +13,24 @@
 		<property name="username" value="${mongo.username}" />
         <property name="password" value="${mongo.password}"/>
 	</bean>
-
+	<bean id="configHelper" class="com.docker.storage.mongodb.MongoHelper"
+		  init-method="init" destroy-method="disconnect">
+		<property name="host" value="${mongo.dbhost}" />
+		<property name="connectionsPerHost" value="${connectionsPerHost}" />
+		<property name="dbName" value="${config.dbname}" />
+		<property name="username" value="${mongo.username}" />
+		<property name="password" value="${mongo.password}"/>
+	</bean>
 	<bean id="dockerStatusDAO" class="com.docker.storage.mongodb.daos.DockerStatusDAO"
 		init-method="init">
 		<property name="mongoHelper" ref="dockerStatusHelper" />
 	</bean>
-
+	<bean id="serversDAO" class="com.docker.storage.mongodb.daos.ServersDAO"
+		  init-method="init">
+		<property name="mongoHelper" ref="configHelper" />
+	</bean>
+	<bean id="lansDAO" class="com.docker.storage.mongodb.daos.LansDAO"
+		  init-method="init">
+		<property name="mongoHelper" ref="configHelper" />
+	</bean>
 </beans>

@@ -10,6 +10,7 @@ import com.docker.storage.adapters.LansService;
 import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import script.groovy.runtime.GroovyRuntime;
 
 import javax.annotation.Resource;
@@ -44,6 +45,8 @@ public class MyBaseRuntime extends BaseRuntime {
 	}
 
 	public ServiceStubManager getServiceStubManager(String lanId) {
+	    if(StringUtils.isBlank(lanId))
+	        return null;
 		ServiceStubManager manager = stubManagerForLanIdMap.get(lanId);
 		if (manager == null) {
 			if (lanId.equals(OnlineServer.getInstance().getLanId())) {
