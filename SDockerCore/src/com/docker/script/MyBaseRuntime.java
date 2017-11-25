@@ -87,8 +87,8 @@ public class MyBaseRuntime extends BaseRuntime {
 					}
 					if(lan == null)
 						throw new NullPointerException("Lan is null for lanId " + lanId);
-					if(lan.getDomain() != null && lan.getPort() != null && lan.getProtocol() != null)
-						throw new NullPointerException("Lan " + lan + " is illegal for lanId " + lanId);
+					if(lan.getDomain() == null || lan.getPort() == null || lan.getProtocol() == null)
+						throw new NullPointerException("Lan " + lan + " is illegal for lanId " + lanId + " domain " + lan.getDomain() + " port " + lan.getPort() + " protocol " + lan.getProtocol());
 					manager.setHost(lan.getProtocol() + "://" + lan.getDomain() + ":" + lan.getPort());
                     manager.init();
 					stubManagerForLanIdMap.putIfAbsent(lanId, manager);
