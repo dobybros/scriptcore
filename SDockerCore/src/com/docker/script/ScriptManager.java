@@ -41,9 +41,11 @@ public class ScriptManager {
 	private String remotePath;
 	private String localPath;
 	private ConcurrentHashMap<String, BaseRuntime> scriptRuntimeMap = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, List<BaseRuntime>> serviceVersionMap = new ConcurrentHashMap<>();
 
 	private Class<?> baseRuntimeClass;
 
+	public static final String SERVICE_NOTFOUND = "servicenotfound";
 	public void init() {
 //		dslFileAdapter.getFilesInDirectory(arg0)
 		TimerEx.schedule(new TimerTaskEx() {
@@ -56,7 +58,19 @@ public class ScriptManager {
 	
 	public BaseRuntime getBaseRuntime(String service) {
 		BaseRuntime runtime = scriptRuntimeMap.get(service);
+		if(runtime == null) {
+            List<BaseRuntime> runtimes = serviceVersionMap.get(service);
+            if(runtimes != null && !runtimes.isEmpty()) {
+                runtime = runtimes.get(runtimes.size() - 1);
+            }
+        }
 //		2017-05-08 为了通用版加入当为null的时候的逻辑处理
+        if(runtime == null) {
+            MyBaseRuntime notFoundRuntime = (MyBaseRuntime) scriptRuntimeMap.get(SERVICE_NOTFOUND);
+            if(notFoundRuntime != null) {
+                runtime = notFoundRuntime.getRuntimeWhenNotFound(service);
+            }
+        }
 		if (runtime == null && runtimeNullHandler != null) {
 			runtime = runtimeNullHandler.getRuntime(service);
 		}
@@ -183,10 +197,9 @@ public class ScriptManager {
 
 									if(createRuntime) {
 										String propertiesPath = localScriptPath + "/config.properties";
-										Properties properties = null;
+										Properties properties = new Properties();
 										File propertiesFile = new File(propertiesPath);
 										if(propertiesFile.exists() && propertiesFile.isFile()) {
-											properties = new Properties();
 											properties.load(FileUtils.openInputStream(propertiesFile));
 										}
 
@@ -242,6 +255,19 @@ public class ScriptManager {
 											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
 
 										scriptRuntimeMap.put(service, runtime);
+                                        List<BaseRuntime> versionList = serviceVersionMap.get(serviceName);
+                                        //使用新的容器是因为防止删除的一瞬间， 获取为空的问题， 因此采用新容器更换的办法。
+                                        List<BaseRuntime> newVersionList = null;
+                                        if(versionList == null) {
+                                            newVersionList = new ArrayList<>();
+                                        } else {
+                                            newVersionList = new ArrayList<>(versionList);
+                                        }
+                                        if(newVersionList.contains(runtime)) {
+                                            newVersionList.remove(runtime);
+                                        }
+                                        newVersionList.add(runtime);
+                                        serviceVersionMap.put(serviceName, newVersionList);
 									}
 
 									runtime.setVersion(file.getLastModificationTime());
@@ -267,9 +293,13 @@ public class ScriptManager {
                                 t.printStackTrace();
                             } finally {
                                 try {
-                                	if(dockerStatusService != null) {
-										String serviceName = getServiceName(key);
-										Integer version = getServiceVersion(key);
+                                    String serviceName = getServiceName(key);
+                                    Integer version = getServiceVersion(key);
+                                    List<BaseRuntime> runtimes = serviceVersionMap.get(serviceName);
+                                    if(runtimes != null) {
+                                        runtimes.remove(runtime);
+                                    }
+                                    if(dockerStatusService != null) {
 										dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), serviceName, version);
 									}
                                 } catch (CoreException e) {

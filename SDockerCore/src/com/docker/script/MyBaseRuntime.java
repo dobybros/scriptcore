@@ -5,19 +5,26 @@ import chat.logs.LoggerEx;
 import com.docker.data.Lan;
 import com.docker.rpc.remote.skeleton.ServiceSkeletonAnnotationHandler;
 import com.docker.rpc.remote.stub.ServiceStubManager;
+import com.docker.script.annotations.ServiceNotFound;
+import com.docker.script.annotations.ServiceNotFoundListener;
 import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.LansService;
 import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import script.groovy.object.GroovyObjectEx;
+import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MyBaseRuntime extends BaseRuntime {
 	private static final String TAG = MyBaseRuntime.class.getSimpleName();
@@ -26,6 +33,11 @@ public class MyBaseRuntime extends BaseRuntime {
 	private ConcurrentHashMap<String, ServiceStubManager> stubManagerForLanIdMap = new ConcurrentHashMap<>();
 
 	private LansService lansService = (LansService) SpringContextUtil.getBean("lansService");
+
+
+    private List<GroovyObjectEx<ServiceNotFoundListener>> serviceNotFoundListeners;
+
+    private ReadWriteLock serviceNotFoundLock = new ReentrantReadWriteLock();
 
 	public void resetServiceStubManager(Class<?> proxyClass) {
 		if(serviceStubManager != null) {
@@ -94,6 +106,49 @@ public class MyBaseRuntime extends BaseRuntime {
 		serviceSkeletonAnnotationHandler.setService(getServiceName());
 		addClassAnnotationHandler(serviceSkeletonAnnotationHandler);
 
+        final MyBaseRuntime instance = this;
+        addClassAnnotationHandler(new ClassAnnotationHandler() {
+            @Override
+            public Class<? extends Annotation> handleAnnotationClass(GroovyRuntime runtime) {
+                return ServiceNotFound.class;
+            }
+
+            @Override
+            public void handleAnnotatedClasses(Map<String, Class<?>> annotatedClassMap,
+                                               MyGroovyClassLoader cl) {
+                if (annotatedClassMap != null && !annotatedClassMap.isEmpty()) {
+                    StringBuilder uriLogs = new StringBuilder(
+                            "\r\n---------------------------------------\r\n");
+
+                    List<GroovyObjectEx<ServiceNotFoundListener>> newServiceNotFoundMap = new ArrayList<>();
+                    Set<String> keys = annotatedClassMap.keySet();
+                    GroovyRuntime groovyRuntime = instance;
+                    for (String key : keys) {
+                        Class<?> groovyClass = annotatedClassMap.get(key);
+                        if (groovyClass != null) {
+                            ServiceNotFound messageReceivedAnnotation = groovyClass.getAnnotation(ServiceNotFound.class);
+                            if (messageReceivedAnnotation != null) {
+                                GroovyObjectEx<ServiceNotFoundListener> messageReceivedObj = groovyRuntime
+                                        .create(groovyClass);
+                                if (messageReceivedObj != null) {
+                                    uriLogs.append("ServiceNotFoundListener #" + groovyClass + "\r\n");
+                                    newServiceNotFoundMap.add(messageReceivedObj);
+                                }
+                            }
+                        }
+                    }
+                    instance.serviceNotFoundLock.writeLock().lock();
+                    try {
+                        instance.serviceNotFoundListeners = newServiceNotFoundMap;
+                    } finally {
+                        instance.serviceNotFoundLock.writeLock().unlock();
+                    }
+                    uriLogs.append("---------------------------------------");
+                    LoggerEx.info(TAG, uriLogs.toString());
+                }
+            }
+        });
+
 		remoteServiceHost = properties.getProperty("remote.service.host");
 		if(remoteServiceHost != null) {
 //			ServiceStubManager serviceStubManager = ServiceStubManager.getInstance();
@@ -155,6 +210,9 @@ public class MyBaseRuntime extends BaseRuntime {
                 manager.shutdown();
             }
         }
+        if(serviceNotFoundListeners != null) {
+            serviceNotFoundListeners.clear();
+        }
 	}
 
 	public ServiceStubManager getServiceStubManager() {
@@ -164,4 +222,23 @@ public class MyBaseRuntime extends BaseRuntime {
 	public void setServiceStubManager(ServiceStubManager serviceStubManager) {
 		this.serviceStubManager = serviceStubManager;
 	}
+
+    public BaseRuntime getRuntimeWhenNotFound(String service) {
+        serviceNotFoundLock.readLock().lock();
+        try {
+            if(serviceNotFoundListeners != null) {
+                for(GroovyObjectEx<ServiceNotFoundListener> listener : serviceNotFoundListeners) {
+                    try {
+                        return listener.getObject().getRuntimeWhenNotFound(service);
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                        LoggerEx.error(TAG, "Handle getRuntime service " + service + " failed, " + t.getMessage());
+                    }
+                }
+            }
+        } finally {
+            serviceNotFoundLock.readLock().unlock();
+        }
+        return null;
+    }
 }

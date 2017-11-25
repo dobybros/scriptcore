@@ -2,6 +2,7 @@ package com.docker.storage.mongodb.daos;
 
 import com.docker.data.DataObject;
 import com.docker.data.DockerStatus;
+import com.docker.data.Lan;
 import com.docker.storage.mongodb.BaseDAO;
 import org.bson.Document;
 
@@ -26,7 +27,7 @@ public class LansDAO extends BaseDAO {
 
 	@Override
 	public Class<? extends DataObject> getDataObjectClass(Document dbObj) {
-		return DockerStatus.class;
+		return Lan.class;
 	}
 
 	@Override
