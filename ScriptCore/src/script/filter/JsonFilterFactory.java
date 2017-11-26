@@ -24,7 +24,9 @@ public class JsonFilterFactory extends ClassAnnotationHandler{
 
 	@Override
 	public void hanlderShutdown() {
-		filterMap.clear();
+		if(filterMap != null) {
+			filterMap.clear();
+		}
 	}
 
 	public JsonFilterFactory() {

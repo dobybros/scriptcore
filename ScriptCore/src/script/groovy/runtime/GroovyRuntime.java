@@ -407,6 +407,16 @@ public class GroovyRuntime extends ScriptRuntime{
 			}
 			loadedClass = super.loadClass(name, lookupScriptFiles,
 					preferClassOverScript);
+			/*试图解决相互依赖class的bug， 思路是让重复编译的class替换缓存的class， 保证应用层的正确性。
+			if(bool) {
+				if (loadedClass != null) {
+					ClassHolder holder = new ClassHolder();
+					holder.parsedClass = loadedClass;
+					myClassCache.put(name.replace(".", "/") + ".groovy", holder);
+				}
+				LoggerEx.info(TAG, "Replace groovy class " + name.replace(".", "/") + ".groovy"
+						+ " successfully");
+			}*/
 			return loadedClass;
 			/*
 			int indx = name.lastIndexOf('.');
