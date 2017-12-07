@@ -74,6 +74,7 @@ public class OnlineServer {
     protected DockerStatus generateDockerStatus(Integer port) {
         DockerStatus dockerStatus = new DockerStatus();
         dockerStatus.setServer(server);
+        dockerStatus.setServerType(serverType);
         dockerStatus.setIp(ipHolder.getIp());
         if (rpcPort != null) {
             try {

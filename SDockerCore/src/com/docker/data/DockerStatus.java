@@ -22,6 +22,13 @@ public class DockerStatus extends DataObject{
 	public static final String FIELD_DOCKERSTATUS_STATUS = "status";
 	public static final String FIELD_DOCKERSTATUS_SERVICES = "services";
 	public static final String FIELD_DOCKERSTATUS_HEALTH = "health";
+	public static final String FIELD_DOCKERSTATUS_SERVERTYPE = "serverType";
+
+	/**
+	 * 服务器的类型， login， gateway， presence等
+	 */
+	private String serverType;
+
 	/**
 	 * 6位服务器名称， 随机生成的， 在数据库中是唯一字段
 	 */
@@ -164,6 +171,7 @@ public class DockerStatus extends DataObject{
 		lanId = dbObj.getString(FIELD_DOCKERSTATUS_LANID);
 		status = dbObj.getInteger(FIELD_DOCKERSTATUS_STATUS);
 		health = dbObj.getInteger(FIELD_DOCKERSTATUS_HEALTH);
+		serverType = (String) dbObj.get(FIELD_DOCKERSTATUS_SERVERTYPE);
 		List<Document> servicesList = (List<Document>) dbObj.get(FIELD_DOCKERSTATUS_SERVICES);
 		if(servicesList != null) {
 			services = new ArrayList<>();
@@ -181,6 +189,8 @@ public class DockerStatus extends DataObject{
 		dbObj = super.toDocument();
 		if(server != null)
 			dbObj.put(FIELD_DOCKERSTATUS_SERVER, server);
+		if(serverType != null)
+			dbObj.put(FIELD_DOCKERSTATUS_SERVERTYPE, serverType);
 		if(publicDomain != null)
 			dbObj.put(FIELD_DOCKERSTATUS_PUBLICDOMAIN, publicDomain);
 		if(ip != null)
@@ -210,4 +220,11 @@ public class DockerStatus extends DataObject{
 		return dbObj;
 	}
 
+	public String getServerType() {
+		return serverType;
+	}
+
+	public void setServerType(String serverType) {
+		this.serverType = serverType;
+	}
 }

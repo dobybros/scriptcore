@@ -313,6 +313,7 @@ public class ScriptManager {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			LoggerEx.error(TAG, "reload failed, " + e.getMessage());
 		}
 	}
 
