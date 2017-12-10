@@ -20,7 +20,7 @@
 		<property name="scriptcore.dir" location="${basedir}/../../ScriptCore" />
 		<property name="mongodbconnector.dir" location="${basedir}/../../Connectors/MongoDBConnector" />
 		<property name="core.dir" location="${basedir}/../../SDockerCore" />
-		<property name="deployment.dir" location="../IMDeployment" />
+		<property name="deployment.dir" location="../SdockerDeployment" />
 		<property name="dist.dir" location="${basedir}/deploy" />
 		<property name="conf.dir" value="${basedir}/../conf" />
 		<property name="i18n.dir" value="${core.dir}/i18n" />
