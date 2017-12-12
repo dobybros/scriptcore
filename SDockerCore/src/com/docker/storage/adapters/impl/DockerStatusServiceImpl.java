@@ -1,24 +1,25 @@
 package com.docker.storage.adapters.impl;
 
-import com.docker.data.DataObject;
-import com.docker.data.DockerStatus;
-import com.docker.data.Service;
-import com.docker.storage.DBException;
-import com.docker.utils.SpringContextUtil;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
-import org.bson.Document;
-
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ChatUtils;
-
-import com.mongodb.client.result.DeleteResult;
+import com.docker.data.DataObject;
+import com.docker.data.DockerStatus;
+import com.docker.data.Service;
+import com.docker.storage.DBException;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.mongodb.daos.DockerStatusDAO;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.DeleteResult;
+import org.bson.Document;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DockerStatusServiceImpl implements DockerStatusService {
 	private static final String TAG = DockerStatusServiceImpl.class.getSimpleName();
@@ -96,6 +97,46 @@ public class DockerStatusServiceImpl implements DockerStatusService {
 		} catch (DBException e) {
 			e.printStackTrace();
 			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_QUERY_FAILED, "Query server present server failed, " + e.getMessage());
+		}
+	}
+
+	@Override
+	public List<DockerStatus> getDockerStatusByServerType(String serverType) throws CoreException {
+		try {
+			List<DockerStatus> dockerStatuses = new ArrayList<>();
+			Document query = new Document().append(DockerStatus.FIELD_DOCKERSTATUS_SERVERTYPE, serverType);
+			FindIterable<Document> iterable = dockerStatusDAO.query(query);
+			MongoCursor<Document> cursor = iterable.iterator();
+			while (cursor.hasNext()) {
+				Document doc = cursor.next();
+				DockerStatus dockerStatus = new DockerStatus();
+				dockerStatus.fromDocument(doc);
+				dockerStatuses.add(dockerStatus);
+			}
+			return dockerStatuses;
+		} catch (DBException e) {
+			e.printStackTrace();
+			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_QUERY_FAILED, "Query server present server failed, " + e.getMessage());
+		}
+	}
+
+	@Override
+	public List<DockerStatus> getAllDockerStatus() throws CoreException {
+		try {
+			List<DockerStatus> dockerStatuses = new ArrayList<>();
+			Document query = new Document();
+			FindIterable<Document> iterable = dockerStatusDAO.query(query);
+			MongoCursor<Document> cursor = iterable.iterator();
+			while (cursor.hasNext()) {
+				Document doc = cursor.next();
+				DockerStatus dockerStatus = new DockerStatus();
+				dockerStatus.fromDocument(doc);
+				dockerStatuses.add(dockerStatus);
+			}
+			return dockerStatuses;
+		} catch (DBException e) {
+			e.printStackTrace();
+			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_QUERY_FAILED, "Query all docker servers failed, " + e.getMessage());
 		}
 	}
 

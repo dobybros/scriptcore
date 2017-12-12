@@ -5,6 +5,8 @@ import chat.errors.CoreException;
 import com.docker.data.DockerStatus;
 import com.docker.data.Service;
 
+import java.util.List;
+
 
 /**
  * 管理服务器在线状态的接口
@@ -31,4 +33,8 @@ public interface DockerStatusService {
 
 	DockerStatus getDockerStatusByServer(String server)
 			throws CoreException;
+
+	List<DockerStatus> getDockerStatusByServerType(String serverType) throws CoreException;
+
+	List<DockerStatus> getAllDockerStatus() throws CoreException;
 }

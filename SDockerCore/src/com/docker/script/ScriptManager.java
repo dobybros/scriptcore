@@ -8,7 +8,6 @@ import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
-import com.docker.storage.adapters.LansService;
 import com.docker.storage.adapters.ServersService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -250,6 +249,7 @@ public class ScriptManager {
 										theService.setService(serviceName);
 										theService.setMinVersion(minVersion);
 										theService.setVersion(version);
+										theService.setUploadTime(file.getLastModificationTime());
 
 										if(dockerStatusService != null)
 											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
