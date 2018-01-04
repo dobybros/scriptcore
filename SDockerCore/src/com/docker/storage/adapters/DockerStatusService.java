@@ -26,6 +26,12 @@ public interface DockerStatusService {
 	void addService(String server, Service service)
 			throws CoreException;
 
+	void updateServiceUpdateTime(String server, String serviceName, Integer serviceVersion, Long updateTime)
+			throws CoreException;
+
+	void updateServiceType(String server, String serviceName, Integer serviceVersion, Integer type)
+			throws CoreException;
+
 	void deleteService(String server, String service, Integer version) throws CoreException;
 
 	void update(String server, DockerStatus serverStatus)

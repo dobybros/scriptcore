@@ -250,6 +250,7 @@ public class ScriptManager {
 										theService.setMinVersion(minVersion);
 										theService.setVersion(version);
 										theService.setUploadTime(file.getLastModificationTime());
+										theService.setType(Service.FIELD_SERVER_TYPE_NORMAL);
 
 										if(dockerStatusService != null)
 											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
@@ -268,10 +269,26 @@ public class ScriptManager {
                                         }
                                         newVersionList.add(runtime);
                                         serviceVersionMap.put(serviceName, newVersionList);
+									} else {
+										Integer version = getServiceVersion(service);
+										String serviceName = getServiceName(service);
+										if(dockerStatusService != null)
+											dockerStatusService.updateServiceUpdateTime(OnlineServer.getInstance().getServer(), serviceName, version, file.getLastModificationTime());
+									}
+									Integer version = getServiceVersion(service);
+									String serviceName = getServiceName(service);
+									try {
+										runtime.setVersion(file.getLastModificationTime());
+										runtime.redeploy();
+										if(dockerStatusService != null) {
+											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_NORMAL);
+										}
+									} catch (Throwable t) {
+										if(dockerStatusService != null)
+											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_DEPLOY_FAILED);
+										throw t;
 									}
 
-									runtime.setVersion(file.getLastModificationTime());
-									runtime.redeploy();
 								}
 							}
 						}

@@ -15,7 +15,9 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -61,6 +63,34 @@ public class DockerStatusServiceImpl implements DockerStatusService {
 			dockerStatusDAO.updateOne(Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server), Updates.addToSet(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, service.toDocument()), false);
 		} catch (DBException e) {
 			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_UPDATE_FAILED, "Add service " + service + " to server " + server + " failed, " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void updateServiceUpdateTime(String server, String serviceName, Integer serviceVersion, Long updateTime) throws CoreException {
+		try {
+			Bson query1 = Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server);
+			Bson query21 = Filters.eq(Service.FIELD_SERVICE_SERVICE, serviceName);
+			Bson query22 = Filters.eq(Service.FIELD_SERVICE_VERSION, serviceVersion);
+			Bson query2 = Filters.elemMatch(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, Filters.and(query21, query22));
+			dockerStatusDAO.updateOne(Filters.and(query1, query2), Updates.set(DockerStatus.FIELD_DOCKERSTATUS_SERVICES + ".$." + Service.FIELD_SERVICE_UPLOADTIME, updateTime), false);
+		} catch (DBException e) {
+			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_UPDATE_FAILED, "Update service " + serviceName + ", version " + serviceVersion + " to server " + server + " failed, " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void updateServiceType(String server, String serviceName, Integer serviceVersion, Integer type) throws CoreException {
+		try {
+			Bson query1 = Filters.eq(DockerStatus.FIELD_DOCKERSTATUS_SERVER, server);
+			Bson query21 = Filters.eq(Service.FIELD_SERVICE_SERVICE, serviceName);
+			Bson query22 = Filters.eq(Service.FIELD_SERVICE_VERSION, serviceVersion);
+			Bson query2 = Filters.elemMatch(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, Filters.and(query21, query22));
+//			Bson query3 = Filters.elemMatch(DockerStatus.FIELD_DOCKERSTATUS_SERVICES, Filters.eq(Service.FIELD_SERVICE_VERSION, serviceVersion));
+			UpdateResult result = dockerStatusDAO.updateOne(Filters.and(query1, query2), Updates.set(DockerStatus.FIELD_DOCKERSTATUS_SERVICES + ".$." + Service.FIELD_SERVICE_TYPE, type), false);
+			System.out.print(result);
+		} catch (DBException e) {
+			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_UPDATE_FAILED, "Update service " + serviceName + ", version " + serviceVersion + " to server " + server + " failed, " + e.getMessage());
 		}
 	}
 
