@@ -514,6 +514,7 @@ public class GroovyRuntime extends ScriptRuntime{
 		MyGroovyClassLoader oldClassLoader = classLoader;
 		boolean deploySuccessfully = false;
         ByteArrayOutputStream baos = null;
+        List<File> compileFirstFiles = new ArrayList<>();
 		final Map<ClassAnnotationHandler, Map<String, Class<?>>> handlerMap = new LinkedHashMap<ClassAnnotationHandler, Map<String, Class<?>>>();
 		try {
 			File importPath = new File(path + "/config/imports.groovy");
@@ -530,6 +531,7 @@ public class GroovyRuntime extends ScriptRuntime{
                 final String result = baos.toString().trim();
                 LoggerEx.info(TAG, "import log " + result);
                 LoggerEx.info(TAG, "Imported " + importPath.getAbsolutePath());
+				compileFirstFiles.add(importPath);
 			}
 
 			newClassLoader = getNewClassLoader();
@@ -557,38 +559,11 @@ public class GroovyRuntime extends ScriptRuntime{
 				key = key.replace("/", ".");
 				newClassLoader.pendingGroovyClasses.add(key);
 			}
-			
+			for(File file : compileFirstFiles) {
+				parseFile(file, handlerMap, newClassLoader);
+			}
 			for (File file : files) {
-				String absolutePath = file.getAbsolutePath();
-				String key = file.getAbsolutePath().substring(absolutePath.indexOf(path) + path.length());
-				// Class<?> groovyClass = groovyServlet.getGroovyClass();
-				Class<?> groovyClass = newClassLoader.parseGroovyClass(key,
-						file);
-
-				if (annotationHandlers != null) {
-					Collection<ClassAnnotationHandler> handlers = annotationHandlers;
-					for (ClassAnnotationHandler handler : handlers) {
-//						ClassAnnotationHandler handler = annotationHandlers.get(i);
-//						handler.setGroovyRuntime(this);
-						Class<? extends Annotation> annotationClass = handler
-								.handleAnnotationClass(this);
-						if (annotationClass != null) {
-							Annotation annotation = groovyClass
-									.getAnnotation(annotationClass);
-							if (annotation != null) {
-								Map<String, Class<?>> classes = handlerMap
-										.get(handler);
-								if (classes == null) {
-									classes = new HashMap<>();
-									handlerMap.put(handler, classes);
-								}
-								classes.put(key, groovyClass);
-							}
-						} else {
-							handlerMap.put(handler, new HashMap<String, Class<?>>());
-						}
-					}
-				}
+				parseFile(file, handlerMap, newClassLoader);
 			}
 			String[] strs = new String[] {
 					"package script.groovy.runtime;",
@@ -703,6 +678,39 @@ public class GroovyRuntime extends ScriptRuntime{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				}
+			}
+		}
+	}
+
+	private void parseFile(File file, Map<ClassAnnotationHandler, Map<String, Class<?>>> handlerMap, MyGroovyClassLoader newClassLoader) throws CoreException {
+		String absolutePath = file.getAbsolutePath();
+		String key = file.getAbsolutePath().substring(absolutePath.indexOf(path) + path.length());
+		// Class<?> groovyClass = groovyServlet.getGroovyClass();
+		Class<?> groovyClass = newClassLoader.parseGroovyClass(key,
+				file);
+
+		if (annotationHandlers != null) {
+			Collection<ClassAnnotationHandler> handlers = annotationHandlers;
+			for (ClassAnnotationHandler handler : handlers) {
+//						ClassAnnotationHandler handler = annotationHandlers.get(i);
+//						handler.setGroovyRuntime(this);
+				Class<? extends Annotation> annotationClass = handler
+						.handleAnnotationClass(this);
+				if (annotationClass != null) {
+					Annotation annotation = groovyClass
+							.getAnnotation(annotationClass);
+					if (annotation != null) {
+						Map<String, Class<?>> classes = handlerMap
+								.get(handler);
+						if (classes == null) {
+							classes = new HashMap<>();
+							handlerMap.put(handler, classes);
+						}
+						classes.put(key, groovyClass);
+					}
+				} else {
+					handlerMap.put(handler, new HashMap<String, Class<?>>());
 				}
 			}
 		}
