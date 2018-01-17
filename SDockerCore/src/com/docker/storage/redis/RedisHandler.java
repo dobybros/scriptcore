@@ -291,4 +291,79 @@ public class RedisHandler {
 				jedis.close();
 		}
 	}
+
+	/**
+	 *
+	 * 将一个或多个值插入到列表头部
+	 *
+	 * @param key
+	 * @param fields
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long lpush(String key, String... fields) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.lpush(key, fields);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpush " + key
+					+ " " + Arrays.toString(fields) + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个或多个值插入到列表头部
+	 *
+	 * @param key
+	 * @param fields
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long lpush(byte[] key, byte[]... fields) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.lpush(key, fields);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpush " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个或多个值插入到列表头部
+	 *
+	 * @param key
+	 * @param fields
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long rpush(byte[] key, byte[]... fields) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.rpush(key, fields);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpush " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
 }

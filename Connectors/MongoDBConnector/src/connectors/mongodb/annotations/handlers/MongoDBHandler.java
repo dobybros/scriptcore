@@ -94,14 +94,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 			LoggerEx.info(TAG, "Information is insufficient, databaseHolder = " + databaseMap + ", collectionMap = " + collectionMap + ", documentMap = " + documentMap);
 			return;
 		}
-		
-		try {
-			mongoClientHelper.connect();
-		} catch (CoreException e) {
-			e.printStackTrace();
-			LoggerEx.error(TAG, "Connect mongodb failed, " + mongoClientHelper.getHosts() + " error, " + e.getMessage());
-		}
-		
+
 		HashMap<Class<?>, com.mongodb.client.MongoDatabase> newDatabaseMap = new HashMap<>();
 		HashMap<Class<?>, CollectionHolder> newCollectionMap = new HashMap<>();
 		HashMap<Class<?>, ClassFieldsHolder> newDocumentMap = new HashMap<>();
