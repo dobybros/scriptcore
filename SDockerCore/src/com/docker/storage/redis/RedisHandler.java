@@ -291,4 +291,162 @@ public class RedisHandler {
 				jedis.close();
 		}
 	}
+
+	/**
+	 *
+	 * 将一个对象插入到列表头部
+	 *
+	 * @param key
+	 * @param obj
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long lpushObject(String key, Object obj) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			String jsonStr = JSON.toJSONString(obj);
+			return jedis.lpush(key, jsonStr);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpush " + key
+					+ " " + JSON.toJSONString(obj) + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个对象插入到列表尾部
+	 *
+	 * @param key
+	 * @param obj
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long rpushObject(String key, Object obj) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			String jsonStr = JSON.toJSONString(obj);
+			return jedis.rpush(key, jsonStr);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "rpush " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 * 获取list长度
+	 * @param key
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long llen(String key) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.llen(key);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "llen " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 * 获取list中string对象
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws CoreException
+	 */
+	public List<String> lrange(String key, long start, long end) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.lrange(key, start, end);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lrange " + key
+					+ " " + start + " " + end + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 * 获取list中object对象
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @param clazz
+	 * @param <T>
+	 * @return
+	 * @throws CoreException
+	 */
+	public <T> List<T> lrange(String key, long start, long end, Class<T> clazz) throws CoreException {
+		ShardedJedis jedis = null;
+		List<String> redisResult;
+		try {
+			jedis = pool.getResource();
+			redisResult = jedis.lrange(key, start, end);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lrange object " + key
+					+ " " + start + " " + end + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+
+		if(redisResult != null) {
+			try {
+				List<T> T = new ArrayList<T>();
+				for (String json : redisResult) {
+					T.add(JSON.parseObject(json, clazz));
+				}
+				return T;
+			} catch(Throwable t) {
+				LoggerEx.warn(TAG, "Value " + redisResult + " is not  json format, return null for key " + key + " class " + clazz + ", error " + t.getMessage());
+				return null;
+			}
+		}
+		return null;
+	}
+
+
+	public String ltrim(String key, long start, long end) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.ltrim(key, start, end);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "ltrim " + key
+					+ " " + start + " " + end + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+
 }
