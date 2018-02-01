@@ -3,10 +3,14 @@ package connectors.mongodb;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 
+import chat.utils.ConcurrentHashSet;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+
+import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MongoClientHelper {
@@ -18,14 +22,15 @@ public class MongoClientHelper {
 	
 	private static int[] lock = new int[0];
 	
-	private MongoClient mongoClient;
+//	private MongoClient mongoClient;
 	private Integer connectionsPerHost;
 	private Integer threadsAllowedToBlockForConnectionMultiplier;
 	private Integer maxWaitTime;
 	private Integer connectTimeout;
 	private Integer socketTimeout;
 	private Boolean socketKeepAlive;
-	
+	private ConcurrentHashMap<String, MongoClient> clientMap = new ConcurrentHashMap<>();
+
 	public MongoClientHelper() {
 //		instance = this;
 	}
@@ -34,46 +39,50 @@ public class MongoClientHelper {
 //		return instance;
 //	}
 	
-	public void connect() throws CoreException {
-		connect(null);
-	}
+//	public void connect() throws CoreException {
+//		connect(null);
+//	}
 	
-	public MongoClient connect(String toHosts) throws CoreException {
-		synchronized (lock) {
-			if(toHosts == null)
-				toHosts = hosts;
-			if(mongoClient == null || hosts == null || !hosts.equals(toHosts)) {
-				LoggerEx.info(TAG, "Connecting hosts " + toHosts + " from old hosts " + hosts);
-				try {
-					MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-					if(connectionsPerHost != null)
-						optionsBuilder.connectionsPerHost(connectionsPerHost);
-					if(threadsAllowedToBlockForConnectionMultiplier != null)
-						optionsBuilder.threadsAllowedToBlockForConnectionMultiplier(threadsAllowedToBlockForConnectionMultiplier);
-					if(maxWaitTime != null)
-						optionsBuilder.maxWaitTime(maxWaitTime);
-					if(connectTimeout != null)
-						optionsBuilder.connectTimeout(connectTimeout);
-					if(socketTimeout != null)
-						optionsBuilder.socketTimeout(socketTimeout);
-					if(socketKeepAlive != null)
-						optionsBuilder.socketKeepAlive(socketKeepAlive);
+	private MongoClient connect(String dbName) throws CoreException {
+//			if(toHosts == null)
+//				toHosts = hosts;
+		MongoClient mongoClient = clientMap.get(dbName);
+		if(mongoClient == null) {
+			synchronized (clientMap) {
+				mongoClient = clientMap.get(dbName);
+				if(mongoClient == null) {
+					LoggerEx.info(TAG, "Connecting hosts " + hosts);
+					try {
+						MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
+						if(connectionsPerHost != null)
+							optionsBuilder.connectionsPerHost(connectionsPerHost);
+						if(threadsAllowedToBlockForConnectionMultiplier != null)
+							optionsBuilder.threadsAllowedToBlockForConnectionMultiplier(threadsAllowedToBlockForConnectionMultiplier);
+						if(maxWaitTime != null)
+							optionsBuilder.maxWaitTime(maxWaitTime);
+						if(connectTimeout != null)
+							optionsBuilder.connectTimeout(connectTimeout);
+						if(socketTimeout != null)
+							optionsBuilder.socketTimeout(socketTimeout);
+						if(socketKeepAlive != null)
+							optionsBuilder.socketKeepAlive(socketKeepAlive);
 //					CodecRegistry registry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromCodecs(new CleanDocumentCodec()));
 //					optionsBuilder.codecRegistry(registry);
 
-					if(mongoClient != null) {
-						mongoClient.close();
-						LoggerEx.info(TAG, "Connected hosts " + toHosts + " closing old hosts client " + hosts + " now.");
-					}
+//							if(mongoClient != null) {
+//								mongoClient.close();
+//								LoggerEx.info(TAG, "Connected hosts " + hosts + " closing old hosts client " + hosts + " now.");
+//							}
 
-					MongoClientURI connectionString = new MongoClientURI(toHosts, optionsBuilder);
-					mongoClient = new MongoClient(connectionString);
-					
-					hosts = toHosts;
-					LoggerEx.info(TAG, "Connected hosts " + toHosts);
-				} catch (Throwable t) {
-					t.printStackTrace();
-					LoggerEx.fatal(TAG, "Build mongo uri for hosts " + hosts + " failed, " + t.getMessage());
+						MongoClientURI connectionString = new MongoClientURI(hosts + "/" + dbName, optionsBuilder);
+						mongoClient = new MongoClient(connectionString);
+						clientMap.put(dbName, mongoClient);
+
+						LoggerEx.info(TAG, "Connected hosts " + hosts + " db " + dbName);
+					} catch (Throwable t) {
+						t.printStackTrace();
+						LoggerEx.fatal(TAG, "Build mongo uri for hosts " + hosts + " failed, " + t.getMessage());
+					}
 				}
 			}
 		}
@@ -83,28 +92,36 @@ public class MongoClientHelper {
 	public void disconnect() {
 		synchronized (lock) {
 			if(hosts != null) {
-				if(mongoClient != null) {
-					mongoClient.close();
+				Collection<MongoClient> clients = clientMap.values();
+				for(MongoClient mongoClient : clients) {
+					if(mongoClient != null) {
+						mongoClient.close();
+					}
 				}
 				hosts = null;
-				mongoClient = null;
 			}
 		}
 	}
 
 	public MongoDatabase getMongoDatabase(String databaseName) {
-		if(mongoClient != null) {
-			return mongoClient.getDatabase(databaseName);
+		MongoClient client = clientMap.get(databaseName);
+		if(client == null) {
+			try {
+				connect(databaseName);
+			} catch (CoreException e) {
+				e.printStackTrace();
+				LoggerEx.error(TAG, "connect database " + databaseName + " failed, " + e.getMessage());
+			}
+		}
+		client = clientMap.get(databaseName);
+		if(client != null) {
+			return client.getDatabase(databaseName);
 		}
 		return null;
 	}
 	
 	public String getHosts() {
 		return hosts;
-	}
-
-	public MongoClient getMongoClient() {
-		return mongoClient;
 	}
 
 	public Integer getConnectionsPerHost() {

@@ -16,7 +16,7 @@ public class MongoInstance {
 
 	private MongoClient mongo;
 	private String host;
-    private MongoClientOptions options;
+    private MongoClientOptions.Builder optionsBuilder;
 	private Integer connectionsPerHost;
 	private Integer threadsAllowedToBlockForConnectionMultiplier;
 	private Integer maxWaitTime;
@@ -42,9 +42,14 @@ public class MongoInstance {
 				initMongoOptions();
 				
 				final String MONGODB_PROTOCOL = "mongodb://";
-				if(host.startsWith(MONGODB_PROTOCOL)) 
-					host = host.substring(MONGODB_PROTOCOL.length());
-				
+				if(host.startsWith(MONGODB_PROTOCOL)) {
+					MongoClientURI connectionString = new MongoClientURI(host + "/" + dbName, optionsBuilder);
+					mongo = new MongoClient(connectionString);
+					return;
+				}
+				MongoClientOptions options = optionsBuilder.build();
+//					host = host.substring(MONGODB_PROTOCOL.length());
+
 				List<ServerAddress> servers = new ArrayList<>();
 				String[] hostArray = host.split(",");
 				for(String hostString : hostArray) {
@@ -76,7 +81,7 @@ public class MongoInstance {
 	}
 	
 	private void initMongoOptions(){
-		MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
+		optionsBuilder = MongoClientOptions.builder();
 		if(connectionsPerHost != null)
 			optionsBuilder.connectionsPerHost(connectionsPerHost);
 		if(threadsAllowedToBlockForConnectionMultiplier != null)
@@ -91,7 +96,6 @@ public class MongoInstance {
 			optionsBuilder.socketKeepAlive(socketKeepAlive);
 		CodecRegistry registry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromCodecs(new CleanDocumentCodec()));
 		optionsBuilder.codecRegistry(registry);
-		options = optionsBuilder.build();
 	}
 
     public MongoClient getMongo() {
@@ -100,12 +104,12 @@ public class MongoInstance {
 	public void setMongo(MongoClient mongo) {
 		this.mongo = mongo;
 	}
-	public MongoClientOptions getOptions() {
-		return options;
-	}
-	public void setOptions(MongoClientOptions options) {
-		this.options = options;
-	}
+//	public MongoClientOptions getOptions() {
+//		return options;
+//	}
+//	public void setOptions(MongoClientOptions options) {
+//		this.options = options;
+//	}
 	
 	public Integer getConnectionsPerHost() {
 		return connectionsPerHost;
