@@ -35,8 +35,6 @@ public class ScriptManager {
 
 	private DockerStatusService dockerStatusService;
 
-	private IRuntimeNullHandler runtimeNullHandler;
-
 	private String remotePath;
 	private String localPath;
 	private ConcurrentHashMap<String, BaseRuntime> scriptRuntimeMap = new ConcurrentHashMap<>();
@@ -63,16 +61,12 @@ public class ScriptManager {
                 runtime = runtimes.get(runtimes.size() - 1);
             }
         }
-//		2017-05-08 为了通用版加入当为null的时候的逻辑处理
         if(runtime == null) {
             MyBaseRuntime notFoundRuntime = (MyBaseRuntime) scriptRuntimeMap.get(SERVICE_NOTFOUND);
             if(notFoundRuntime != null) {
                 runtime = notFoundRuntime.getRuntimeWhenNotFound(service);
             }
         }
-		if (runtime == null && runtimeNullHandler != null) {
-			runtime = runtimeNullHandler.getRuntime(service);
-		}
 		return runtime;
 	}
 
@@ -378,14 +372,6 @@ public class ScriptManager {
 
 	public void setLocalPath(String localPath) {
 		this.localPath = localPath;
-	}
-
-	public IRuntimeNullHandler getRuntimeNullHandler() {
-		return runtimeNullHandler;
-	}
-
-	public void setRuntimeNullHandler(IRuntimeNullHandler runtimeNullHandler) {
-		this.runtimeNullHandler = runtimeNullHandler;
 	}
 
 	public DockerStatusService getDockerStatusService() {
