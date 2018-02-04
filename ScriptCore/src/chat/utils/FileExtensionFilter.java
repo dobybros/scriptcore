@@ -27,7 +27,7 @@ public class FileExtensionFilter implements FilenameFilter{
 		boolean hit = false;
 		if(name.endsWith(".js"))
 			hit = true;
-		File file = new File(dir.getAbsolutePath() + "/" + name);
+		File file = new File(dir.getAbsolutePath() + File.separator + name);
 		if(hit) {
 			files.add(file);
 			if(this.iterator != null)

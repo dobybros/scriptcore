@@ -108,7 +108,7 @@ public class DeployServiceUtils {
             FileUtils.copyDirectory(resourceFile, deploy);
         if(version != null)
             serviceName = serviceName + "_v" + version;
-        doZip(new File(deploy.getAbsolutePath() + (prefix != null ? "/" + prefix : "") + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
+        doZip(new File(deploy.getAbsolutePath() + (prefix != null ? File.separator + prefix : "") + File.separator + dockerName + File.separator + serviceName + File.separator + "groovy.zip"), deploy);
         clean(deploy, ".zip");
 
         File[] toRemoveEmptyFolders = deploy.listFiles();
@@ -224,7 +224,7 @@ public class DeployServiceUtils {
 
         if(files.length == 0){//如果目录为空,则单独创建之.
             //ZipEntry的isDirectory()方法中,目录以"/"结尾.
-            zipOut.putNextEntry(new ZipEntry(dir.toString() + "/"));
+            zipOut.putNextEntry(new ZipEntry(dir.toString() + File.separator));
             zipOut.closeEntry();
         }
         else{//如果目录不为空,则分别处理目录和文件.
@@ -238,7 +238,7 @@ public class DeployServiceUtils {
                 else if(!fileName.getAbsolutePath().equals(zipFile.getAbsolutePath())){
                     fileIn = new FileInputStream(fileName);
                     String zipPath = fileName.getAbsolutePath().substring(root.getAbsolutePath().length());
-                    if(zipPath.startsWith("/"))
+                    if(zipPath.startsWith(File.separator))
                         zipPath = zipPath.substring(1);
                     zipOut.putNextEntry(new ZipEntry(zipPath));
 

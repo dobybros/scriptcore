@@ -380,7 +380,7 @@ public class GroovyRuntime extends ScriptRuntime{
 			Class<?> loadedClass = null;
 			if(pendingGroovyClasses.contains(name)) {
 //				pendingGroovyClasses.remove(name);
-				String key = name.replace(".", "/") + ".groovy";
+				String key = name.replace(".", File.separator) + ".groovy";
 				if(!parsingGroovyClasses.contains(name)) {
 					parsingGroovyClasses.add(name);
 					try {
@@ -556,7 +556,7 @@ public class GroovyRuntime extends ScriptRuntime{
 				if(pos >= 0) {
 					key = key.substring(0, pos);
 				}
-				key = key.replace("/", ".");
+				key = key.replace(File.separator, ".");
 				newClassLoader.pendingGroovyClasses.add(key);
 			}
 			for(File file : compileFirstFiles) {
@@ -717,7 +717,7 @@ public class GroovyRuntime extends ScriptRuntime{
 	}
 
 	public static String path(Class<?> c) {
-		return c.getName().replace(".", "/") + ".groovy";
+		return c.getName().replace(".", File.separator) + ".groovy";
 	}
 
 	public <T> GroovyObjectEx<T> create(Class<?> c) {
@@ -882,7 +882,7 @@ public class GroovyRuntime extends ScriptRuntime{
 	public Class<?> getClass(String classStr) {
 		if(StringUtils.isBlank(classStr))
 			return null;
-		classStr = classStr.replace(".", "/") + ".groovy";
+		classStr = classStr.replace(".", File.separator) + ".groovy";
 		if(classLoader != null) {
 			ClassHolder holder = classLoader.getClass(classStr);
 			if(holder != null) {

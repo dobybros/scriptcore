@@ -1,10 +1,6 @@
 package com.docker.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.Character.UnicodeBlock;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
@@ -33,7 +29,7 @@ public class CommonUtils {
 	
 	public static final String PROPERTY_PATH = "props"; 
 	public static Properties loadProperty(String fileName) throws CoreException {
-		ClassPathResource resource = new ClassPathResource(PROPERTY_PATH + "/" + fileName);
+		ClassPathResource resource = new ClassPathResource(PROPERTY_PATH + File.separator + fileName);
 		Properties props  = null;
 		try {
 			props  = PropertiesLoaderUtils.loadProperties(resource);
@@ -76,9 +72,9 @@ public class CommonUtils {
             synchronized (gmtFormatter) {
                 timePath = gmtFormatter.format(oid.getDate());
             }
-            builder.append(timePath).append("/").append(resourceId);
+            builder.append(timePath).append(File.separator).append(resourceId);
             if(fileName != null)
-                builder.append("/").append(fileName);
+                builder.append(File.separator).append(fileName);
             return builder.toString();
         } else {
             throw new IOException("Invalid resourceId " + resourceId);

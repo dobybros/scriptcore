@@ -172,8 +172,8 @@ public class ScriptManager {
 										break;
 									}
 									if(runtime != null) {
-										localScriptPath = localPath + serverTypePath + service + "/" + language;
-										runtime.setPath(localScriptPath + "/");
+										localScriptPath = localPath + serverTypePath + service + File.separator + language;
+										runtime.setPath(localScriptPath + File.separator);
 									}
 								}
 								
@@ -184,12 +184,12 @@ public class ScriptManager {
 
 									String n = localZipFile.getName();
 									n = n.substring(0, n.length() - ".zip".length());
-									localScriptPath = localPath + serverTypePath + service + "/" + n;
+									localScriptPath = localPath + serverTypePath + service + File.separator + n;
 									FileUtils.deleteDirectory(new File(localScriptPath));
 									unzip(localZipFile, localScriptPath);
 
 									if(createRuntime) {
-										String propertiesPath = localScriptPath + "/config.properties";
+										String propertiesPath = localScriptPath + File.separator + "config.properties";
 										Properties properties = new Properties();
 										File propertiesFile = new File(propertiesPath);
 										if(propertiesFile.exists() && propertiesFile.isFile()) {
