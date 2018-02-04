@@ -10,6 +10,7 @@ import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.adapters.ServersService;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import script.file.FileAdapter;
@@ -354,7 +355,7 @@ public class ScriptManager {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new CoreException(CoreErrorCodes.ERROR_SCRIPT_UNZIP_FAILED, "Groovy zip " + file.getAbsolutePath() + " unzip failed, " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_SCRIPT_UNZIP_FAILED, "Groovy zip " + FilenameUtils.separatorsToUnix(file.getAbsolutePath()) + " unzip failed, " + e.getMessage());
 		}
 	}
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chat.utils.IteratorEx;
+import org.apache.commons.io.FilenameUtils;
 
 public class FileExtensionFilter implements FilenameFilter{
 	private IteratorEx<File> iterator;
@@ -29,7 +30,7 @@ public class FileExtensionFilter implements FilenameFilter{
 		boolean hit = false;
 		if(name.endsWith(".js"))
 			hit = true;
-		File file = new File(dir.getAbsolutePath() + "/" + name);
+		File file = new File(FilenameUtils.separatorsToUnix(dir.getAbsolutePath()) + "/" + name);
 		if(hit) {
 			files.add(file);
 			if(this.iterator != null)
