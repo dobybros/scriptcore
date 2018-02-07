@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -124,7 +125,7 @@ public class MDataFileGroup<T extends MDataFile<?>> {
 		if(fileClass != null) { 
 			try {
 				Constructor<?> constructor = fileClass.getConstructor(String.class);
-				T t = (T) constructor.newInstance(file.getAbsolutePath());
+				T t = (T) constructor.newInstance(FilenameUtils.separatorsToUnix(file.getAbsolutePath()));
 				t.open();
 				return t;
 			} catch (Throwable t) {

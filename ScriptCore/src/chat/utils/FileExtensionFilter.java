@@ -1,5 +1,7 @@
 package chat.utils;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class FileExtensionFilter implements FilenameFilter{
 		boolean hit = false;
 		if(name.endsWith(".js"))
 			hit = true;
-		File file = new File(dir.getAbsolutePath() + "/" + name);
+		File file = new File(FilenameUtils.separatorsToUnix(dir.getAbsolutePath()) + "/" + name);
 		if(hit) {
 			files.add(file);
 			if(this.iterator != null)

@@ -96,7 +96,7 @@ public class LocalFileHandler extends FileAdapter {
 			List<FileEntity> list = new ArrayList<>();
 			for(File file : files) {
 				FileEntity entity = new FileEntity();
-				entity.setAbsolutePath(file.getAbsolutePath());
+				entity.setAbsolutePath(FilenameUtils.separatorsToUnix(file.getAbsolutePath()));
 				entity.setLastModificationTime(file.lastModified());
 				entity.setLength(file.length());
 				entity.setType(file.isFile() ? FileEntity.TYPE_FILE : FileEntity.TYPE_DIRECTORY);

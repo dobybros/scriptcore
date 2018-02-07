@@ -3,6 +3,10 @@
 .project
 .settings
 bin
-/.idea/
+/.idea
 *.iml
 /logs/
+.idea
+*.iml
+*.class
+SDocker/classes/ctx.xml

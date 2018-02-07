@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import chat.encrypter.EncryptService;
@@ -301,7 +302,7 @@ public abstract class FileAdapter {
 				} else {
 					type = TYPE_DIRECTORY;
 				}
-				absolutePath = file.getAbsolutePath();
+				absolutePath = FilenameUtils.separatorsToUnix(file.getAbsolutePath());
 				lastModificationTime = file.lastModified();
 			} 
 		}

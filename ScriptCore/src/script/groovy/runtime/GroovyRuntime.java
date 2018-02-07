@@ -23,6 +23,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
@@ -519,8 +520,8 @@ public class GroovyRuntime extends ScriptRuntime{
 		try {
 			File importPath = new File(path + "/config/imports.groovy");
 			if(importPath.isFile() && importPath.exists()) {
-				LoggerEx.info(TAG, "Start imports " + importPath.getAbsolutePath());
-				final CommandLine cmdLine = CommandLine.parse("groovy " + importPath.getAbsolutePath());
+				LoggerEx.info(TAG, "Start imports " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
+				final CommandLine cmdLine = CommandLine.parse("groovy " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
 				ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(15));//设置超时时间
 				DefaultExecutor executor = new DefaultExecutor();
                 baos = new ByteArrayOutputStream();
@@ -530,7 +531,7 @@ public class GroovyRuntime extends ScriptRuntime{
 				int exitValue = executor.execute(cmdLine);
                 final String result = baos.toString().trim();
                 LoggerEx.info(TAG, "import log " + result);
-                LoggerEx.info(TAG, "Imported " + importPath.getAbsolutePath());
+                LoggerEx.info(TAG, "Imported " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
 				compileFirstFiles.add(importPath);
 			}
 
@@ -545,13 +546,13 @@ public class GroovyRuntime extends ScriptRuntime{
 			newClassLoader.pendingGroovyClasses = new HashSet<String>();
 			newClassLoader.parsingGroovyClasses = new HashSet<String>();
 			for(File file : files) {
-				String absolutePath = file.getAbsolutePath();
+				String absolutePath = FilenameUtils.separatorsToUnix(file.getAbsolutePath());
 				int pathPos = absolutePath.indexOf(path);
 				if(pathPos < 0) {
 					LoggerEx.warn(TAG, "Find path " + path + " in file " + absolutePath + " failed, " + pathPos + ". Ignore...");
 					continue;
 				}
-				String key = file.getAbsolutePath().substring(pathPos + path.length());
+				String key = absolutePath.substring(pathPos + path.length());
 				int pos = key.lastIndexOf(".");
 				if(pos >= 0) {
 					key = key.substring(0, pos);
@@ -684,8 +685,8 @@ public class GroovyRuntime extends ScriptRuntime{
 	}
 
 	private void parseFile(File file, Map<ClassAnnotationHandler, Map<String, Class<?>>> handlerMap, MyGroovyClassLoader newClassLoader) throws CoreException {
-		String absolutePath = file.getAbsolutePath();
-		String key = file.getAbsolutePath().substring(absolutePath.indexOf(path) + path.length());
+		String absolutePath = FilenameUtils.separatorsToUnix(file.getAbsolutePath());
+		String key = absolutePath.substring(absolutePath.indexOf(path) + path.length());
 		// Class<?> groovyClass = groovyServlet.getGroovyClass();
 		Class<?> groovyClass = newClassLoader.parseGroovyClass(key,
 				file);

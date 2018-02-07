@@ -14,6 +14,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import script.file.FileAdapter;
@@ -108,7 +109,7 @@ public class DeployServiceUtils {
             FileUtils.copyDirectory(resourceFile, deploy);
         if(version != null)
             serviceName = serviceName + "_v" + version;
-        doZip(new File(deploy.getAbsolutePath() + (prefix != null ? "/" + prefix : "") + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
+        doZip(new File(FilenameUtils.separatorsToUnix(deploy.getAbsolutePath()) + (prefix != null ? "/" + prefix : "") + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
         clean(deploy, ".zip");
 
         File[] toRemoveEmptyFolders = deploy.listFiles();
@@ -138,8 +139,8 @@ public class DeployServiceUtils {
         Collection<File> files = FileUtils.listFiles(directory, new String[]{"zip"}, true);
         if(files != null) {
             for(File file : files) {
-                String filePath = file.getAbsolutePath();
-                String dirPath = directory.getAbsolutePath();
+                String filePath = FilenameUtils.separatorsToUnix(file.getAbsolutePath());
+                String dirPath = FilenameUtils.separatorsToUnix(directory.getAbsolutePath());
                 String thePath = filePath.substring(dirPath.length());
 //				System.out.println("file " + thePath);
 
@@ -156,7 +157,7 @@ public class DeployServiceUtils {
         if(current.isDirectory()){
             File[] files = current.listFiles();
             if(files.length == 0){ //There is no file in this folder - safe to delete
-                System.out.println("Safe to delete - empty folder: " + current.getAbsolutePath());
+                System.out.println("Safe to delete - empty folder: " + FilenameUtils.separatorsToUnix(current.getAbsolutePath()));
                 return true;
             } else {
                 int totalFolderCount = 0;
@@ -171,7 +172,7 @@ public class DeployServiceUtils {
 
                 }
                 if(totalFolderCount == files.length && emptyFolderCount == totalFolderCount){ //only if all folders are safe to delete then this folder is also safe to delete
-                    System.out.println("Safe to delete - all subfolders are empty: " + current.getAbsolutePath());
+                    System.out.println("Safe to delete - all subfolders are empty: " + FilenameUtils.separatorsToUnix(current.getAbsolutePath()));
                     return true;
                 }
             }
@@ -237,7 +238,7 @@ public class DeployServiceUtils {
                 }
                 else if(!fileName.getAbsolutePath().equals(zipFile.getAbsolutePath())){
                     fileIn = new FileInputStream(fileName);
-                    String zipPath = fileName.getAbsolutePath().substring(root.getAbsolutePath().length());
+                    String zipPath = FilenameUtils.separatorsToUnix(fileName.getAbsolutePath()).substring(FilenameUtils.separatorsToUnix(root.getAbsolutePath()).length());
                     if(zipPath.startsWith("/"))
                         zipPath = zipPath.substring(1);
                     zipOut.putNextEntry(new ZipEntry(zipPath));
