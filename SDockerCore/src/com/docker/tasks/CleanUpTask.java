@@ -72,7 +72,7 @@ public class CleanUpTask extends Task {
 						break;
 					switch(task.type) {
 					case CleanUp.TYPE_RESOURCEID:
-						boolean bool = fileAdapter.deleteFile(new PathEx(CommonUtils.getDocumentPath(task.id),
+						boolean bool = fileAdapter.deleteFile(new PathEx(CommonUtils.getDocumentPath(CommonUtils.RESOURCES_ROOT, task.id),
 	                    		task.id, null));
 						task.retry--;
 						if(!bool) {

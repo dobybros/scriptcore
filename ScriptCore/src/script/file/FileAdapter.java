@@ -314,4 +314,5 @@ public abstract class FileAdapter {
 		}
 	}
 
+	public void close(){}
 }
