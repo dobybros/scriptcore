@@ -11,11 +11,10 @@ import connectors.mongodb.annotations.handlers.MongoDocumentAnnotationHolder;
 import script.filter.JsonFilterFactory;
 import script.groovy.runtime.*;
 import script.groovy.servlets.GroovyServletDispatcher;
-import script.groovy.servlets.GroovyServletManagerEx;
+import com.docker.script.servlet.GroovyServletManagerEx;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,7 +33,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 	private Properties config;
 
 	public void prepare(String service, Properties properties, String rootPath) {
-	    this.service = service;
+	    this.service = service.toLowerCase();
 	    this.config = properties;
         String enableGroovyMVC = null;
         if(properties != null) {
@@ -85,11 +84,11 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 		addClassAnnotationHandler(new GroovyBeanFactory());
         if(enableGroovyMVC != null && enableGroovyMVC.trim().equals("true")) {
-            GroovyServletManagerEx servletManagerEx = new GroovyServletManagerEx();
+            GroovyServletManagerEx servletManagerEx = new GroovyServletManagerEx(this.serviceName);
             addClassAnnotationHandler(servletManagerEx);
-            GroovyServletDispatcher.addGroovyServletManagerEx(service.toLowerCase(), servletManagerEx);
+            GroovyServletDispatcher.addGroovyServletManagerEx(this.service, servletManagerEx);
         } else {
-            GroovyServletDispatcher.removeGroovyServletManagerEx(service.toLowerCase());
+            GroovyServletDispatcher.removeGroovyServletManagerEx(this.service);
         }
 
 		addClassAnnotationHandler(new GroovyTimerTaskHandler());
