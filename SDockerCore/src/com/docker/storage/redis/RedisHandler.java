@@ -3,6 +3,7 @@ package com.docker.storage.redis;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.docker.errors.CoreErrorCodes;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisShardInfo;
@@ -220,6 +221,39 @@ public class RedisHandler {
 		return null;
 	}
 
+	public JSONObject hgetJsonObject(String key, String field) throws CoreException {
+		String value = hget(key, field);
+		if(value != null) {
+			try {
+				return JSON.parseObject(value);
+			} catch(Throwable t) {
+				LoggerEx.warn(TAG, "Value " + value + " is not  json format, return null for key " + key + " field " + field + ", error " + t.getMessage());
+				return null;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 获取哈希表中字段的数量
+	 * O(1)
+	 */
+	public Long hlen(String key) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.hlen(key);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "hlen " + key
+					+ " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
 	public String setObject(String prefix, String key, Object obj, String nxxx, String expx, long time) throws CoreException {
 		return setObject(prefix + "_" + key, obj, nxxx, expx, time);
 	}
@@ -310,7 +344,7 @@ public class RedisHandler {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
-			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpush " + key
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpushObject " + key
 					+ " " + JSON.toJSONString(obj) + " failed, " + e.getMessage());
 		} finally {
 			if (jedis != null)
@@ -320,7 +354,82 @@ public class RedisHandler {
 
 	/**
 	 *
-	 * 将一个对象插入到列表尾部
+	 * 将一个字符串插入到列表头部
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long lpush(String key, String value) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.lpush(key, value);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpush " + key
+					+ " " + value + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个对象从列表头部取出
+	 *
+	 * @param key
+	 * @param clazz 获取类的类型
+	 * @return
+	 * @throws CoreException
+	 */
+	public <T> T lpopObject(String key, Class<T> clazz) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			String value = jedis.lpop(key);
+			return JSON.parseObject(value, clazz);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpopObject " + key
+					+ " " + key + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个字符串从列表头部取出
+	 *
+	 * @param key
+	 * @return
+	 * @throws CoreException
+	 */
+	public String lpop(String key) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.lpop(key);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lpop " + key
+					+ " " + key + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个对象从列表尾部取出
 	 *
 	 * @param key
 	 * @param obj
@@ -336,7 +445,81 @@ public class RedisHandler {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "rpushObject " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个字符串从列表尾部取出
+	 *
+	 * @param key
+	 * @return
+	 * @throws CoreException
+	 */
+	public Long rpush(String key, String value) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.rpush(key, value);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
 			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "rpush " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个对象从列表尾部取出
+	 *
+	 * @param key
+	 * @param clazz
+	 * @return
+	 * @throws CoreException
+	 */
+	public  <T> T rpopObject(String key, Class<T> clazz) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			String value = jedis.rpop(key);
+			return JSON.parseObject(value, clazz);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "rpopObject " + key
+					+ " " + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
+	/**
+	 *
+	 * 将一个字符串从列表尾部取出
+	 *
+	 * @param key
+	 * @return
+	 * @throws CoreException
+	 */
+	public String rpop(String key) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.rpop(key);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "rpop " + key
 					+ " " + " failed, " + e.getMessage());
 		} finally {
 			if (jedis != null)
