@@ -30,7 +30,10 @@ import chat.logs.LoggerEx;
 
 public class CommonUtils {
 	private static final String TAG = CommonUtils.class.getSimpleName();
-	
+
+	public static final String RESOURCES_ROOT = "resources/";
+	public static final String RESOURCES_TEMP = "temp/";
+
 	public static final String PROPERTY_PATH = "props"; 
 	public static Properties loadProperty(String fileName) throws CoreException {
 		ClassPathResource resource = new ClassPathResource(PROPERTY_PATH + "/" + fileName);
@@ -63,13 +66,13 @@ public class CommonUtils {
 //		}
 //	}
 	
-	public static String getDocumentPath(String resourceId) throws IOException {
-		return getDocumentPath(resourceId, null);
+	public static String getDocumentPath(String prefix, String resourceId) throws IOException {
+		return getDocumentPath(prefix, resourceId, null);
 	}
-	
-	public static String getDocumentPath(String resourceId, String fileName) throws IOException {
+
+	public static String getDocumentPath(String prefix, String resourceId, String fileName) throws IOException {
         if(resourceId != null && ObjectId.isValid(resourceId)) {
-            StringBuilder builder = new StringBuilder(FileAdapter.DOC_ROOT_PATH);
+            StringBuilder builder = new StringBuilder(prefix);
             ObjectId oid = new ObjectId(resourceId);
             String timePath = null;
             //XXX format is not thread safe, so sync it. But need better performance solution.

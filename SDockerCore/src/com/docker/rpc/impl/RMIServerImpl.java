@@ -7,6 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import chat.errors.ChatErrorCodes;
 import com.docker.rpc.*;
+import com.docker.storage.DBException;
 import script.groovy.object.GroovyObjectEx;
 import chat.errors.CoreException;
 
@@ -71,10 +72,14 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServer {
 			return null;
 		} catch (Throwable t) {
 			String message = null;
-			if(t instanceof CoreException) 
+			if(t instanceof DBException) {
+				t = new CoreException(((DBException)t).getCode(), t.getMessage());
+			}
+			if(t instanceof CoreException) {
 				message = ((CoreException)t).getCode() + "|" + t.getMessage();
-			else 
+			} else {
 				message = t.getMessage();
+			}
 			throw new RemoteException(message, t);
 		}
 	}

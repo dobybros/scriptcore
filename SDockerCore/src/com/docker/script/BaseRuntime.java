@@ -118,8 +118,8 @@ public abstract class BaseRuntime extends GroovyRuntime {
 			}
 		} catch(Throwable t) {
 		}
-		clear();
 		super.close();
+		clear();
 	}
 
 	public MongoDBHandler getMongoDBHandler() {

@@ -35,7 +35,13 @@ public class GridFSFileHandler extends FileAdapter {
 	public GridFSFileHandler() {
 	}
 
-	
+	@Override
+	public void close() {
+		if(resourceHelper != null) {
+			resourceHelper.disconnect();
+		}
+	}
+
 	public void init() {
 		if (bucketName == null) 
 	        gridFs = new GridFS(resourceHelper.getDbForGridFS());
@@ -189,8 +195,17 @@ public class GridFSFileHandler extends FileAdapter {
 	@Override
 	public boolean moveFile(PathEx sourcePath, PathEx destPath)
 			throws IOException {
-		//TODO 暂不需使用此方法
-	    throw new NotImplementedException();
+		if(sourcePath == null || sourcePath.getPath() == null || destPath == null || destPath.getPath() == null)
+			return false;
+		if(sourcePath.getPath().equals(destPath.getPath()))
+			return false;
+		GridFSFile file = gridFs.findOne(sourcePath.getPath());
+		if(file != null) {
+			file.put("filename", destPath.getPath());
+			file.save();
+			return true;
+		}
+		return false;
 	}
 
 	@Override

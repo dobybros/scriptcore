@@ -189,6 +189,7 @@ public class MyBaseRuntime extends BaseRuntime {
 //					"        serviceStubManager.clearCache()\n" +
 //					"        serviceStubManager.init()\n" +
 					"    }\n" +
+					"    public void shutdown(){}\n" +
 					"}";
 			try {
 				FileUtils.writeStringToFile(new File(path + "/script/groovy/runtime/ServiceStubProxy.groovy"), code, "utf8");
