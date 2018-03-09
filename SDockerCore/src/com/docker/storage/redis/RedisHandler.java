@@ -258,6 +258,68 @@ public class RedisHandler {
 		return setObject(prefix + "_" + key, obj, nxxx, expx, time);
 	}
 
+	public Long ttl(String key) throws CoreException {
+        ShardedJedis jedis = null;
+        try {
+            jedis = pool.getResource();
+            return jedis.ttl(key);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            // LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "ttl " + key + " failed, " + e.getMessage());
+        } finally {
+            if (jedis != null)
+                jedis.close();
+        }
+    }
+
+    public Long pttl(String key) throws CoreException {
+        ShardedJedis jedis = null;
+        try {
+            jedis = pool.getResource();
+            return jedis.pttl(key);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            // LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "pttl " + key + " failed, " + e.getMessage());
+        } finally {
+            if (jedis != null)
+                jedis.close();
+        }
+    }
+
+    public String set(String key, String value, String nxxx, String expx, long time) throws CoreException {
+        ShardedJedis jedis = null;
+        try {
+            jedis = pool.getResource();
+            return jedis.set(key, value, nxxx, expx, time);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            // LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "set " + key
+                    + " " + value + " " + nxxx + " " + expx + " " + time + " failed, " + e.getMessage());
+        } finally {
+            if (jedis != null)
+                jedis.close();
+        }
+    }
+
+	public String psetex(String key, String value, long time) throws CoreException {
+		ShardedJedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			return jedis.psetex(key, time, value);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "psetex " + key
+					+ " " + value + " " + time + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+	}
+
 	public String setObject(String key, Object obj, String nxxx, String expx, long time) throws CoreException {
 		ShardedJedis jedis = null;
 		try {
@@ -305,6 +367,24 @@ public class RedisHandler {
 		}
 		return null;
 	}
+
+    public String get(String key) throws CoreException {
+        ShardedJedis jedis = null;
+        String value = null;
+        try {
+            jedis = pool.getResource();
+            value = jedis.get(key);
+            return value;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            // LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "get " + key
+                    + " " + value + " failed, " + e.getMessage());
+        } finally {
+            if (jedis != null)
+                jedis.close();
+        }
+    }
 
 	public Long expire(String prefix, String key, long expire) throws CoreException {
 		return expire(prefix + "_" + key, expire);
