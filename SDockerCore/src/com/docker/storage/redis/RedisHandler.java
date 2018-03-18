@@ -576,6 +576,42 @@ public class RedisHandler {
 	/**
 	 * 获取list中object对象
 	 * @param key
+	 * @param index
+	 * @param clazz
+	 * @param <T>
+	 * @return
+	 * @throws CoreException
+	 */
+	public <T> Object lIndex(String key, Long index, Class<T> clazz) throws CoreException {
+		ShardedJedis jedis = null;
+		String redisResult;
+		try {
+			jedis = pool.getResource();
+			redisResult = jedis.lindex(key, index);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			// LoggerEx.error(TAG, "redis保存异常 " + e.getMessage());
+			throw new CoreException(CoreErrorCodes.ERROR_REDIS, "lindex key: " + key
+					+ ", index: " + index + " failed, " + e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
+		}
+
+		if(redisResult != null) {
+			try {
+				return JSON.parseObject(redisResult, clazz);
+			} catch(Throwable t) {
+				LoggerEx.warn(TAG, "Value " + redisResult + " is not  json format, return null for key " + key + " class " + clazz + ", error " + t.getMessage());
+				return null;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 获取list中object对象
+	 * @param key
 	 * @param start
 	 * @param end
 	 * @param clazz
