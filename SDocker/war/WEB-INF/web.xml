@@ -33,7 +33,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<filter>
+	<!--<filter>
 		<filter-name>cross-origin</filter-name>
 		<filter-class>com.docker.http.CrossOriginFilter</filter-class>
 		<init-param>
@@ -53,7 +53,7 @@
 	<filter-mapping>
 		<filter-name>cross-origin</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping>-->
 
 	<!-- <servlet> <servlet-name>FileServlet</servlet-name> <servlet-class>com.caseroom.servlets.FileServlet</servlet-class> 
 		</servlet> <servlet-mapping> <servlet-name>FileServlet</servlet-name> <url-pattern>/file/*</url-pattern> 

@@ -231,7 +231,10 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 								if(method.isAnnotationPresent(RequestMapping.class)) {
 									RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
 									if(requestMapping != null) {
-										requestUri = new RequestURI(requestMapping.uri(), requestMapping.method(), key, method.getName());
+										String uri = handleUri(requestMapping.uri(), groovyServlet, method);
+										if(uri == null)
+											continue;
+										requestUri = new RequestURI(uri, requestMapping.method(), key, method.getName());
 										
 										RequestURIWrapper requestUriWrapper = new RequestURIWrapper(groovyServlet);
 										requestUriWrapper.analyzeMethod(method);
@@ -251,6 +254,13 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 			uriLogs.append("---------------------------------------");
 			LoggerEx.info(TAG, uriLogs.toString());
 		}
+	}
+
+	public String handleUri(String uri, GroovyObjectEx<GroovyServlet> groovyServlet, Method method) {
+		if(uri.startsWith("/")) {
+			uri = uri.substring(1);
+		}
+		return uri;
 	}
 
 	public GroovyObjectEx<PermissionIntercepter> getPermissionIntercepter() {

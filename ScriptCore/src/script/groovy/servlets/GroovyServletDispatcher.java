@@ -19,14 +19,14 @@ public class GroovyServletDispatcher extends HttpServlet {
 	private static final String TAG = GroovyServletManager.class.getSimpleName();
 	private static GroovyServletManager groovyServletManager = null;
 
-	private static ConcurrentHashMap<String, GroovyServletManagerEx> groovyServletMap = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<String, GroovyServletManager> groovyServletMap = new ConcurrentHashMap<>();
 
 	public static void setDefaultGroovyServletManager(GroovyServletManager servletManager) {
 		groovyServletManager = servletManager;
 	}
 
-	public static void addGroovyServletManagerEx(String rootPath, GroovyServletManagerEx servletManager) {
-		GroovyServletManagerEx oldGroovyServletMap = groovyServletMap.put(rootPath, servletManager);
+	public static void addGroovyServletManagerEx(String rootPath, GroovyServletManager servletManager) {
+		GroovyServletManager oldGroovyServletMap = groovyServletMap.put(rootPath, servletManager);
 		//TODO whether need clear memory for oldGroovyServletMap
 	}
 
@@ -45,7 +45,7 @@ public class GroovyServletDispatcher extends HttpServlet {
 			String matchStr = uriStrs.length > 1 ? uriStrs[1] : null;
 			LoggerEx.info(TAG, "uriStrs " + Arrays.toString(uriStrs) + " matchStr " + matchStr);
 			if(matchStr != null) {
-				GroovyServletManagerEx servletManagerEx = groovyServletMap.get(matchStr);
+				GroovyServletManager servletManagerEx = groovyServletMap.get(matchStr);
 				if(servletManagerEx != null) {
 					int index = matchStr.lastIndexOf("_v");
 					if(index > 0)
