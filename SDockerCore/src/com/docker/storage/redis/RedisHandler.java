@@ -582,7 +582,7 @@ public class RedisHandler {
 	 * @return
 	 * @throws CoreException
 	 */
-	public <T> Object lIndex(String key, Long index, Class<T> clazz) throws CoreException {
+	public <T> Object lIndex(String key, long index, Class<T> clazz) throws CoreException {
 		ShardedJedis jedis = null;
 		String redisResult;
 		try {
