@@ -6,7 +6,7 @@
 	<bean id="springContextUtil" class="com.docker.utils.SpringContextUtil"/>
 
 	<bean id="dockerStatusHelper" class="com.docker.storage.mongodb.MongoHelper"
-		init-method="init" destroy-method="disconnect">
+		init-method="init">
 		<property name="host" value="${mongo.dbhost}" />
 		<property name="connectionsPerHost" value="${connectionsPerHost}" />
 		<property name="dbName" value="${dockerstatus.dbname}" />
@@ -14,7 +14,7 @@
         <property name="password" value="${mongo.password}"/>
 	</bean>
 	<bean id="configHelper" class="com.docker.storage.mongodb.MongoHelper"
-		  init-method="init" destroy-method="disconnect">
+		  init-method="init">
 		<property name="host" value="${mongo.dbhost}" />
 		<property name="connectionsPerHost" value="${connectionsPerHost}" />
 		<property name="dbName" value="${config.dbname}" />

@@ -9,7 +9,7 @@
 		</property>
 	</bean>-->
 	<bean id="gridfsHelper" class="com.docker.storage.mongodb.MongoHelper"
-		  init-method="init" destroy-method="disconnect">
+		  init-method="init">
 		<property name="host" value="${gridfs.dbhost}" />
 		<property name="connectionsPerHost" value="${gridfs.connectionsPerHost}" />
 		<property name="dbName" value="${gridfs.files.dbname}" />

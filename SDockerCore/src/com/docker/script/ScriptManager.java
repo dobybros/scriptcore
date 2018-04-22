@@ -16,6 +16,7 @@ import org.bson.Document;
 import script.file.FileAdapter;
 import script.file.FileAdapter.FileEntity;
 import script.file.FileAdapter.PathEx;
+import script.utils.ShutdownListener;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ScriptManager {
+public class ScriptManager implements ShutdownListener {
 	private static final String TAG = ScriptManager.class.getSimpleName();
 
 	@Resource
@@ -42,6 +43,7 @@ public class ScriptManager {
 	private ConcurrentHashMap<String, List<BaseRuntime>> serviceVersionMap = new ConcurrentHashMap<>();
 
 	private Class<?> baseRuntimeClass;
+	boolean isShutdown = false;
 
 	public static final String SERVICE_NOTFOUND = "servicenotfound";
 	public void init() {
@@ -49,7 +51,10 @@ public class ScriptManager {
 		TimerEx.schedule(new TimerTaskEx() {
 			@Override
 			public void execute() {
-				reload();
+			    synchronized (ScriptManager.this) {
+                    if(!isShutdown)
+                        reload();
+                }
 			}
 		}, 5000, TimeUnit.SECONDS.toMillis(10));//30
 	}
@@ -147,6 +152,15 @@ public class ScriptManager {
 								boolean needRedeploy = false;
 								if(runtime != null && (runtime.getVersion() == null || runtime.getVersion() < file.getLastModificationTime())) {
 									needRedeploy = true;
+									try {
+										runtime.close();
+										LoggerEx.error(TAG, "Runtime " + runtime + " service " + service + " closed because of deployment");
+									} catch (Throwable t) {
+										t.printStackTrace();
+										LoggerEx.error(TAG, "close runtime " + runtime + " service " + service + " failed, " + t.getMessage());
+									} finally {
+										runtime = null;
+									}
 								}
 								if(runtime == null) {
 									createRuntime = true;
@@ -356,6 +370,25 @@ public class ScriptManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new CoreException(CoreErrorCodes.ERROR_SCRIPT_UNZIP_FAILED, "Groovy zip " + FilenameUtils.separatorsToUnix(file.getAbsolutePath()) + " unzip failed, " + e.getMessage());
+		}
+	}
+
+	@Override
+	public synchronized void shutdown() {
+        isShutdown = true;
+		Collection<String> keys = scriptRuntimeMap.keySet();
+		for(String key : keys) {
+			BaseRuntime runtime = scriptRuntimeMap.remove(key);
+			if(runtime != null) {
+				LoggerEx.info(TAG, "Service " + key + " is going to be removed, because of shutdown");
+				try {
+					runtime.close();
+					LoggerEx.info(TAG, "Service " + key + " has been removed, because of shutdown");
+				} catch(Throwable t) {
+					t.printStackTrace();
+					LoggerEx.info(TAG, "Service " + key + " remove failed, " + t.getMessage());
+				}
+			}
 		}
 	}
 

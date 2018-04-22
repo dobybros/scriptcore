@@ -15,6 +15,7 @@ import com.docker.tasks.Task;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.springframework.core.io.ClassPathResource;
+import script.utils.ShutdownListener;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class OnlineServer {
     private String server;
 
     private List<Task> tasks;
+    private List<ShutdownListener> shutdownList;
 
     private String internalKey;
 
@@ -186,6 +188,7 @@ public class OnlineServer {
             }
         }
         if (tasks != null) {
+            LoggerEx.info(TAG, "Deleted tasks " + tasks + " size " + tasks.size());
             for (Task task : tasks) {
                 try {
                     LoggerEx.info(TAG, "Task " + task + " is shutting down");
@@ -193,7 +196,20 @@ public class OnlineServer {
                     LoggerEx.info(TAG, "Task " + task + " has been shutdown");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LoggerEx.fatal(TAG, "Task shutdown failed, " + e.getMessage());
+                    LoggerEx.fatal(TAG, "Task " + task + " shutdown failed, " + e.getMessage());
+                }
+            }
+        }
+        if (shutdownList != null) {
+            LoggerEx.info(TAG, "Deleted shutdownListener " + shutdownList + " size " + shutdownList.size());
+            for (ShutdownListener shutdownListener : shutdownList) {
+                try {
+                    LoggerEx.info(TAG, "shutdownListener " + shutdownListener + " is shutting down");
+                    shutdownListener.shutdown();
+                    LoggerEx.info(TAG, "shutdownListener " + shutdownListener + " has been shutdown");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LoggerEx.fatal(TAG, "shutdownListener " + shutdownListener + " shutdown failed, " + e.getMessage());
                 }
             }
         }
@@ -309,5 +325,13 @@ public class OnlineServer {
 
     public void setRpcSslJksPwd(String rpcSslJksPwd) {
         this.rpcSslJksPwd = rpcSslJksPwd;
+    }
+
+    public List<ShutdownListener> getShutdownList() {
+        return shutdownList;
+    }
+
+    public void setShutdownList(List<ShutdownListener> shutdownList) {
+        this.shutdownList = shutdownList;
     }
 }

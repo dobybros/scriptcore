@@ -6,12 +6,13 @@ import com.mongodb.*;
 import org.apache.commons.lang.StringUtils;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
+import script.utils.ShutdownListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MongoInstance {
+public class MongoInstance implements ShutdownListener {
 	private static final String TAG = LoggerEx.getClassTag(MongoInstance.class);
 
 	private MongoClient mongo;
@@ -186,5 +187,9 @@ public class MongoInstance {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	@Override
+	public void shutdown() {
+		disconnect();
+	}
 }

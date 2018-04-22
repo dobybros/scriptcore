@@ -8,7 +8,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
 
-public class MongoHelper extends MongoInstance{
+public class MongoHelper extends MongoInstance {
 
 	private MongoDatabase db;
 	private String dbName;
@@ -107,5 +107,5 @@ public class MongoHelper extends MongoInstance{
 	public void setDbForGridFS(DB dbForGridFS) {
 		this.dbForGridFS = dbForGridFS;
 	}
-	
+
 }
