@@ -195,7 +195,9 @@ public class ScriptManager implements ShutdownListener {
 								if(runtime != null && needRedeploy) {
 									File localZipFile = new File(localPath + serverTypePath + thePath);
 									FileUtils.deleteQuietly(localZipFile);
-									fileAdapter.readFile(new PathEx(file.getAbsolutePath()), FileUtils.openOutputStream(localZipFile));
+									OutputStream zipOs = FileUtils.openOutputStream(localZipFile);
+									fileAdapter.readFile(new PathEx(file.getAbsolutePath()), zipOs);
+									IOUtils.closeQuietly(zipOs);
 
 									String n = localZipFile.getName();
 									n = n.substring(0, n.length() - ".zip".length());
@@ -208,7 +210,9 @@ public class ScriptManager implements ShutdownListener {
 										Properties properties = new Properties();
 										File propertiesFile = new File(propertiesPath);
 										if(propertiesFile.exists() && propertiesFile.isFile()) {
-											properties.load(FileUtils.openInputStream(propertiesFile));
+										    InputStream is = FileUtils.openInputStream(propertiesFile);
+											properties.load(is);
+											IOUtils.closeQuietly(is);
 										}
 
 										String minVersionStr = properties != null ? properties.getProperty("service.minversion") : null;
@@ -361,7 +365,7 @@ public class ScriptManager implements ShutdownListener {
 			        OutputStream out = new FileOutputStream(entryDestination);
 			        IOUtils.copy(in, out);
 			        IOUtils.closeQuietly(in);
-			        out.close();
+					IOUtils.closeQuietly(out);
 			    }
 			  }
 			} finally {
