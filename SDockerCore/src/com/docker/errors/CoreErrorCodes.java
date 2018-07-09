@@ -14,5 +14,5 @@ public interface CoreErrorCodes {
 	public static final int ERROR_SCRIPT_UNZIP_FAILED = CODE_CORE + 342;
 	public static final int ERROR_LANID_ILLEGAL = CODE_CORE + 343;
 	public static final int ERROR_REDIS = CODE_CORE + 344;
-
+	public static final int ERROR_KAFKA_CONFCENT_ILLEGAL = CODE_CORE + 345;
 }

@@ -2,12 +2,16 @@ package com.docker.script;
 
 import com.docker.script.i18n.I18nHandler;
 import com.docker.script.i18n.MessageProperties;
+import com.docker.storage.kafka.KafkaConfCenter;
+import com.docker.storage.kafka.KafkaConsumerHandler;
+import com.docker.storage.kafka.KafkaProducerHandler;
 import com.docker.storage.redis.RedisHandler;
 import connectors.mongodb.MongoClientHelper;
 import connectors.mongodb.annotations.handlers.MongoCollectionAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
 import connectors.mongodb.annotations.handlers.MongoDatabaseAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDocumentAnnotationHolder;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import script.filter.JsonFilterFactory;
 import script.groovy.runtime.*;
 import script.groovy.servlets.GroovyServletDispatcher;
@@ -23,6 +27,8 @@ public abstract class BaseRuntime extends GroovyRuntime {
 
 	private MongoDBHandler mongoDBHandler;
 	private RedisHandler redisHandler;
+	private KafkaProducerHandler kafkaProducerHandler;
+	private KafkaConfCenter kafkaConfCenter;
 	private I18nHandler i18nHandler;
 
 	private String service;
@@ -55,7 +61,13 @@ public abstract class BaseRuntime extends GroovyRuntime {
 				redisHandler = new RedisHandler(redisHost);
 				redisHandler.connect();
 			}
-
+            String produce = properties.getProperty("db.kafka.produce");
+			kafkaConfCenter = new KafkaConfCenter();
+			kafkaConfCenter.filterKafkaConf(properties,KafkaConfCenter.FIELD_PRODUCE,KafkaConfCenter.FIELD_CONSUMER);
+			if(produce != null){
+				kafkaProducerHandler = new KafkaProducerHandler(kafkaConfCenter);
+				kafkaProducerHandler.connect();
+			}
 			String i18nFolder = properties.getProperty("i18n.folder");
 			String name = properties.getProperty("i18n.name");
 			if (i18nFolder != null && name != null) {
@@ -129,7 +141,11 @@ public abstract class BaseRuntime extends GroovyRuntime {
 		return redisHandler;
 	}
 
-	public I18nHandler getI18nHandler() {
+	public KafkaProducerHandler getKafkaProducerHandler(){ return kafkaProducerHandler;}
+
+    public KafkaConfCenter getKafkaConfCenter() { return kafkaConfCenter; }
+
+    public I18nHandler getI18nHandler() {
 		return i18nHandler;
 	}
 
