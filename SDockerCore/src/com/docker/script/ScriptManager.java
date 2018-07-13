@@ -265,8 +265,11 @@ public class ScriptManager implements ShutdownListener {
 										theService.setUploadTime(file.getLastModificationTime());
 										theService.setType(Service.FIELD_SERVER_TYPE_NORMAL);
 
-										if(dockerStatusService != null)
+										if(dockerStatusService != null) {
+											//Aplomb delete service first before add, fixed the duplicated service bug.
+											dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), theService.getService(), theService.getVersion());
 											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
+										}
 
 										scriptRuntimeMap.put(service, runtime);
                                         List<BaseRuntime> versionList = serviceVersionMap.get(serviceName);
