@@ -47,7 +47,15 @@ public class Switch64 {
 	public long getValue() {
 		return switch64;
 	}
-	
+
+	public long getSwitch64() {
+		return switch64;
+	}
+
+	public void setSwitch64(long switch64) {
+		this.switch64 = switch64;
+	}
+
 	public static void main(String[] args) {
 		Switch64 switches = new Switch64(Long.MAX_VALUE);
 		System.out.println("test " + switches.isSwitchOn(5));

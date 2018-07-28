@@ -506,6 +506,7 @@ public class GroovyRuntime extends ScriptRuntime{
 	}
 	public synchronized void redeploy() throws CoreException {
 		try {
+
 			beforeDeploy();
 		} catch(Throwable t) {
 			LoggerEx.warn(TAG, "beforeDeploy failed, " + t.getMessage());

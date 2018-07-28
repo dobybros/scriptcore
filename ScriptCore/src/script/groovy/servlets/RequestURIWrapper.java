@@ -278,6 +278,11 @@ public class RequestURIWrapper implements GroovyObjectListener{
 	}
 
 	public void setPermissions(String[] permissions) {
-		this.permissions = permissions;
+		if(permissions != null && permissions.length > 0) {
+			if (permissions.length == 1 && permissions[0].equals("")) {
+				return;
+			}
+			this.permissions = permissions;
+		}
 	}
 }
