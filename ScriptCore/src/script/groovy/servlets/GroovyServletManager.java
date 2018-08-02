@@ -40,6 +40,11 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 	private GroovyObjectEx<PermissionIntercepter> permissionIntercepter;
 
 	@Override
+	public Object getKey() {
+		return GroovyServletManager.class;
+	}
+
+	@Override
 	public void hanlderShutdown() {
 		permissionIntercepter = null;
 		interceptorMap = null;

@@ -4,9 +4,11 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 
 import chat.utils.ConcurrentHashSet;
+import com.mongodb.ClientSessionOptions;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoDatabase;
 
 import java.util.Collection;
@@ -119,7 +121,23 @@ public class MongoClientHelper {
 		}
 		return null;
 	}
-	
+
+	public ClientSession startSession(String databaseName) {
+		MongoClient client = clientMap.get(databaseName);
+		if(client != null) {
+			return client.startSession();
+		}
+		return null;
+	}
+
+	public ClientSession startSession(String databaseName, ClientSessionOptions options) {
+		MongoClient client = clientMap.get(databaseName);
+		if(client != null) {
+			return client.startSession(options);
+		}
+		return null;
+	}
+
 	public String getHosts() {
 		return hosts;
 	}

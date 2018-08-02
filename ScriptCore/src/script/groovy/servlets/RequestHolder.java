@@ -252,7 +252,7 @@ public class RequestHolder {
 			}
 			return servletObj.invokeMethod(groovyMethod, args);
 		}
-		return null;
+		return servletObj.invokeMethod(groovyMethod, args);
 	}
 
 	public GroovyServletManager getGroovyServletManager() {

@@ -120,8 +120,8 @@ public class OnlineServer {
             }
             Integer port = Integer.parseInt(serverPort);
 
-            if (server == null)
-                server = ChatUtils.generateFixedRandomString();
+            if (server == null){
+                server = ChatUtils.generateFixedRandomString();}
             prepare();
             if (dockerStatusService != null) {
                 dockerStatus = generateDockerStatus(port);
