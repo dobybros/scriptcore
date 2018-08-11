@@ -16,6 +16,7 @@ import script.filter.JsonFilterFactory;
 import script.groovy.runtime.*;
 import script.groovy.servlets.GroovyServletDispatcher;
 import com.docker.script.servlet.GroovyServletManagerEx;
+import script.groovy.servlets.RequestPermissionHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +108,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 		addClassAnnotationHandler(new GroovyRedeployMainHandler());
 		addClassAnnotationHandler(new ServerLifeCircleHandler());
 		addClassAnnotationHandler(new JsonFilterFactory());
+		addClassAnnotationHandler(new RequestPermissionHandler());
 	}
 
 	@Override
