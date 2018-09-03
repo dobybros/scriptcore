@@ -15,4 +15,9 @@ public interface CoreErrorCodes {
 	public static final int ERROR_LANID_ILLEGAL = CODE_CORE + 343;
 	public static final int ERROR_REDIS = CODE_CORE + 344;
 	public static final int ERROR_KAFKA_CONFCENT_ILLEGAL = CODE_CORE + 345;
+
+
+	public static final int ERROR_LOCK = 8000;
+	public static final int ERROR_LOCK_CAN_NOT_FOUND = ERROR_LOCK + 5;
+	public static final int ERROR_LOCK_VERIFY_FIELD = ERROR_LOCK + 2;
 }
