@@ -39,7 +39,7 @@ public class RedisHandler {
 
     private JedisCluster cluster = null;
     private String hosts;
-    private Integer type = 0;
+    private Integer type = TYPE_SHARD;
 
     public RedisHandler(String hosts) {
         this.hosts = hosts;
