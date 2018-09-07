@@ -1,4 +1,4 @@
-package com.imryao.server;
+package com.docker.storage.redis;
 
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
@@ -989,6 +989,31 @@ public class RedisHandler {
                 jedis.close();
         }
 */
+    }
+
+    public String hmset(String key, Map<String, String> hash)
+            throws CoreException {
+        return doJedisExcute(jedis -> {
+            return jedis.hmset(key, hash);
+        });
+    }
+
+    public List<String> hmget(String key, String... fields) throws CoreException {
+        return doJedisExcute(jedis -> {
+            return jedis.hmget(key, fields);
+        });
+    }
+
+    public Map<String, String> hgetAll(String key) throws CoreException {
+        return doJedisExcute(jedis -> {
+            return jedis.hgetAll(key);
+        });
+    }
+
+    public Long hincrby(String key, String field, long value) throws CoreException {
+        return doJedisExcute(jedis -> {
+            return jedis.hincrBy(key, field, value);
+        });
     }
 
     private <V> V doJedisExcute(JedisExcutor excutor) throws CoreException {
