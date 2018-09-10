@@ -2,6 +2,7 @@
   <library name="mongodblib">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/SDockerCore/mongodblib" />
+      <root url="file://$PROJECT_DIR$/ChatCore/mongodblib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

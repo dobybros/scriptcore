@@ -2,10 +2,12 @@
   <library name="lib">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/SDockerCore/lib" />
+      <root url="file://$PROJECT_DIR$/ChatCore/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="file://$PROJECT_DIR$/SDockerCore/lib" />
+      <root url="file://$PROJECT_DIR$/ChatCore/lib" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ChatCore/lib" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/ChatCore/lib" recursive="false" type="SOURCES" />

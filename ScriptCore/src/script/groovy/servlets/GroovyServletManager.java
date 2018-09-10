@@ -239,7 +239,7 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 										String uri = handleUri(requestMapping.uri(), groovyServlet, method);
 										if(uri == null)
 											continue;
-										requestUri = new RequestURI(uri, requestMapping.method(), key, method.getName());
+										requestUri = new RequestURI(uri.trim(), requestMapping.method(), key, method.getName());
 										
 										RequestURIWrapper requestUriWrapper = new RequestURIWrapper(groovyServlet);
 										requestUriWrapper.analyzeMethod(method);
