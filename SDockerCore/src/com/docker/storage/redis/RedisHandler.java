@@ -1027,7 +1027,7 @@ public class RedisHandler {
             return (V) excutor.excute(jedis);
         } catch (Throwable e) {
             e.printStackTrace();
-            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "Redis excute field.");
+            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "Redis execute failed."+e.getMessage());
         } finally {
             if (jedis != null && jedis.getClass().equals(ShardedJedis.class)) {
                 ((ShardedJedis) jedis).close();
