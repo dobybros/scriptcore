@@ -1,9 +1,12 @@
 package com.docker.data;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用于存储服务器的在线信息， 上线时写入该对象， 下线时删除该对象。 
@@ -23,6 +26,8 @@ public class DockerStatus extends DataObject{
 	public static final String FIELD_DOCKERSTATUS_SERVICES = "services";
 	public static final String FIELD_DOCKERSTATUS_HEALTH = "health";
 	public static final String FIELD_DOCKERSTATUS_SERVERTYPE = "serverType";
+	public static final String FIELD_DOCKERSTATUS_INFO = "serverInfo";
+
 
 	/**
 	 * 服务器的类型， login， gateway， presence等
@@ -80,6 +85,11 @@ public class DockerStatus extends DataObject{
 	 */
 	private Integer health;
 	public static final int HEALTH_MAX = 100;
+
+	/**
+	 * 其他字段，例如gateway的sslRpcPort、tcpPort、webSocketPort、rpcPort
+	 */
+	public Map info;
 
 	public String getServer() {
 		return server;
@@ -158,6 +168,14 @@ public class DockerStatus extends DataObject{
 		this.services = services;
 	}
 
+	public Map getInfo() {
+		return info;
+	}
+
+	public void setInfo(Map info) {
+		this.info = info;
+	}
+
 	@Override
 	public void fromDocument(Document dbObj) {
 		super.fromDocument(dbObj);
@@ -180,6 +198,10 @@ public class DockerStatus extends DataObject{
 				service.fromDocument(serviceDoc);
 				services.add(service);
 			}
+		}
+		String jsonInfo = dbObj.getString(FIELD_DOCKERSTATUS_INFO);
+		if (jsonInfo != null) {
+			info = JSONObject.parseObject(jsonInfo);
 		}
 	}
 	
@@ -216,6 +238,9 @@ public class DockerStatus extends DataObject{
 				serviceList.add(serviceDoc);
 			}
 			dbObj.put(FIELD_DOCKERSTATUS_SERVICES, serviceList);
+		}
+		if (info != null) {
+			dbObj.put(FIELD_DOCKERSTATUS_INFO, JSON.toJSONString(info));
 		}
 		return dbObj;
 	}
