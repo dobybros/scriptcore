@@ -49,4 +49,5 @@
 
 	<bean id="serversService" class="com.docker.storage.adapters.impl.ServersServiceImpl" ></bean>
 	<bean id="lansService" class="com.docker.storage.adapters.impl.LansServiceImpl" ></bean>
+	<bean id="sdockersService" class="com.docker.storage.adapters.impl.SDockersServiceImpl" ></bean>
 </beans>

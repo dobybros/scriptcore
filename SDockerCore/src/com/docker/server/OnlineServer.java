@@ -7,12 +7,17 @@ import chat.main.ServerStart;
 import chat.utils.ChatUtils;
 import chat.utils.IPHolder;
 import com.docker.data.DockerStatus;
+import com.docker.data.SDocker;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.adapters.LansService;
+import com.docker.storage.adapters.SDockersService;
 import com.docker.storage.adapters.ServersService;
 import com.docker.tasks.Task;
+import com.docker.utils.StringFormats;
+import com.jcraft.jsch.Logger;
 import org.apache.commons.lang.StringUtils;
+import org.bson.Document;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.springframework.core.io.ClassPathResource;
 import script.utils.ShutdownListener;
@@ -37,6 +42,9 @@ public class OnlineServer {
     @Resource
     private IPHolder ipHolder;
 
+    @Resource
+    private SDockersService sDockersService;
+
     private DockerStatusService dockerStatusService;
 
     private static OnlineServer instance;
@@ -47,14 +55,19 @@ public class OnlineServer {
 
     private String sslRpcPort;
     private String rpcPort;
+    private Integer httpPort;
     private Integer status;
 
     private String lanId;
 
-    /** rpc ssl certificate */
+    /**
+     * rpc ssl certificate
+     */
     private String rpcSslClientTrustJksPath;
     private String rpcSslServerJksPath;
     private String rpcSslJksPwd;
+
+    private Properties config;
 
     public static interface OnlineServerStartHandler {
         public void serverWillStart(OnlineServer onlineServer) throws CoreException;
@@ -93,7 +106,7 @@ public class OnlineServer {
         dockerStatus.setHttpPort(port);
         dockerStatus.setLanId(lanId);
         dockerStatus.setHealth(0);
-        if(status == null)
+        if (status == null)
             status = DockerStatus.STATUS_OK;
         dockerStatus.setStatus(status);
         return dockerStatus;
@@ -102,6 +115,7 @@ public class OnlineServer {
     public void start() {
         try {
             ClassPathResource resource = new ClassPathResource("lan.properties");
+
             Properties pro = new Properties();
             try {
                 pro.load(resource.getInputStream());
@@ -119,10 +133,21 @@ public class OnlineServer {
                 throw new CoreException(ChatErrorCodes.ERROR_CORE_SERVERPORT_ILLEGAL, "Server port is null");
             }
             Integer port = Integer.parseInt(serverPort);
-
-            if (server == null){
-                server = ChatUtils.generateFixedRandomString();}
+            this.httpPort = port;
+            if (server == null) {
+                server = ChatUtils.generateFixedRandomString();
+            }
             prepare();
+
+            fetchConfig();
+            try {
+                String serverType = (String) this.config.get("server.type");
+                if (serverType != null) {
+                    this.serverType = serverType;
+                }
+            } catch (Exception e) {
+                LoggerEx.info(TAG, "'serverType' not font in config.");
+            }
             if (dockerStatusService != null) {
                 dockerStatus = generateDockerStatus(port);
                 dockerStatusService.addDockerStatus(dockerStatus);
@@ -162,9 +187,37 @@ public class OnlineServer {
         }
     }
 
+    public Properties fetchConfig() {
+        if (this.config != null) {
+            return this.config;
+        }
+        ClassPathResource configResource = new ClassPathResource("config.properties");
+        Properties config = new Properties();
+        try {
+            config.load(configResource.getInputStream());
+        } catch (IOException e) {
+            LoggerEx.error(TAG, "Prepare config.properties failed, can't do anything. " + e.getMessage());
+        }
+
+        if (sDockersService != null) {
+            try {
+                Document sDocker = sDockersService.getSDockerConf(ipHolder.getIp(), this.httpPort);
+                for (String field : sDocker.keySet()) {
+                    if (field.equals("_id")) continue;
+                    config.put(field.toString().replaceAll("_", "."), sDocker.get(field));
+                    LoggerEx.info(TAG, field.toString());
+                }
+            } catch (Throwable e) {
+                LoggerEx.warn(TAG, "Can not get SDocker configuration in DB, will use local config.");
+            }
+        }
+        this.config = config;
+        return config;
+    }
+
     public static void shutdownNow() {
         OnlineServer onlineServer = OnlineServer.getInstance();
-        if(onlineServer != null)
+        if (onlineServer != null)
             onlineServer.shutdown();
     }
 

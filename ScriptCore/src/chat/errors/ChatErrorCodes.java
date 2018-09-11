@@ -12,7 +12,7 @@ public interface ChatErrorCodes {
 	public static final int ERROR_ONLINESERVER_DELETE_FAILED = CODE_CORE + 123;
 	public static final int ERROR_ONLINESERVER_ADD_FAILED = CODE_CORE + 124;
 	public static final int ERROR_ONLINESERVER_QUERY_FAILED = CODE_CORE + 125;
-	
+
 	public static final int ERROR_USERPRESENT_ADD_FAILED = CODE_CORE + 126;
 	public static final int ERROR_USERPRESENT_UPDATE_FAILED = CODE_CORE + 127;
 	public static final int ERROR_USERPRESENT_QUERY_FAILED = CODE_CORE + 128;
@@ -85,4 +85,6 @@ public interface ChatErrorCodes {
 	public static final int ERROR_METHODREQUEST_SERVICE_NOTFOUND = CODE_CORE + 195;
 	public static final int ERROR_METHODREQUEST_SKELETON_NULL = CODE_CORE + 196;
 	public static final int ERROR_METHODREQUEST_SERVICE_NULL = CODE_CORE + 197;
+
+	public static final int ERROR_SDOCKER_QUERY_FAILED = CODE_CORE + 201;
 }
