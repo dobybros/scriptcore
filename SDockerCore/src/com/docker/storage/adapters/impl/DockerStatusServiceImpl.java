@@ -151,6 +151,32 @@ public class DockerStatusServiceImpl implements DockerStatusService {
 	}
 
 	@Override
+	public List<DockerStatus> getDockerStatus(String serverType, Integer status) throws CoreException {
+		try {
+			List<DockerStatus> dockerStatuses = new ArrayList<>();
+			Document query = new Document();
+			if (serverType != null) {
+				query.append(DockerStatus.FIELD_DOCKERSTATUS_SERVERTYPE, serverType);
+			}
+			if (status != null) {
+				query.append(DockerStatus.FIELD_DOCKERSTATUS_STATUS, status);
+			}
+			FindIterable<Document> iterable = dockerStatusDAO.query(query);
+			MongoCursor<Document> cursor = iterable.iterator();
+			while (cursor.hasNext()) {
+				Document doc = cursor.next();
+				DockerStatus dockerStatus = new DockerStatus();
+				dockerStatus.fromDocument(doc);
+				dockerStatuses.add(dockerStatus);
+			}
+			return dockerStatuses;
+		} catch (DBException e) {
+			e.printStackTrace();
+			throw new CoreException(ChatErrorCodes.ERROR_ONLINESERVER_QUERY_FAILED, "Query server present server failed, " + e.getMessage());
+		}
+	}
+
+	@Override
 	public List<DockerStatus> getAllDockerStatus() throws CoreException {
 		try {
 			List<DockerStatus> dockerStatuses = new ArrayList<>();

@@ -42,5 +42,7 @@ public interface DockerStatusService {
 
 	List<DockerStatus> getDockerStatusByServerType(String serverType) throws CoreException;
 
+	List<DockerStatus> getDockerStatus(String serverType, Integer status) throws CoreException;
+
 	List<DockerStatus> getAllDockerStatus() throws CoreException;
 }

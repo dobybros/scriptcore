@@ -47,7 +47,9 @@ public class Switch64 {
 	public long getValue() {
 		return switch64;
 	}
-
+	public void setValue(long switch64) {
+		this.switch64 = switch64;
+	}
 	public long getSwitch64() {
 		return switch64;
 	}

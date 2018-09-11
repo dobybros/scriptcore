@@ -5,15 +5,9 @@ import chat.logs.LoggerEx;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.docker.errors.CoreErrorCodes;
-import com.sun.corba.se.spi.orb.Operation;
 import redis.clients.jedis.*;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * @author wangrongxuan
@@ -171,7 +165,7 @@ public class RedisHandler {
      */
     public Long hsetnx(String key, String field, String value)
             throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.hsetnx(key, field, value);
         });
 /*
@@ -212,7 +206,7 @@ public class RedisHandler {
      */
     public Long hset(String key, String field, String value)
             throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.hset(key, field, value);
         });
 /*
@@ -245,7 +239,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public Long hdel(String key, String... fields) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.hdel(key, fields);
         });
 /*
@@ -280,7 +274,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public String hget(String key, String field) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.hget(key, field);
         });
 /*
@@ -341,7 +335,7 @@ public class RedisHandler {
      * O(1)
      */
     public Long hlen(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.hlen(key);
         });
 
@@ -367,7 +361,7 @@ public class RedisHandler {
     }
 
     public Long ttl(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.ttl(key);
         });
 /*
@@ -387,7 +381,7 @@ public class RedisHandler {
     }
 
     public Long pttl(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.pttl(key);
         });
 
@@ -408,7 +402,7 @@ public class RedisHandler {
     }
 
     public String set(String key, String value, String nxxx, String expx, long time) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.set(key, value, nxxx, expx, time);
         });
 /*
@@ -429,7 +423,7 @@ public class RedisHandler {
     }
 
     public Long del(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.del(key);
         });
 /*
@@ -449,7 +443,7 @@ public class RedisHandler {
     }
 
     public String psetex(String key, String value, long time) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.psetex(key, time, value);
         });
 /*
@@ -470,7 +464,7 @@ public class RedisHandler {
     }
 
     public String setObject(String key, Object obj, String nxxx, String expx, long time) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             String jsonStr = JSON.toJSONString(obj);
             return jedis.set(key, jsonStr, nxxx, expx, time);
         });
@@ -497,7 +491,7 @@ public class RedisHandler {
     }
 
     public <T> T getObject(String key, Class<T> clazz) throws CoreException {
-        String json = doJedisExcute(jedis -> {
+        String json = doJedisExecute(jedis -> {
             return jedis.get(key);
         });
 /*
@@ -528,7 +522,7 @@ public class RedisHandler {
     }
 
     public String get(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.get(key);
         });
 
@@ -555,7 +549,7 @@ public class RedisHandler {
     }
 
     public Long expire(String key, long expire) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.pexpire(key, expire);
         });
 
@@ -585,7 +579,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public Long lpushObject(String key, Object obj) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             String jsonStr = JSON.toJSONString(obj);
             return jedis.lpush(key, jsonStr);
         });
@@ -617,7 +611,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public Long lpush(String key, String value) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.lpush(key, value);
         });
 
@@ -647,7 +641,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public <T> T lpopObject(String key, Class<T> clazz) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             String value = jedis.lpop(key);
             return JSON.parseObject(value, clazz);
         });
@@ -678,7 +672,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public String lpop(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.lpop(key);
         });
 
@@ -708,7 +702,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public Long rpushObject(String key, Object obj) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             String jsonStr = JSON.toJSONString(obj);
             return jedis.rpush(key, jsonStr);
         });
@@ -739,7 +733,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public Long rpush(String key, String value) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.rpush(key, value);
         });
 
@@ -769,7 +763,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public <T> T rpopObject(String key, Class<T> clazz) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             String value = jedis.rpop(key);
             return JSON.parseObject(value, clazz);
         });
@@ -800,7 +794,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public String rpop(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.rpop(key);
         });
 
@@ -829,7 +823,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public Long llen(String key) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.llen(key);
         });
 
@@ -858,7 +852,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public List<String> lrange(String key, long start, long end) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.lrange(key, start, end);
         });
 
@@ -890,7 +884,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public <T> Object lIndex(String key, long index, Class<T> clazz) throws CoreException {
-        String redisResult = doJedisExcute(jedis -> {
+        String redisResult = doJedisExecute(jedis -> {
             return jedis.lindex(key, index);
         });
 /*
@@ -932,7 +926,7 @@ public class RedisHandler {
      * @throws CoreException
      */
     public <T> List<T> lrange(String key, long start, long end, Class<T> clazz) throws CoreException {
-        List<String> redisResult = doJedisExcute(jedis -> {
+        List<String> redisResult = doJedisExecute(jedis -> {
             return jedis.lrange(key, start, end);
         });
 
@@ -970,7 +964,7 @@ public class RedisHandler {
 
 
     public String ltrim(String key, long start, long end) throws CoreException {
-        return doJedisExcute(jedis -> {
+        return doJedisExecute(jedis -> {
             return jedis.ltrim(key, start, end);
         });
 
@@ -991,7 +985,32 @@ public class RedisHandler {
 */
     }
 
-    private <V> V doJedisExcute(JedisExcutor excutor) throws CoreException {
+    public String hmset(String key, Map<String, String> hash)
+            throws CoreException {
+        return doJedisExecute(jedis -> {
+            return jedis.hmset(key, hash);
+        });
+    }
+
+    public List<String> hmget(String key, String... fields) throws CoreException {
+        return doJedisExecute(jedis -> {
+            return jedis.hmget(key, fields);
+        });
+    }
+
+    public Map<String, String> hgetAll(String key) throws CoreException {
+        return doJedisExecute(jedis -> {
+            return jedis.hgetAll(key);
+        });
+    }
+
+    public Long hincrby(String key, String field, long value) throws CoreException {
+        return doJedisExecute(jedis -> {
+            return jedis.hincrBy(key, field, value);
+        });
+    }
+
+    private <V> V doJedisExecute(JedisExcutor executor) throws CoreException {
         JedisCommands jedis = null;
         try {
             if (type == TYPE_SHARD) {
@@ -999,10 +1018,10 @@ public class RedisHandler {
             } else if (type == TYPE_CLUSTER) {
                 jedis = cluster;
             }
-            return (V) excutor.excute(jedis);
+            return (V) executor.execute(jedis);
         } catch (Throwable e) {
             e.printStackTrace();
-            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "Redis excute field.");
+            throw new CoreException(CoreErrorCodes.ERROR_REDIS, "Redis execute failed."+e.getMessage());
         } finally {
             if (jedis != null && jedis.getClass().equals(ShardedJedis.class)) {
                 ((ShardedJedis) jedis).close();
@@ -1012,6 +1031,6 @@ public class RedisHandler {
 
     @FunctionalInterface
     interface JedisExcutor<T> {
-        T excute(JedisCommands commands);
+        T execute(JedisCommands commands);
     }
 }
