@@ -33,4 +33,8 @@
 		  init-method="init">
 		<property name="mongoHelper" ref="configHelper" />
 	</bean>
+	<bean id="sdockerDAO" class="com.docker.storage.mongodb.daos.SDockerDAO"
+		  init-method="init">
+		<property name="mongoHelper" ref="configHelper" />
+	</bean>
 </beans>
