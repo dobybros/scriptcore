@@ -1,9 +1,9 @@
 package com.docker.script;
 
+import chat.logs.LoggerEx;
 import com.docker.script.i18n.I18nHandler;
 import com.docker.script.i18n.MessageProperties;
 import com.docker.storage.kafka.KafkaConfCenter;
-import com.docker.storage.kafka.KafkaConsumerHandler;
 import com.docker.storage.kafka.KafkaProducerHandler;
 import com.docker.storage.redis.RedisHandler;
 import connectors.mongodb.MongoClientHelper;
@@ -11,7 +11,6 @@ import connectors.mongodb.annotations.handlers.MongoCollectionAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
 import connectors.mongodb.annotations.handlers.MongoDatabaseAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDocumentAnnotationHolder;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import script.filter.JsonFilterFactory;
 import script.groovy.runtime.*;
 import script.groovy.servlets.GroovyServletDispatcher;
@@ -24,6 +23,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BaseRuntime extends GroovyRuntime {
+	public static final String TAG = BaseRuntime.class.getSimpleName();
 	private ConcurrentHashMap<String, Object> memoryCache = new ConcurrentHashMap<>();
 
 	private MongoDBHandler mongoDBHandler;
@@ -40,6 +40,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 	private Properties config;
 
 	public void prepare(String service, Properties properties, String rootPath) {
+		LoggerEx.info(TAG,"prepare service: " + service + " properties: " + properties + " rootPath: " + rootPath);
 	    this.service = service.toLowerCase();
 	    this.config = properties;
         String enableGroovyMVC = null;
