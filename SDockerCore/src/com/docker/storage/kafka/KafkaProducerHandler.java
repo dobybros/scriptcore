@@ -3,14 +3,10 @@ package com.docker.storage.kafka;
 import chat.logs.LoggerEx;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.KafkaException;
-import org.apache.kafka.common.errors.AuthorizationException;
-import org.apache.kafka.common.errors.OutOfOrderSequenceException;
-import org.apache.kafka.common.errors.ProducerFencedException;
 import java.util.Properties;
 
 public class KafkaProducerHandler {
-       public static final String TAG = KafkaConsumerHandler.class.getSimpleName();
+       public static final String TAG = KafkaProducerHandler.class.getSimpleName();
        private KafkaProducer<String,String> producer;
        private KafkaConfCenter kafkaConfCenter;
        public KafkaProducerHandler(KafkaConfCenter kafkaConfCenter){
