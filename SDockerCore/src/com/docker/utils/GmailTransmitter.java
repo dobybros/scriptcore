@@ -98,6 +98,6 @@ public class GmailTransmitter {
         Message encodeMessage = createMessageWithEmail(message);
         String user = "me";
         Message result = service.users().messages().send(user, encodeMessage).execute();
-        return result.toPrettyString();
+        return result.toString();
     }
 }
