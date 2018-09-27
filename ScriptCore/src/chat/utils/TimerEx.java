@@ -3,6 +3,7 @@ package chat.utils;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import chat.logs.LoggerEx;
@@ -16,15 +17,27 @@ public class TimerEx {
 	
 	public static void schedule(TimerTask task, long delay) {
 		try {
-			scheduledExecutorService.schedule(task, delay, TimeUnit.MILLISECONDS);
-		} catch(Exception e) {
+            ScheduledFuture future = scheduledExecutorService.schedule(task, delay, TimeUnit.MILLISECONDS);
+            if(task instanceof TimerTaskEx) {
+                ((TimerTaskEx)task).setFuture(future);
+            } else {
+                LoggerEx.warn(TAG, "There still a TimerTask " + task + " delay " + delay + " not using TimerTaskEx, the cancel method will not be available");
+            }
+		} catch(Throwable e) {
+		    e.printStackTrace();
 			LoggerEx.error(TAG, "Schedule TimerTask " + task + " failed, " + e.getMessage());
 		}
 	}
 	public static void schedule(TimerTask task, long delay, long period) {
 		try {
-			scheduledExecutorService.scheduleAtFixedRate(task, delay, period, TimeUnit.MILLISECONDS);
-		} catch(Exception e) {
+            ScheduledFuture future = scheduledExecutorService.scheduleAtFixedRate(task, delay, period, TimeUnit.MILLISECONDS);
+            if(task instanceof TimerTaskEx) {
+                ((TimerTaskEx)task).setFuture(future);
+            } else {
+                LoggerEx.warn(TAG, "There still a  periodic TimerTask " + task + " delay " + delay + " not using TimerTaskEx, the cancel method will not be available");
+            }
+		} catch(Throwable e) {
+            e.printStackTrace();
 			LoggerEx.error(TAG, "Schedule Period TimerTask " + task + " failed, " + e.getMessage());
 		}
 	}
@@ -36,27 +49,27 @@ public class TimerEx {
 
 	public static void main(String args[]) {
 		System.out.println("start");
-		TimerEx.schedule(new TimerTask() {
+		TimerEx.schedule(new TimerTaskEx() {
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("done");
 			}
 		}, -1234);
-		TimerEx.schedule(new TimerTask() {
+		TimerEx.schedule(new TimerTaskEx() {
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("done1");
 			}
 		}, 2000);
-		TimerEx.schedule(new TimerTask() {
+		TimerEx.schedule(new TimerTaskEx() {
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("123");
 			}
 		}, 2000, 2000);
-		TimerEx.schedule(new TimerTask() {
+		TimerEx.schedule(new TimerTaskEx() {
 			@Override
-			public void run() {
+			public void execute() {
 				System.out.println("negetive");
 			}
 		}, -123);

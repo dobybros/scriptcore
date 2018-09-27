@@ -24,9 +24,9 @@ public abstract class ReloadHandler {
 			e.printStackTrace();
 			LoggerEx.error(TAG, "Load in period " + period + " failed, " + e.getMessage());
 		}
-		TimerEx.schedule(new TimerTask() {
+		TimerEx.schedule(new TimerTaskEx() {
 			@Override
-			public void run() {
+			public void execute() {
 				try {
 					load();
 				} catch (Throwable e) {
