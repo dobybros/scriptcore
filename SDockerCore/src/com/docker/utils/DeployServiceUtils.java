@@ -20,6 +20,7 @@ import org.apache.commons.io.filefilter.FileFileFilter;
 import script.file.FileAdapter;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +35,7 @@ public class DeployServiceUtils {
         opt.addOption("h", "help", false, "help")
                 .addOption("p",true, "Service path")
 //			.addOption("a",true, "async servlet map")
+                .addOption("l",true, "Dependency library path")
                 .addOption("x",true, "Prefix name")
                 .addOption("d",true, "Docker name")
                 .addOption("s",true, "Service name")
@@ -54,6 +56,7 @@ public class DeployServiceUtils {
         String serviceName = null;
         String gridfsHost = null;
         String versionStr = null;
+        String libPath = null;
 
         if(line.hasOption('x')){
             prefix = line.getOptionValue('x');
@@ -64,6 +67,9 @@ public class DeployServiceUtils {
             HelpFormatter hf = new HelpFormatter();
             hf.printHelp("DeployServiceUtils[options:]", opt, false);
             return;
+        }
+        if(line.hasOption('l')){
+            libPath = line.getOptionValue('l');
         }
         if(line.hasOption('d')){
             dockerName = line.getOptionValue('d');
@@ -94,25 +100,48 @@ public class DeployServiceUtils {
             } catch(Exception e) {}
         }
 
-        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version);
+        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version, libPath);
     }
 
     public static void deploy(String prefix, String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version) throws Exception {
-        File deploy = new File(servicePath + "/build/deploy");
+        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version, null);
+    }
 
-        FileUtils.deleteDirectory(deploy);
+    public static void deploy(String prefix, String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version, String libPath) throws Exception {
+        File deploy = new File(servicePath + "/build/deploy/classes");
+        File root = new File(servicePath + "/build/deploy");
+        FileUtils.deleteDirectory(root);
+        //copy libs
+        if(libPath != null) {
+//            List<String> libPathList = new ArrayList<>();
+            String[] libPaths = libPath.split(",");
+            for(String libP : libPaths) {
+                File libGroovyFile = new File(libP + "/src/main/groovy");
+                if(libGroovyFile.isDirectory() && libGroovyFile.exists())
+                    FileUtils.copyDirectory(libGroovyFile, deploy);
+                File libResourceFile = new File(libP + "/src/main/resources");
+                if(libResourceFile.exists() && libResourceFile.isDirectory())
+                    FileUtils.copyDirectory(libResourceFile, deploy);
+            }
+        }
+
+        //copy source
         File groovyFile = new File(servicePath + "/src/main/groovy");
-        if(groovyFile.isDirectory() && groovyFile.exists())
+        if(groovyFile.isDirectory() && groovyFile.exists()) {
             FileUtils.copyDirectory(groovyFile, deploy);
+        }
         File resourceFile = new File(servicePath + "/src/main/resources");
-        if(resourceFile.exists() && resourceFile.isDirectory())
+        if(resourceFile.exists() && resourceFile.isDirectory()) {
             FileUtils.copyDirectory(resourceFile, deploy);
+        }
+
         if(version != null)
             serviceName = serviceName + "_v" + version;
-        doZip(new File(FilenameUtils.separatorsToUnix(deploy.getAbsolutePath()) + (prefix != null ? "/" + prefix : "") + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
-        clean(deploy, ".zip");
+        doZip(new File(FilenameUtils.separatorsToUnix(root.getAbsolutePath()) + (prefix != null ? "/" + prefix : "") + "/" + dockerName + "/" + serviceName + "/groovy.zip"), deploy);
+//        clean(deploy, ".zip");
+        FileUtils.deleteQuietly(deploy);
 
-        File[] toRemoveEmptyFolders = deploy.listFiles();
+        File[] toRemoveEmptyFolders = root.listFiles();
         for(File findEmptyFolder : toRemoveEmptyFolders) {
             if(getAllEmptyFoldersOfDir(findEmptyFolder)) {
                 FileUtils.deleteDirectory(findEmptyFolder);
@@ -184,7 +213,12 @@ public class DeployServiceUtils {
         Collection<File> fList = FileUtils.listFiles(folder, null, true);
         for (File file : fList) {
             if (file.isFile() && !file.getName().endsWith(endWith)) {
-                file.delete();
+//                file.delete();
+                try {
+                    FileUtils.forceDelete(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         FileUtils.listFiles(folder, new FileFileFilter(){}, new DirectoryFileFilter(){
@@ -192,7 +226,12 @@ public class DeployServiceUtils {
                 if(file.isDirectory()) {
                     Collection<File> hasFiles = FileUtils.listFiles(file, null, true);
                     if(hasFiles == null || hasFiles.isEmpty()) {
-                        file.delete();
+//                        file.delete();
+                        try {
+                            FileUtils.forceDelete(file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 return false;
