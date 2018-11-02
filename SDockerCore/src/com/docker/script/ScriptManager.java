@@ -4,6 +4,7 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.TimerEx;
 import chat.utils.TimerTaskEx;
+import com.docker.annotations.ServiceBean;
 import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.server.OnlineServer;
@@ -12,14 +13,18 @@ import com.docker.storage.adapters.ServersService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bson.Document;
 import script.file.FileAdapter;
 import script.file.FileAdapter.FileEntity;
 import script.file.FileAdapter.PathEx;
+import script.groovy.runtime.FieldInjectionListener;
 import script.utils.ShutdownListener;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -173,6 +178,30 @@ public class ScriptManager implements ShutdownListener {
 										} else {
 											runtime = new MyBaseRuntime();
 										}
+										if(runtime instanceof MyBaseRuntime) {
+											final MyBaseRuntime baseRuntime = (MyBaseRuntime) runtime;
+											runtime.addFieldInjectionListener(new FieldInjectionListener<ServiceBean>() {
+												public Class<ServiceBean> annotationClass() {
+													return ServiceBean.class;
+												}
+												@Override
+												public void inject(ServiceBean annotation, Field field, Object obj) {
+													String serviceName = annotation.name();
+													if(!StringUtils.isBlank(serviceName)) {
+														Object serviceStub = baseRuntime.getServiceStubManager().getService(serviceName, field.getType());
+														if(!field.isAccessible())
+															field.setAccessible(true);
+														try {
+															field.set(obj, serviceStub);
+														} catch (IllegalAccessException e) {
+															e.printStackTrace();
+															LoggerEx.error(TAG, "Set field " + field.getName() + " for service " + serviceName + " class " + field.getType() + " in class " + obj.getClass());
+														}
+													}
+												}
+											});
+										}
+
 //										switch(serverType) {
 //											case "gateway":
 //												runtime = new GatewayGroovyRuntime();

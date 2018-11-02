@@ -1,20 +1,23 @@
 package script.groovy.object;
 
 import chat.errors.GroovyErrorCodes;
+import chat.logs.LoggerEx;
 import groovy.lang.GroovyObject;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import script.groovy.annotation.Bean;
+import script.groovy.runtime.FieldInjectionListener;
 import script.groovy.runtime.GroovyBeanFactory;
 import script.groovy.runtime.GroovyRuntime;
 import script.groovy.runtime.GroovyRuntime.ClassHolder;
 import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
-import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 
 public class GroovyObjectEx<T> {
@@ -77,6 +80,7 @@ public class GroovyObjectEx<T> {
 								Field[] fields = gObj.getClass().getDeclaredFields();
 								if(fields != null) {
 									for(Field field : fields) {
+										//Bean handler
 										Bean bean = field.getAnnotation(Bean.class);
 										if(bean != null) {
 											String beanName = bean.name();
@@ -112,6 +116,24 @@ public class GroovyObjectEx<T> {
 													Object obj = groovyRuntime.getProxyObject(beanValue);
 													field.set(gObj, gClass.cast(obj));
 												} 
+											}
+										}
+
+										List<FieldInjectionListener> injectListeners = groovyRuntime.getFieldInjectionListeners();
+										if(injectListeners != null) {
+											for(FieldInjectionListener listener : injectListeners) {
+												try {
+													Class<? extends Annotation> annotationClass = listener.annotationClass();
+													if(annotationClass != null) {
+														Annotation annotation = field.getAnnotation(annotationClass);
+														if(annotation != null) {
+															listener.inject(annotation, field, gObj);
+														}
+													}
+												} catch (Throwable t) {
+													t.printStackTrace();
+													LoggerEx.error(TAG, "handle field inject listener " + listener + " failed, " + t.getMessage());
+												}
 											}
 										}
 									}

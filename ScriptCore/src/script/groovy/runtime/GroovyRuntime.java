@@ -50,6 +50,24 @@ public class GroovyRuntime extends ScriptRuntime{
 //	private static GroovyRuntime instance;
 	private Class<?> groovyObjectExProxyClass;
 	private GroovyBeanFactory beanFactory;
+	private List<FieldInjectionListener> fieldInjectionListeners;
+
+	public void addFieldInjectionListener(FieldInjectionListener listener) {
+		if(fieldInjectionListeners == null) {
+			fieldInjectionListeners = new ArrayList<>();
+		}
+		if(!fieldInjectionListeners.contains(listener))
+			fieldInjectionListeners.add(listener);
+	}
+
+	public void removeFieldInjectionListener(FieldInjectionListener listener) {
+		if(fieldInjectionListeners != null)
+			fieldInjectionListeners.remove(listener);
+	}
+
+	public List<FieldInjectionListener> getFieldInjectionListeners() {
+		return fieldInjectionListeners;
+	}
 
 //	public static GroovyRuntime getInstance() {
 //		return instance;
