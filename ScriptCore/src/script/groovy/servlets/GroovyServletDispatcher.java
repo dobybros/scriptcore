@@ -57,7 +57,7 @@ public class GroovyServletDispatcher extends HttpServlet {
 				if(groovyServletManager != null) {
 					holder = groovyServletManager.parseUri(request, response, uriStrs);
 				} else {
-					LoggerEx.error(TAG, "No default groovyServletManager for parseUri " + request.getRequestURI() + " method " + request.getMethod());
+					LoggerEx.error(TAG, "No default groovyServletManager for parseUri " + request.getRequestURI() + " method " + request.getMethod() + " from " + request.getRemoteAddr());
 				}
 			}
 			if(holder == null) {
