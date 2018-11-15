@@ -155,6 +155,13 @@ public class MyBaseRuntime extends BaseRuntime {
 			serviceStubManager = new ServiceStubManager(service);
 			serviceStubManager.setHost(remoteServiceHost);
 		}
+		String libs = properties.getProperty("libs");
+		if(libs != null) {
+			String[] libArray = libs.split(",");
+			for(String lib : libArray) {
+				addLibPath(lib);
+			}
+		}
 	}
 	public void beforeDeploy() {
 		if(remoteServiceHost != null) {

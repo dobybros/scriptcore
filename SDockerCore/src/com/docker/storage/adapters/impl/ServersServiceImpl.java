@@ -6,6 +6,7 @@ import com.docker.storage.DBException;
 import com.docker.storage.adapters.ServersService;
 import com.docker.storage.mongodb.daos.LansDAO;
 import com.docker.storage.mongodb.daos.ServersDAO;
+import com.docker.utils.SpringContextUtil;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import org.bson.Document;
@@ -13,8 +14,8 @@ import org.bson.Document;
 import javax.annotation.Resource;
 
 public class ServersServiceImpl implements ServersService {
-    @Resource
-    private ServersDAO serversDAO;
+//    @Resource
+    private ServersDAO serversDAO = (ServersDAO) SpringContextUtil.getBean("serversDAO");
     @Override
     public Document getServerConfig(String serverType) throws CoreException {
         try {

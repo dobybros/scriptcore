@@ -1,6 +1,5 @@
 package connectors.mongodb.annotations.handlers;
 
-import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ClassFieldsHolder;
 import chat.utils.ClassFieldsHolder.FieldEx;
@@ -115,8 +114,11 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 			DBCollection mongoCollection = collectionMap.get(collectionClass);
 			if(mongoCollection != null) {
 				String collectionName = mongoCollection.name();
-				String dClass = mongoCollection.databaseClass();
-				Class<?> databaseClass = groovyRuntime.getClass(dClass);
+				Class<?> databaseClass = mongoCollection.database();
+				if(databaseClass == null || databaseClass.equals(Object.class)) {
+					String dClass = mongoCollection.databaseClass();
+					databaseClass = groovyRuntime.getClass(dClass);
+				}
 				if(databaseClass == null)
 					continue;
 				if(collectionName != null && databaseClass != null) {
@@ -139,7 +141,10 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 			DBDocument mongoDocument = documentMap.get(documentClass);
 			if(mongoDocument != null) {
 				String[] filters = mongoDocument.filters();
-				Class<?> collectionClass = groovyRuntime.getClass(mongoDocument.collectionClass());
+				Class<?> collectionClass = mongoDocument.collection();
+				if(collectionClass == null || collectionClass.equals(Object.class)) {
+					collectionClass = groovyRuntime.getClass(mongoDocument.collectionClass());
+				}
 				CollectionHolder holder = null;
 				if(collectionClass != null) {
 					holder = newCollectionMap.get(collectionClass);

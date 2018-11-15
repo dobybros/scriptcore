@@ -39,11 +39,9 @@ public class OnlineServer {
 
     private String serverType;
 
-    @Resource
     private IPHolder ipHolder;
 
-    @Resource
-    private SDockersService sDockersService;
+    private SDockersService sdockersService;
 
     private DockerStatusService dockerStatusService;
 
@@ -199,9 +197,9 @@ public class OnlineServer {
             LoggerEx.error(TAG, "Prepare config.properties failed, can't do anything. " + e.getMessage());
         }
 
-        if (sDockersService != null) {
+        if (sdockersService != null) {
             try {
-                Document sDocker = sDockersService.getSDockerConf(ipHolder.getIp(), this.httpPort);
+                Document sDocker = sdockersService.getSDockerConf(ipHolder.getIp(), this.httpPort);
                 for (String field : sDocker.keySet()) {
                     if (field.equals("_id")) continue;
                     config.put(field.toString().replaceAll("_", "."), sDocker.get(field));
@@ -386,5 +384,21 @@ public class OnlineServer {
 
     public void setShutdownList(List<ShutdownListener> shutdownList) {
         this.shutdownList = shutdownList;
+    }
+
+    public IPHolder getIpHolder() {
+        return ipHolder;
+    }
+
+    public void setIpHolder(IPHolder ipHolder) {
+        this.ipHolder = ipHolder;
+    }
+
+    public SDockersService getSdockersService() {
+        return sdockersService;
+    }
+
+    public void setSdockersService(SDockersService sdockersService) {
+        this.sdockersService = sdockersService;
     }
 }

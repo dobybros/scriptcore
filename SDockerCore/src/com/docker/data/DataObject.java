@@ -2,17 +2,11 @@ package com.docker.data;
 
 import com.docker.storage.mongodb.CleanDocument;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
-import script.memodb.ObjectId;
 
-
-public abstract class DataObject {
+public abstract class DataObject extends connectors.mongodb.codec.DataObject{
 	
-	protected String id;
-	
-	public DataObject(){
-	}
-
 	public boolean isIdGenerated(){
 		if(id == null){
 			return false;
@@ -28,19 +22,6 @@ public abstract class DataObject {
 		if(id == null)
 			id = ObjectId.get().toString();
 	}
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(String id){
-		this.id = id;
-	}
-	
-	public static final String FIELD_ID = "_id";
 	public Document toDocument(){
 		Document dbObj1 = new CleanDocument();//TODO need CleanDocument implementation like CleanDBObject
 //		Document dbObj1 = new Document();

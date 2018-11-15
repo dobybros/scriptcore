@@ -11,5 +11,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface DBCollection {
 	public String name();
-	public String databaseClass();
+	@Deprecated
+	public String databaseClass() default "";
+	public Class database() default Object.class;
 }

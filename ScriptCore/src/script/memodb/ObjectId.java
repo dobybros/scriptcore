@@ -568,4 +568,3 @@ public final class ObjectId implements Comparable<ObjectId>, Serializable {
         return (byte) (x);
     }
 }
-

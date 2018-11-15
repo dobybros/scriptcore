@@ -11,6 +11,8 @@ public class IPHolder {
 
 	public void init() {
 		ip = ChatUtils.getLocalHostIp(ipPrefix, ethPrefix);
+		if(ip == null)
+			ip = "127.0.0.1";
 		LoggerEx.info(TAG, "Server ip is " + ip + " by ipPrefix " + ipPrefix + " ethPrefix " + ethPrefix);
 	}
 	public String getIpPrefix() {

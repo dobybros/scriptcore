@@ -6,6 +6,7 @@ import com.docker.script.i18n.MessageProperties;
 import com.docker.storage.kafka.KafkaConfCenter;
 import com.docker.storage.kafka.KafkaProducerHandler;
 import com.docker.storage.redis.RedisHandler;
+import com.docker.utils.SpringContextUtil;
 import connectors.mongodb.MongoClientHelper;
 import connectors.mongodb.annotations.handlers.MongoCollectionAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
@@ -45,6 +46,16 @@ public abstract class BaseRuntime extends GroovyRuntime {
 	    this.config = properties;
         String enableGroovyMVC = null;
         if(properties != null) {
+			ClassAnnotationHandler rpcServerHandler = (ClassAnnotationHandler) SpringContextUtil.getBean("rpcServer");
+			if(rpcServerHandler != null)
+        		addClassAnnotationHandler(rpcServerHandler);
+			ClassAnnotationHandler rpcServerSslHandler = (ClassAnnotationHandler) SpringContextUtil.getBean("rpcServerSsl");
+			if(rpcServerSslHandler != null)
+				addClassAnnotationHandler(rpcServerSslHandler);
+			ClassAnnotationHandler upStreamAnnotationHandler = (ClassAnnotationHandler) SpringContextUtil.getBean("upStreamAnnotationHandler");
+			if(upStreamAnnotationHandler != null)
+				addClassAnnotationHandler(upStreamAnnotationHandler);
+
             enableGroovyMVC = properties.getProperty("web.groovymvc.enable");
 			String mongodbHost = properties.getProperty("db.mongodb.uri");
 			if(mongodbHost != null) {

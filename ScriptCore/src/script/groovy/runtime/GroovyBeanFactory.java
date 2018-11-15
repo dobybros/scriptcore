@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 
 import script.groovy.annotation.Bean;

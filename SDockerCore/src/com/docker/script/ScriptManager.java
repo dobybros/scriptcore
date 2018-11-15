@@ -10,6 +10,7 @@ import com.docker.errors.CoreErrorCodes;
 import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.adapters.ServersService;
+import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -34,11 +35,11 @@ import java.util.zip.ZipFile;
 public class ScriptManager implements ShutdownListener {
 	private static final String TAG = ScriptManager.class.getSimpleName();
 
-	@Resource
-	private FileAdapter fileAdapter;
+//	@Resource
+	private FileAdapter fileAdapter = (FileAdapter) SpringContextUtil.getBean("fileAdapter");
 
-	@Resource
-	private ServersService serversService;
+//	@Resource
+	private ServersService serversService = (ServersService) SpringContextUtil.getBean("serversService");
 
 	private DockerStatusService dockerStatusService;
 

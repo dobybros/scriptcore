@@ -218,13 +218,21 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 					//Handle RequestIntercepting
 					ControllerMapping requestIntercepting = groovyClass.getAnnotation(ControllerMapping.class);
 					if(requestIntercepting != null) {
-						String interceptClass = requestIntercepting.interceptClass();
-						if(!StringUtils.isBlank(interceptClass)) {
-							GroovyObjectEx<RequestIntercepter> groovyInterceptor = groovyRuntime
-									.create(interceptClass);
-							if(groovyInterceptor != null) {
-								iMap.put(groovyServlet.getGroovyPath(), groovyInterceptor);
+						GroovyObjectEx<RequestIntercepter> groovyInterceptor = null;
+						Class<?> clazz = requestIntercepting.intercept();
+						if(clazz == null || clazz.equals(Object.class)) {
+							String interceptClass = requestIntercepting.interceptClass();
+							if(!StringUtils.isBlank(interceptClass)) {
+								groovyInterceptor = groovyRuntime
+										.create(interceptClass);
 							}
+						} else {
+							groovyInterceptor = groovyRuntime
+									.create(clazz);
+						}
+
+						if(groovyInterceptor != null) {
+							iMap.put(groovyServlet.getGroovyPath(), groovyInterceptor);
 						}
 					}
 					

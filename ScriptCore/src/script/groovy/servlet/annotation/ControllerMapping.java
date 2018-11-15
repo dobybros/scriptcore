@@ -10,5 +10,7 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 public @interface ControllerMapping {
+	@Deprecated
 	public String interceptClass() default "";
+	public Class intercept() default Object.class;
 }

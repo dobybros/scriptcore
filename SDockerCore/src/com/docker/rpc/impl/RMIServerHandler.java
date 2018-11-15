@@ -8,6 +8,7 @@ import com.docker.rpc.RPCRequest;
 import com.docker.rpc.RPCServerAdapter;
 import com.docker.rpc.RPCResponse;
 import com.docker.server.OnlineServer;
+import com.docker.utils.SpringContextUtil;
 
 import javax.annotation.Resource;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
@@ -27,8 +28,8 @@ public class RMIServerHandler {
     private Integer rmiPort = RMI_PORT;
     private String serverName;
 
-    @Resource
-    private IPHolder ipHolder;
+//    @Resource
+    private IPHolder ipHolder = (IPHolder) SpringContextUtil.getBean("ipHolder");
     private ConcurrentHashMap<String, RPCEntity> typeEntityMap = new ConcurrentHashMap<>();
 
     //both

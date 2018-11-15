@@ -10,6 +10,7 @@ import com.docker.data.Service;
 import com.docker.storage.DBException;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.mongodb.daos.DockerStatusDAO;
+import com.docker.utils.SpringContextUtil;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -25,8 +26,8 @@ import java.util.List;
 
 public class DockerStatusServiceImpl implements DockerStatusService {
 	private static final String TAG = DockerStatusServiceImpl.class.getSimpleName();
-	@Resource
-	private DockerStatusDAO dockerStatusDAO;
+//	@Resource
+	private DockerStatusDAO dockerStatusDAO = (DockerStatusDAO) SpringContextUtil.getBean("dockerStatusDAO");
 	@Override
 	public void deleteDockerStatus(String server) throws CoreException {
 		try {

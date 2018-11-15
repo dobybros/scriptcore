@@ -99,6 +99,7 @@ public class GroovyObjectEx<T> {
 													gClass = field.getType();
 												}
 											}
+											gClass = groovyRuntime.getClass(gClass.getName());
 											GroovyObjectEx<?> beanValue;
 											if(StringUtils.isBlank(beanName)) {
 												beanValue = beanFactory.getBean(gClass);
