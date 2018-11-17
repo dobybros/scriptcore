@@ -4,6 +4,9 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.TimerEx;
 import chat.utils.TimerTaskEx;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.util.TypeUtils;
+import com.docker.annotations.ConfigProperty;
 import com.docker.annotations.ServiceBean;
 import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
@@ -194,9 +197,34 @@ public class ScriptManager implements ShutdownListener {
 															field.setAccessible(true);
 														try {
 															field.set(obj, serviceStub);
-														} catch (IllegalAccessException e) {
+														} catch (Throwable e) {
 															e.printStackTrace();
 															LoggerEx.error(TAG, "Set field " + field.getName() + " for service " + serviceName + " class " + field.getType() + " in class " + obj.getClass());
+														}
+													}
+												}
+											});
+											runtime.addFieldInjectionListener(new FieldInjectionListener<ConfigProperty>() {
+												public Class<ConfigProperty> annotationClass() {
+													return ConfigProperty.class;
+												}
+												@Override
+												public void inject(ConfigProperty annotation, Field field, Object obj) {
+													String key = annotation.name();
+													if(!StringUtils.isBlank(key)) {
+														Properties properties = baseRuntime.getConfig();
+														if(properties == null)
+															return;
+														String value = properties.getProperty(key);
+														if(value == null)
+															return;
+														if(!field.isAccessible())
+															field.setAccessible(true);
+														try {
+															field.set(obj, TypeUtils.cast(value, field.getType(), ParserConfig.getGlobalInstance()));
+														} catch (Throwable e) {
+															e.printStackTrace();
+															LoggerEx.error(TAG, "Set field " + field.getName() + " for config key " + key + " class " + field.getType() + " in class " + obj.getClass());
 														}
 													}
 												}
