@@ -26,6 +26,8 @@
 		<property name="sslRpcPort" value="${rpc.sslport}" />
 		<property name="publicDomain" value="${public.domain}" />
 		<property name="dockerStatusService" ref="dockerStatusService"/>
+		<property name="ipHolder" ref="ipHolder" />
+		<property name="sdockersService" ref="sdockersService" />
 
 		<property name="rpcSslClientTrustJksPath" value="${rpc.ssl.clientTrust.jks.path}"/>
 		<property name="rpcSslServerJksPath" value="${rpc.ssl.server.jks.path}"/>
@@ -39,9 +41,6 @@
 		<property name="shutdownList">
 			<list>
 				<ref bean="scriptManager" />
-				<ref bean="dockerStatusHelper" />
-				<ref bean="configHelper" />
-				<ref bean="gridfsHelper" />
 			</list>
 		</property>
 	</bean>
