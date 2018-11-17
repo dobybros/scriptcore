@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.lang.StringUtils;
 import script.file.FileAdapter;
 
 import java.io.*;
@@ -40,7 +41,8 @@ public class DeployServiceUtils {
                 .addOption("d",true, "Docker name")
                 .addOption("s",true, "Service name")
                 .addOption("f",true, "Mongodb GridFS host, or other dfs host")
-                .addOption("v",true, "Version");
+                .addOption("v",true, "Version")
+                .addOption("b", true, "bucket");
 
         org.apache.commons.cli.CommandLine line = parser.parse(opt, args);
         System.out.println("commandLine " + Arrays.toString(args));
@@ -57,6 +59,7 @@ public class DeployServiceUtils {
         String gridfsHost = null;
         String versionStr = null;
         String libPath = null;
+        String bucket = "imfs";
 
         if(line.hasOption('x')){
             prefix = line.getOptionValue('x');
@@ -99,15 +102,18 @@ public class DeployServiceUtils {
                 version = Integer.valueOf(versionStr);
             } catch(Exception e) {}
         }
+        if(line.hasOption('b')){
+            bucket = line.getOptionValue('b');
+        }
 
-        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version, libPath);
+        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version, libPath, bucket);
     }
 
     public static void deploy(String prefix, String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version) throws Exception {
-        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version, null);
+        deploy(prefix, servicePath, dockerName, serviceName, gridfsHost, version, null, null);
     }
 
-    public static void deploy(String prefix, String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version, String libPath) throws Exception {
+    public static void deploy(String prefix, String servicePath, String dockerName, String serviceName, String gridfsHost, Integer version, String libPath, String bucket) throws Exception {
         File deploy = new File(servicePath + "/build/deploy/classes");
         File root = new File(servicePath + "/build/deploy");
         FileUtils.deleteDirectory(root);
@@ -158,9 +164,11 @@ public class DeployServiceUtils {
         helper.init();
 //		helper.setUsername();
 
+        if (StringUtils.isBlank(bucket))
+            bucket = "imfs";
         GridFSFileHandler fileHandler = new GridFSFileHandler();
         fileHandler.setResourceHelper(helper);
-        fileHandler.setBucketName("imfs");
+        fileHandler.setBucketName(bucket);
         fileHandler.init();
 
         File directory = new File(servicePath + "/build/deploy");
