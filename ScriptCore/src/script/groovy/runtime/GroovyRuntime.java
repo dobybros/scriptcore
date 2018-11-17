@@ -239,23 +239,23 @@ public class GroovyRuntime extends ScriptRuntime{
                 LoggerEx.info(TAG, "Start imports " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
                 String content = FileUtils.readFileToString(importPath, "utf8");
                 if(!content.endsWith("//THE END\r\n")) {
+                    final CommandLine cmdLine = CommandLine.parse("groovy " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
+                    ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(15));//设置超时时间
+                    DefaultExecutor executor = new DefaultExecutor();
+                    baos = new ByteArrayOutputStream();
+                    executor.setStreamHandler(new PumpStreamHandler(baos, baos));
+                    executor.setWatchdog(watchdog);
+                    executor.setExitValue(0);//由于ping被到时间终止，所以其默认退出值已经不是0，而是1，所以要设置它
+                    int exitValue = executor.execute(cmdLine);
+                    final String result = baos.toString().trim();
+                    LoggerEx.info(TAG, "import log " + result);
+                    LoggerEx.info(TAG, "Imported " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
+
                     importBuilder = new StringBuilder(content);
                     importBuilder.append("\r\n");
                 } else {
                     LoggerEx.info(TAG, "Already added imports for " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
                 }
-//				final CommandLine cmdLine = CommandLine.parse("groovy " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
-//				ExecuteWatchdog watchdog = new ExecuteWatchdog(TimeUnit.MINUTES.toMillis(15));//设置超时时间
-//				DefaultExecutor executor = new DefaultExecutor();
-//                baos = new ByteArrayOutputStream();
-//                executor.setStreamHandler(new PumpStreamHandler(baos, baos));
-//                executor.setWatchdog(watchdog);
-//				executor.setExitValue(0);//由于ping被到时间终止，所以其默认退出值已经不是0，而是1，所以要设置它
-//				int exitValue = executor.execute(cmdLine);
-//                final String result = baos.toString().trim();
-//                LoggerEx.info(TAG, "import log " + result);
-//                LoggerEx.info(TAG, "Imported " + FilenameUtils.separatorsToUnix(importPath.getAbsolutePath()));
-
             } else {
                 String[] strs = new String[] {
                         "package config",
