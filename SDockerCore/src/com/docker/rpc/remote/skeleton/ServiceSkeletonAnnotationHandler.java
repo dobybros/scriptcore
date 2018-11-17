@@ -15,6 +15,7 @@ import script.groovy.runtime.GroovyRuntime;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -171,7 +172,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
         Method[] methods = ReflectionUtil.getMethods(clazz);
         if(methods != null) {
             for(Method method : methods) {
-                if(method.isSynthetic())
+                if(method.isSynthetic() || method.getModifiers() == Modifier.PRIVATE)
                     continue;
                 SkelectonMethodMapping mm = new SkelectonMethodMapping(method);
                 mm.setRemoteService(serverAdapter);

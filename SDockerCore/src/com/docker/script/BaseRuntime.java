@@ -46,15 +46,15 @@ public abstract class BaseRuntime extends GroovyRuntime {
 	    this.config = properties;
         String enableGroovyMVC = null;
         if(properties != null) {
-			ClassAnnotationHandler rpcServerHandler = (ClassAnnotationHandler) SpringContextUtil.getBean("rpcServer");
-			if(rpcServerHandler != null)
-        		addClassAnnotationHandler(rpcServerHandler);
-			ClassAnnotationHandler rpcServerSslHandler = (ClassAnnotationHandler) SpringContextUtil.getBean("rpcServerSsl");
-			if(rpcServerSslHandler != null)
-				addClassAnnotationHandler(rpcServerSslHandler);
-			ClassAnnotationHandler upStreamAnnotationHandler = (ClassAnnotationHandler) SpringContextUtil.getBean("upStreamAnnotationHandler");
-			if(upStreamAnnotationHandler != null)
-				addClassAnnotationHandler(upStreamAnnotationHandler);
+			Object rpcServerHandler = SpringContextUtil.getBean("rpcServer");
+			if(rpcServerHandler != null && rpcServerHandler instanceof ClassAnnotationHandler)
+        		addClassAnnotationHandler((ClassAnnotationHandler) rpcServerHandler);
+			Object rpcServerSslHandler = SpringContextUtil.getBean("rpcServerSsl");
+			if(rpcServerSslHandler != null && rpcServerSslHandler instanceof ClassAnnotationHandler)
+				addClassAnnotationHandler((ClassAnnotationHandler) rpcServerSslHandler);
+			Object upStreamAnnotationHandler = SpringContextUtil.getBean("upStreamAnnotationHandler");
+			if(upStreamAnnotationHandler != null && upStreamAnnotationHandler instanceof ClassAnnotationHandler)
+				addClassAnnotationHandler((ClassAnnotationHandler) upStreamAnnotationHandler);
 
             enableGroovyMVC = properties.getProperty("web.groovymvc.enable");
 			String mongodbHost = properties.getProperty("db.mongodb.uri");
