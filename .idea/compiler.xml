@@ -8,6 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="AdminService" />
         <module name="DiscoveryService" />
+        <module name="DiscoveryService (1)" />
+        <module name="GatewayService" />
         <module name="MyScripts" />
         <module name="PKRoomService" />
         <module name="PKRoomService (1)" />
@@ -15,22 +17,26 @@
         <module name="PKUserService" />
         <module name="PKUserService (1)" />
         <module name="PKWalletService" />
+        <module name="ScheduledTaskService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="AdminService" target="1.8" />
       <module name="APNService" target="1.8" />
       <module name="DiscoveryService" target="1.8" />
-      <module name="DiscoveryService (1)" target="1.8" />
+      <module name="DiscoveryService (1)" target="1.5" />
       <module name="DiscoveryService (2)" target="1.8" />
+      <module name="GatewayService" target="1.8" />
       <module name="IMUserService" target="1.8" />
       <module name="MyScripts" target="1.8" />
+      <module name="OTIndexService" target="1.8" />
       <module name="PKRoomService" target="1.8" />
       <module name="PKRoomService (1)" target="1.5" />
       <module name="PKShopService" target="1.8" />
       <module name="PKUserService" target="1.8" />
       <module name="PKUserService (1)" target="1.5" />
       <module name="PKWalletService" target="1.8" />
+      <module name="ScheduledTaskService" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

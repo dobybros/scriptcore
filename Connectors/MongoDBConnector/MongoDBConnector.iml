@@ -17,18 +17,7 @@
     </content>
     <orderEntry type="module" module-name="ScriptCore" exported="" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
-    <orderEntry type="module-library" exported="">
-      <library name="mongo-java-driver-3.2.2.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/mongo-java-driver-3.2.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/reflibs/mongo-java-driver-3.2.2-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -217,5 +206,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="mongo-java-driver-3.8.0" level="project" />
   </component>
 </module>

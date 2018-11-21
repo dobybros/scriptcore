@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="EntryPointsManager">
-    <entry_points version="2.0" />
-  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
@@ -12,10 +9,13 @@
         <option value="$PROJECT_DIR$/../PKUserService/pom.xml" />
         <option value="$PROJECT_DIR$/../PKAdminService/pom.xml" />
         <option value="$PROJECT_DIR$/../PKShopService/pom.xml" />
+        <option value="$PROJECT_DIR$/../../acucom/DiscoveryService/pom.xml" />
+        <option value="$PROJECT_DIR$/../../acucom/ScheduledTaskService/pom.xml" />
+        <option value="$PROJECT_DIR$/../../acucom/GatewayService/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="9.0" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

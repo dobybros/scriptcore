@@ -3,10 +3,15 @@
 .project
 .settings
 bin
-/.idea
+.idea/
 *.iml
 /logs/
 .idea
 *.iml
 *.class
-SDocker/classes/ctx.xml
+SDocker/classes/*
+SDocker/deploy/*
+*/buildlib/*
+.DS_Store
+*/.DS_Store
+SDockerCore/bin/*

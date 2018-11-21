@@ -56,6 +56,5 @@
     </orderEntry>
     <orderEntry type="module" module-name="ScriptCore" exported="" />
     <orderEntry type="module" module-name="MongoDBConnector" exported="" />
-    <orderEntry type="module" module-name="SolrConnector" exported="" />
   </component>
 </module>

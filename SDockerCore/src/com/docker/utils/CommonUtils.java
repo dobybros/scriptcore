@@ -19,11 +19,11 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.io.FilenameUtils;
+import org.bson.types.ObjectId;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import script.file.FileAdapter;
-import script.memodb.ObjectId;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 

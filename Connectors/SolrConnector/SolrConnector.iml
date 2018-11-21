@@ -19,7 +19,7 @@
     </content>
     <orderEntry type="module" module-name="ScriptCore" exported="" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="9.0" jdkType="JavaSDK" />
     <orderEntry type="module-library" exported="">
       <library name="noggit-0.6.jar">
         <CLASSES>

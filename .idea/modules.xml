@@ -3,21 +3,20 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../PKAdminService/AdminService.iml" filepath="$PROJECT_DIR$/../PKAdminService/AdminService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../im/msgservers/workspace-chat/ChatCore/ChatCore.iml" filepath="$PROJECT_DIR$/../../im/msgservers/workspace-chat/ChatCore/ChatCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../acucom/DiscoveryService/DiscoveryService.iml" filepath="$PROJECT_DIR$/../../acucom/DiscoveryService/DiscoveryService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../DiscoveryServiceForServiceVersioning/DiscoveryService.iml" filepath="$PROJECT_DIR$/../DiscoveryServiceForServiceVersioning/DiscoveryService.iml" />
-      <module fileurl="file://$PROJECT_DIR$/JDocker/JDocker.iml" filepath="$PROJECT_DIR$/JDocker/JDocker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../im/msgservers/workspace-chat/Gateway/Gateway.iml" filepath="$PROJECT_DIR$/../../im/msgservers/workspace-chat/Gateway/Gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../acucom/GatewayService/GatewayService.iml" filepath="$PROJECT_DIR$/../../acucom/GatewayService/GatewayService.iml" />
       <module fileurl="file://$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" filepath="$PROJECT_DIR$/Connectors/MongoDBConnector/MongoDBConnector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" filepath="$PROJECT_DIR$/Samples/MongoDBConnectorSample/MongoDBConnectorSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKRoomService/PKRoomService.iml" filepath="$PROJECT_DIR$/../PKRoomService/PKRoomService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKShopService/PKShopService.iml" filepath="$PROJECT_DIR$/../PKShopService/PKShopService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKUserService/PKUserService.iml" filepath="$PROJECT_DIR$/../PKUserService/PKUserService.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PKWalletService/PKWalletService.iml" filepath="$PROJECT_DIR$/../PKWalletService/PKWalletService.iml" />
       <module fileurl="file://$PROJECT_DIR$/SDocker/SDocker.iml" filepath="$PROJECT_DIR$/SDocker/SDocker.iml" />
       <module fileurl="file://$PROJECT_DIR$/SDockerCore/SDockerCore.iml" filepath="$PROJECT_DIR$/SDockerCore/SDockerCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../acucom/ScheduledTaskService/ScheduledTaskService.iml" filepath="$PROJECT_DIR$/../../acucom/ScheduledTaskService/ScheduledTaskService.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScriptCore/ScriptCore.iml" filepath="$PROJECT_DIR$/ScriptCore/ScriptCore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Connectors/SolrConnector/SolrConnector.iml" filepath="$PROJECT_DIR$/Connectors/SolrConnector/SolrConnector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SqlConnector/SqlConnector.iml" filepath="$PROJECT_DIR$/SqlConnector/SqlConnector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SqlConnectorSample/SqlConnectorSample.iml" filepath="$PROJECT_DIR$/SqlConnectorSample/SqlConnectorSample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Projects/ContentDistribution/Task/Task.iml" filepath="$PROJECT_DIR$/Projects/ContentDistribution/Task/Task.iml" />
     </modules>
   </component>
 </project>
