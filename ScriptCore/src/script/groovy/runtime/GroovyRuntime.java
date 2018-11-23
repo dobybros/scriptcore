@@ -11,6 +11,9 @@ import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -224,6 +227,34 @@ public class GroovyRuntime extends ScriptRuntime{
             beforeDeploy();
         } catch(Throwable t) {
             LoggerEx.warn(TAG, "beforeDeploy failed, " + t.getMessage());
+        }
+
+        //load libs
+        URLClassLoader libClassLoader = null;
+        File libsPath = new File(path + "/libs");
+        if(libsPath.exists() && libsPath.isDirectory()) {
+            List<URL> urls = new ArrayList<>();
+            Collection<File> jars = FileUtils.listFiles(libsPath,
+                    FileFilterUtils.suffixFileFilter(".jar"),
+                    FileFilterUtils.directoryFileFilter());
+            for(File jar : jars) {
+                String path = "jar:file://" + jar.getAbsolutePath() + "!/";
+                try {
+                    urls.add(new URL(path));
+                    LoggerEx.info(TAG, "Loaded jar " + jar.getAbsolutePath());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    LoggerEx.warn(TAG, "MalformedURL " + path + " while load jars, error " + e.getMessage());
+                }
+            }
+            if(!urls.isEmpty()) {
+                URL[] theUrls = new URL[urls.size()];
+                urls.toArray(theUrls);
+                if(parentClassLoader == null)
+                    parentClassLoader = GroovyRuntime.class.getClassLoader();
+                libClassLoader = new URLClassLoader(theUrls, parentClassLoader);
+                parentClassLoader = libClassLoader;
+            }
         }
 
         MyGroovyClassLoader newClassLoader = null;
