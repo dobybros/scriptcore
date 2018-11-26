@@ -178,7 +178,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
                 mm.setRemoteService(serverAdapter);
                 long value = ReflectionUtil.getCrc(method, service);
                 if(methodMap.contains(value)) {
-                    LoggerEx.fatal(TAG, "Don't support override methods, please rename your method " + method + " for crc " + value + " and existing method " + methodMap.get(value).getMethod());
+                    LoggerEx.warn(TAG, "Don't support override methods, please rename your method " + method + " for crc " + value + " and existing method " + methodMap.get(value).getMethod());
                     continue;
                 }
                 Class<?>[] parameterTypes = method.getParameterTypes();
@@ -189,7 +189,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
                         Class<?> parameterType = parameterTypes[i];
                         if(!ReflectionUtil.canBeInitiated(parameterType)) {
                             failed = true;
-                            LoggerEx.fatal(TAG, "Parameter " + parameterType + " in method " + method + " couldn't be initialized. ");
+                            LoggerEx.warn(TAG, "Parameter " + parameterType + " in method " + method + " couldn't be initialized. ");
                             break;
                         }
                     }

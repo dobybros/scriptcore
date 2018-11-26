@@ -33,7 +33,7 @@ public class GroovyRedeployMainHandler extends ClassAnnotationHandler {
 					groovyObj.invokeRootMethod("main");
 				} catch (Throwable t) {
 					t.printStackTrace();
-					LoggerEx.error(TAG, "Execute redeploy main for " + groovyClass + " failed, " + t.getMessage());
+					LoggerEx.warn(TAG, "Execute redeploy main for " + groovyClass + " failed, " + t.getMessage());
 				}
 				newRedeploySet.add(groovyObj);
 			}
@@ -48,7 +48,7 @@ public class GroovyRedeployMainHandler extends ClassAnnotationHandler {
 				obj.invokeRootMethod("shutdown");
 			} catch (Throwable e) {
 //				e.printStackTrace();
-				LoggerEx.error(TAG, "Execute redeploy shutdown for " + obj.getGroovyPath() + " failed, " + e.getMessage());
+				LoggerEx.warn(TAG, "Execute redeploy shutdown for " + obj.getGroovyPath() + " failed, " + e.getMessage());
 			}
 		}
 	}
