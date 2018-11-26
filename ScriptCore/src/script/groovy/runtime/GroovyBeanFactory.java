@@ -51,7 +51,7 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 		else
 			return getBean(c);
 	}
-	
+
 	private <T> GroovyObjectEx<T> getObject(String beanName, Class<?> c, ConcurrentHashMap<String, GroovyObjectEx> beanMap) {
 		if(beanMap == null) {
 			beanMap = this.beanMap;

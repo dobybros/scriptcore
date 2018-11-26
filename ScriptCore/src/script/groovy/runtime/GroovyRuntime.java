@@ -10,6 +10,7 @@ import groovy.lang.MetaClassRegistry;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.jar.JarFile;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -56,6 +58,7 @@ public class GroovyRuntime extends ScriptRuntime{
     private GroovyBeanFactory beanFactory;
     private List<FieldInjectionListener> fieldInjectionListeners;
     private List<String> libPaths;
+    private URLClassLoader libClassLoader;
 
     public GroovyRuntime addLibPath(String libPath) {
         if(StringUtils.isBlank(libPath))
@@ -195,7 +198,7 @@ public class GroovyRuntime extends ScriptRuntime{
         return false;
     }
 
-    private MyGroovyClassLoader getNewClassLoader() {
+    private MyGroovyClassLoader getNewClassLoader(URLClassLoader newLibClassLoader) {
         CompilerConfiguration cc = new CompilerConfiguration();
         // cc.setMinimumRecompilationInterval(0);
         // cc.setRecompileGroovySource(true);
@@ -214,13 +217,55 @@ public class GroovyRuntime extends ScriptRuntime{
 //			e.printStackTrace();
 //		}
 
-        if (parentClassLoader == null)
-            parentClassLoader = GroovyRuntime.class.getClassLoader();
-        return new MyGroovyClassLoader(parentClassLoader, cc);
+        ClassLoader newParentClassLoader = parentClassLoader;
+        if (newParentClassLoader == null)
+            newParentClassLoader = GroovyRuntime.class.getClassLoader();
+        if(newLibClassLoader != null)
+            newParentClassLoader = newLibClassLoader;
+        return new MyGroovyClassLoader(newParentClassLoader, cc);
     }
 
     public void beforeDeploy() {
 
+    }
+
+    private void closeLibClassloader(URLClassLoader oldLibClassLoader) {
+        if(libClassLoader != null) {
+//            try {
+//                Class clazz = java.net.URLClassLoader.class;
+//                Field ucp = clazz.getDeclaredField("ucp");
+//                ucp.setAccessible(true);
+//                Object sunMiscURLClassPath = ucp.get(oldLibClassLoader);
+//                Field loaders = sunMiscURLClassPath.getClass().getDeclaredField("loaders");
+//                loaders.setAccessible(true);
+//                Object collection = loaders.get(sunMiscURLClassPath);
+//                for (Object sunMiscURLClassPathJarLoader : ((Collection) collection).toArray()) {
+//                    try {
+//                        Field loader = sunMiscURLClassPathJarLoader.getClass().getDeclaredField("jar");
+//                        loader.setAccessible(true);
+//                        Object jarFile = loader.get(sunMiscURLClassPathJarLoader);
+//                        if(jarFile instanceof JarFile) {
+//                            JarFile theJarFile = (JarFile) jarFile;
+//                            theJarFile.close();
+//                            LoggerEx.info(TAG, "Jar file " + theJarFile.getName() + " has been closed");
+//                        }
+//                    } catch (Throwable t) {
+//                        LoggerEx.warn(TAG, "Close jar file failed, " + t.getMessage());
+//                        // if we got this far, this is probably not a JAR loader so skip it
+//                    }
+//                }
+//            } catch (Throwable t) {
+//                LoggerEx.warn(TAG, "Close all jar files failed, " + t.getMessage());
+//            }
+
+            try {
+                oldLibClassLoader.close();
+                LoggerEx.info(TAG, "oldLibClassLoader " + oldLibClassLoader + " has been closed.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                LoggerEx.error(TAG, "oldLibClassLoader close failed, " + e.getMessage());
+            }
+        }
     }
     public synchronized void redeploy() throws CoreException {
         try {
@@ -230,7 +275,9 @@ public class GroovyRuntime extends ScriptRuntime{
         }
 
         //load libs
-        URLClassLoader libClassLoader = null;
+//        closeLibClassloader();
+        ClassLoader newParentClassLoader = parentClassLoader;
+        URLClassLoader newLibClassLoader = null, oldLibClassLoader = libClassLoader;
         File libsPath = new File(path + "/libs");
         if(libsPath.exists() && libsPath.isDirectory()) {
             List<URL> urls = new ArrayList<>();
@@ -250,10 +297,9 @@ public class GroovyRuntime extends ScriptRuntime{
             if(!urls.isEmpty()) {
                 URL[] theUrls = new URL[urls.size()];
                 urls.toArray(theUrls);
-                if(parentClassLoader == null)
-                    parentClassLoader = GroovyRuntime.class.getClassLoader();
-                libClassLoader = new URLClassLoader(theUrls, parentClassLoader);
-                parentClassLoader = libClassLoader;
+                if(newParentClassLoader == null)
+                    newParentClassLoader = GroovyRuntime.class.getClassLoader();
+                newLibClassLoader = new URLClassLoader(theUrls, newParentClassLoader);
             }
         }
 
@@ -301,7 +347,7 @@ public class GroovyRuntime extends ScriptRuntime{
             compileFirstFiles.add(importPath);
 //            StringBuilder importBuilder = new StringBuilder(FileUtils.readFileToString(importPath, "utf8"));
 
-            newClassLoader = getNewClassLoader();
+            newClassLoader = getNewClassLoader(newLibClassLoader);
             Collection<File> files = FileUtils.listFiles(new File(path),
                     FileFilterUtils.suffixFileFilter(".groovy"),
                     FileFilterUtils.directoryFileFilter());
@@ -458,11 +504,13 @@ public class GroovyRuntime extends ScriptRuntime{
                                 oldClassLoader.close();
                                 LoggerEx.info(TAG, "oldClassLoader " + oldClassLoader
                                         + " is closed");
-                            } catch (Exception e) {
+                            } catch (Throwable e) {
                                 e.printStackTrace();
                                 LoggerEx.error(TAG, oldClassLoader + " close failed, "
                                         + e.getMessage());
                             }
+
+                            closeLibClassloader(oldLibClassLoader);
                         }
                     }, TimeUnit.SECONDS.toMillis(60)); //release old class loader after 60 seconds.
                     LoggerEx.info(TAG, "Old class loader " + oldClassLoader + " will be released after 60 seconds");
@@ -470,6 +518,7 @@ public class GroovyRuntime extends ScriptRuntime{
                 long version = latestVersion.incrementAndGet();
                 newClassLoader.version = version;
                 classLoader = newClassLoader;
+                libClassLoader = newLibClassLoader;
 
                 if (handlerMap != null && !handlerMap.isEmpty()) {
                     Thread handlerThread = new Thread(new Runnable() {
@@ -604,6 +653,7 @@ public class GroovyRuntime extends ScriptRuntime{
             if(proxyClass != null) {
                 Constructor<?> constructor = proxyClass.getConstructor(GroovyObjectEx.class);
                 obj = constructor.newInstance(groovyObject);
+                GroovyObjectEx.fillGroovyObject((GroovyObject) obj, this);
             }
         } catch (Throwable  e) {
             e.printStackTrace();
@@ -647,6 +697,9 @@ public class GroovyRuntime extends ScriptRuntime{
                 LoggerEx.error(TAG, classLoader + " close failed, "
                         + e.getMessage());
             }
+        }
+        if(libClassLoader != null) {
+            closeLibClassloader(libClassLoader);
         }
         annotationHandlerMap.clear();
         annotationHandlers.clear();

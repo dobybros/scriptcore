@@ -2,6 +2,7 @@ package script.groovy.object;
 
 import chat.errors.GroovyErrorCodes;
 import chat.logs.LoggerEx;
+import chat.utils.ReflectionUtil;
 import groovy.lang.GroovyObject;
 
 import java.lang.annotation.Annotation;
@@ -74,72 +75,8 @@ public class GroovyObjectEx<T> {
 				synchronized (lock) {
 					if(groovyClass != null) {
 						try {
-							gObj = (GroovyObject) groovyClass.newInstance();
-							GroovyBeanFactory beanFactory = groovyRuntime.getBeanFactory();
-							if(beanFactory != null) {
-								Field[] fields = gObj.getClass().getDeclaredFields();
-								if(fields != null) {
-									for(Field field : fields) {
-										//Bean handler
-										Bean bean = field.getAnnotation(Bean.class);
-										if(bean != null) {
-											String beanName = bean.name();
-											Class<?> gClass = null;
-											if(StringUtils.isBlank(beanName)) {
-												if(field.getType().isAssignableFrom(GroovyObjectEx.class)) {
-													Type fieldType = field.getGenericType();
-													if(fieldType instanceof ParameterizedType) {
-														ParameterizedType pType = (ParameterizedType) fieldType;
-														Type[] aTypes = pType.getActualTypeArguments();
-														if(aTypes != null && aTypes.length == 1) {
-															gClass = (Class<?>) aTypes[0];
-														}
-													}
-												} else {
-													gClass = field.getType();
-												}
-											}
-											gClass = groovyRuntime.getClass(gClass.getName());
-											GroovyObjectEx<?> beanValue;
-											if(StringUtils.isBlank(beanName)) {
-												beanValue = beanFactory.getBean(gClass);
-											} else {
-												beanValue = beanFactory.getBean(beanName);
-											}
-											if(beanValue != null) {
-												if(field.getType().isAssignableFrom(GroovyObjectEx.class)) {
-													if(!field.isAccessible())
-														field.setAccessible(true);
-													field.set(gObj, beanValue);
-												} else {
-													if(!field.isAccessible())
-														field.setAccessible(true);
-													Object obj = groovyRuntime.getProxyObject(beanValue);
-													field.set(gObj, gClass.cast(obj));
-												} 
-											}
-										}
-
-										List<FieldInjectionListener> injectListeners = groovyRuntime.getFieldInjectionListeners();
-										if(injectListeners != null) {
-											for(FieldInjectionListener listener : injectListeners) {
-												try {
-													Class<? extends Annotation> annotationClass = listener.annotationClass();
-													if(annotationClass != null) {
-														Annotation annotation = field.getAnnotation(annotationClass);
-														if(annotation != null) {
-															listener.inject(annotation, field, gObj);
-														}
-													}
-												} catch (Throwable t) {
-													t.printStackTrace();
-													LoggerEx.error(TAG, "handle field inject listener " + listener + " failed, " + t.getMessage());
-												}
-											}
-										}
-									}
-								}
-							}
+							gObj = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+							GroovyObjectEx.fillGroovyObject(gObj, groovyRuntime);
 							holder.setCachedObject(gObj);
 						} catch (Throwable e) {
 							e.printStackTrace();
@@ -152,8 +89,76 @@ public class GroovyObjectEx<T> {
 			} 
 			return (T) gObj;
 		}
-		
-		public String getGroovyPath() {
+
+	public static void fillGroovyObject(GroovyObject gObj, GroovyRuntime groovyRuntime) throws IllegalAccessException {
+		GroovyBeanFactory beanFactory = groovyRuntime.getBeanFactory();
+		if(beanFactory != null) {
+			Field[] fields = ReflectionUtil.getFields(gObj.getClass());
+			if(fields != null) {
+				for(Field field : fields) {
+					//Bean handler
+					Bean bean = field.getAnnotation(Bean.class);
+					if(bean != null) {
+						String beanName = bean.name();
+						Class<?> gClass = null;
+						if(StringUtils.isBlank(beanName)) {
+							if(field.getType().isAssignableFrom(GroovyObjectEx.class)) {
+								Type fieldType = field.getGenericType();
+								if(fieldType instanceof ParameterizedType) {
+									ParameterizedType pType = (ParameterizedType) fieldType;
+									Type[] aTypes = pType.getActualTypeArguments();
+									if(aTypes != null && aTypes.length == 1) {
+										gClass = (Class<?>) aTypes[0];
+									}
+								}
+							} else {
+								gClass = field.getType();
+							}
+						}
+						gClass = groovyRuntime.getClass(gClass.getName());
+						GroovyObjectEx<?> beanValue;
+						if(StringUtils.isBlank(beanName)) {
+							beanValue = beanFactory.getBean(gClass);
+						} else {
+							beanValue = beanFactory.getBean(beanName);
+						}
+						if(beanValue != null) {
+							if(field.getType().isAssignableFrom(GroovyObjectEx.class)) {
+								if(!field.isAccessible())
+									field.setAccessible(true);
+								field.set(gObj, beanValue);
+							} else {
+								if(!field.isAccessible())
+									field.setAccessible(true);
+								Object obj = groovyRuntime.getProxyObject(beanValue);
+								field.set(gObj, gClass.cast(obj));
+							}
+						}
+					}
+
+					List<FieldInjectionListener> injectListeners = groovyRuntime.getFieldInjectionListeners();
+					if(injectListeners != null) {
+						for(FieldInjectionListener listener : injectListeners) {
+							try {
+								Class<? extends Annotation> annotationClass = listener.annotationClass();
+								if(annotationClass != null) {
+									Annotation annotation = field.getAnnotation(annotationClass);
+									if(annotation != null) {
+										listener.inject(annotation, field, gObj);
+									}
+								}
+							} catch (Throwable t) {
+								t.printStackTrace();
+								LoggerEx.error(TAG, "handle field inject listener " + listener + " failed, " + t.getMessage());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public String getGroovyPath() {
 			return groovyPath;
 		}
 
