@@ -21,7 +21,7 @@ public class MongoDocumentAnnotationHolder extends ClassAnnotationHandler {
 	}
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		documentClassMap.clear();
 	}
 

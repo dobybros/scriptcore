@@ -16,7 +16,7 @@ public class MongoCollectionAnnotationHolder extends ClassAnnotationHandler {
 	private Map<Class<?>, DBCollection> collectionClassMap = new LinkedHashMap<>();
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		collectionClassMap.clear();
 	}
 

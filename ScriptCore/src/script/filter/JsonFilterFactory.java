@@ -23,7 +23,7 @@ public class JsonFilterFactory extends ClassAnnotationHandler{
 	private Map<String, GroovyObjectEx<JsonFilter>> filterMap;
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		if(filterMap != null) {
 			filterMap.clear();
 		}

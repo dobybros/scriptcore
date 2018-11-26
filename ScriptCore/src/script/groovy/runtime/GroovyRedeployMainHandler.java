@@ -42,7 +42,7 @@ public class GroovyRedeployMainHandler extends ClassAnnotationHandler {
 	}
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		for(GroovyObjectEx<?> obj : redeploySet) {
 			try {
 				obj.invokeRootMethod("shutdown");

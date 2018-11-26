@@ -26,7 +26,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
 
 	private String service;
     @Override
-    public void hanlderShutdown() {
+    public void handlerShutdown() {
         methodMap.clear();
     }
     public ServiceSkeletonAnnotationHandler() {

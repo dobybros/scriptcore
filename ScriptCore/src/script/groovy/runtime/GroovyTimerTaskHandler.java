@@ -19,7 +19,7 @@ public class GroovyTimerTaskHandler extends ClassAnnotationHandler {
 	private ConcurrentHashMap<String, MyTimerTask> timerTasks;
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		if(timerTasks != null) {
 			Collection<MyTimerTask> theTimerTasks = timerTasks.values();
 			for(MyTimerTask timerTask : theTimerTasks) {

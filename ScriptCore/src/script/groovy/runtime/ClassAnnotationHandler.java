@@ -23,5 +23,5 @@ public abstract class ClassAnnotationHandler {
 		return this.getClass();
 	}
 
-	public void hanlderShutdown() {}
+	public void handlerShutdown() {}
 }

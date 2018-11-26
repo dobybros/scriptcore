@@ -1,6 +1,7 @@
 package script.groovy.runtime;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,7 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 	private ConcurrentHashMap<String, Class<?>> proxyClassMap = new ConcurrentHashMap<>();
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		beanMap.clear();
 		proxyClassMap.clear();
 	}
@@ -109,11 +110,16 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 							"this.groovyObject = groovyObject;",
 							"}",
 							"def invokeMethod(String name, args) {",
+//                            "chat.logs.LoggerEx.info(\" PROXY \", \"Invoked \" + name + \" args \" + Arrays.toString(args));",
 							"Class<?> groovyClass = this.groovyObject.getGroovyClass();",
 							"def calledMethod = groovyClass.metaClass.getMetaMethod(name, args);",
 							"def returnObj = calledMethod?.invoke(this.groovyObject.getObject(), args);",
 							"return returnObj;",
 							"}",
+                            "Class<?> getGroovyClass() {",
+                            "Class<?> groovyClass = this.groovyObject == null ? null : this.groovyObject.getGroovyClass();",
+                            "return groovyClass;",
+                            "}",
 							"}"
 					};
 					String proxyClassStr = StringUtils.join(strs, "\r\n");

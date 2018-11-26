@@ -16,7 +16,7 @@ public class ServerLifeCircleHandler extends ClassAnnotationHandler {
 	private ConcurrentHashMap<String, Long> startedHandlerMap = new ConcurrentHashMap<>();
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		handlerMap.clear();
 		startedHandlerMap.clear();
 	}

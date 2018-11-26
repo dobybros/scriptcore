@@ -45,7 +45,7 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 	}
 
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		permissionIntercepter = null;
 		interceptorMap = null;
 		servletTree = null;

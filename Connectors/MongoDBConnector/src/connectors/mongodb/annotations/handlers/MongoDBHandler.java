@@ -39,7 +39,7 @@ public class MongoDBHandler extends ClassAnnotationHandler{
 	
 	private MongoClientHelper mongoClientHelper;
 	@Override
-	public void hanlderShutdown() {
+	public void handlerShutdown() {
 		databaseMap.clear();
 		collectionMap.clear();
 		documentMap.clear();

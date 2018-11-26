@@ -1,11 +1,13 @@
 package com.docker.script;
 
+import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import com.docker.script.i18n.I18nHandler;
 import com.docker.script.i18n.MessageProperties;
 import com.docker.storage.kafka.KafkaConfCenter;
 import com.docker.storage.kafka.KafkaProducerHandler;
 import com.docker.storage.redis.RedisHandler;
+import com.docker.utils.ReflectionUtil;
 import com.docker.utils.SpringContextUtil;
 import connectors.mongodb.MongoClientHelper;
 import connectors.mongodb.annotations.handlers.MongoCollectionAnnotationHolder;
@@ -20,6 +22,11 @@ import script.groovy.servlets.RequestPermissionHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -145,6 +152,43 @@ public abstract class BaseRuntime extends GroovyRuntime {
 		}
 		super.close();
 		clear();
+	}
+
+
+	public Object executeBeanMethod(Object caller, String name, Object... args) throws CoreException, InvocationTargetException, IllegalAccessException {
+		GroovyBeanFactory beanFactory = (GroovyBeanFactory) getClassAnnotationHandler(GroovyBeanFactory.class);
+		if(beanFactory != null) {
+            Method groovyClassMethod = null;
+            try {
+                groovyClassMethod = caller.getClass().getMethod("getGroovyClass");
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+            if(groovyClassMethod == null)
+                return null;
+            script.groovy.object.GroovyObjectEx objectEx = beanFactory.getBean((Class<?>) groovyClassMethod.invoke(caller));
+			Object obj = objectEx.getObject();
+			if(obj != null) {
+                Class<?>[] argClasses = null;
+				if(args != null && args.length > 0) {
+					for(int i = 0; i < args.length; i++) {
+						argClasses[i] = args[i].getClass();
+					}
+				}
+				Method method = null;
+                try {
+                    method = obj.getClass().getMethod(name, argClasses);
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                    LoggerEx.error(TAG, "NoSuchMethod while executeBeanMethod " + name + " args " + Arrays.toString(args));
+                }
+                if(method != null) {
+                    return method.invoke(obj, args);
+                }
+            }
+		}
+		return null;
 	}
 
 	public MongoDBHandler getMongoDBHandler() {

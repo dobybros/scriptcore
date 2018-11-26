@@ -10,18 +10,13 @@ import groovy.lang.MetaClassRegistry;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.jar.JarFile;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -32,11 +27,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.control.CompilationFailedException;
-import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.Phases;
-import org.codehaus.groovy.tools.GroovyClass;
 
 import script.ScriptRuntime;
 import script.groovy.object.GroovyObjectEx;
@@ -653,7 +644,6 @@ public class GroovyRuntime extends ScriptRuntime{
             if(proxyClass != null) {
                 Constructor<?> constructor = proxyClass.getConstructor(GroovyObjectEx.class);
                 obj = constructor.newInstance(groovyObject);
-                GroovyObjectEx.fillGroovyObject((GroovyObject) obj, this);
             }
         } catch (Throwable  e) {
             e.printStackTrace();
@@ -668,7 +658,7 @@ public class GroovyRuntime extends ScriptRuntime{
         Collection<ClassAnnotationHandler> handlers = annotationHandlers;
         for(ClassAnnotationHandler annotationHandler : handlers) {
             try {
-                annotationHandler.hanlderShutdown();
+                annotationHandler.handlerShutdown();
             } catch (Throwable t) {
                 t.printStackTrace();
                 LoggerEx.fatal(TAG,
