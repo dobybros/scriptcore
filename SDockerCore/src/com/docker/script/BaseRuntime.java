@@ -172,6 +172,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 			if(obj != null) {
                 Class<?>[] argClasses = null;
 				if(args != null && args.length > 0) {
+					argClasses = new Class[args.length];
 					for(int i = 0; i < args.length; i++) {
 						argClasses[i] = args[i].getClass();
 					}
