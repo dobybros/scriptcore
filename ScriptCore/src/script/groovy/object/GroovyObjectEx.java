@@ -60,8 +60,11 @@ public class GroovyObjectEx<T> {
 				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
 			return (Class<T>) holder.getParsedClass();
 		}
-		
-		public T getObject() throws CoreException {
+
+        public T getObject() throws CoreException {
+		    return getObject(true);
+        }
+		public T getObject(boolean forceFill) throws CoreException {
 			MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
 			if(classLoader == null) 
 				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
@@ -76,7 +79,8 @@ public class GroovyObjectEx<T> {
 					if(groovyClass != null) {
 						try {
 							gObj = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
-							GroovyObjectEx.fillGroovyObject(gObj, groovyRuntime);
+							if(forceFill)
+							    GroovyObjectEx.fillGroovyObject(gObj, groovyRuntime);
 							holder.setCachedObject(gObj);
 						} catch (Throwable e) {
 							e.printStackTrace();
@@ -130,8 +134,15 @@ public class GroovyObjectEx<T> {
 							} else {
 								if(!field.isAccessible())
 									field.setAccessible(true);
-								Object obj = groovyRuntime.getProxyObject(beanValue);
-								field.set(gObj, gClass.cast(obj));
+//								Object obj = groovyRuntime.getProxyObject(beanValue);
+                                Object obj = null;
+                                try {
+                                    obj = beanValue.getObject();
+                                    field.set(gObj, gClass.cast(obj));
+                                } catch (CoreException e) {
+                                    e.printStackTrace();
+                                    LoggerEx.warn(TAG, "Assign value failed, " + field + " error " + e.getMessage());
+                                }
 							}
 						}
 					}

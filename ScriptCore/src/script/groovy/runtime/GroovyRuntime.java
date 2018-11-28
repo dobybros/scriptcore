@@ -636,22 +636,22 @@ public class GroovyRuntime extends ScriptRuntime{
         return obj;
     }
 
-    public Object getProxyObject(GroovyObjectEx<?> groovyObject) {
-        Object obj = null;
-        try {
-            GroovyBeanFactory factory = beanFactory;
-            Class<?> proxyClass = factory.getProxyClass(groovyObject.getGroovyClass().getName());
-            if(proxyClass != null) {
-                Constructor<?> constructor = proxyClass.getConstructor(GroovyObjectEx.class);
-                obj = constructor.newInstance(groovyObject);
-            }
-        } catch (Throwable  e) {
-            e.printStackTrace();
-            LoggerEx.error(TAG, "New proxy instance(getProxyObject) "
-                    + groovyObject.getGroovyPath() + " failed, " + e.getMessage());
-        }
-        return obj;
-    }
+//    public Object getProxyObject(GroovyObjectEx<?> groovyObject) {
+//        Object obj = null;
+//        try {
+//            GroovyBeanFactory factory = beanFactory;
+//            Class<?> proxyClass = factory.getProxyClass(groovyObject.getGroovyClass().getName());
+//            if(proxyClass != null) {
+//                Constructor<?> constructor = proxyClass.getConstructor(GroovyObjectEx.class);
+//                obj = constructor.newInstance(groovyObject);
+//            }
+//        } catch (Throwable  e) {
+//            e.printStackTrace();
+//            LoggerEx.error(TAG, "New proxy instance(getProxyObject) "
+//                    + groovyObject.getGroovyPath() + " failed, " + e.getMessage());
+//        }
+//        return obj;
+//    }
 
     @Override
     public void close() {

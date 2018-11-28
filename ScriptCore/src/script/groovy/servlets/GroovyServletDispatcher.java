@@ -38,12 +38,12 @@ public class GroovyServletDispatcher extends HttpServlet {
 		try {
 			RequestHolder holder = null;
 			String uri = request.getRequestURI();
+			LoggerEx.info(TAG, "RequestURI " + uri + " method " + request.getMethod() + " from " + request.getRemoteAddr());
 			if (uri.startsWith("/")) {
 				uri = uri.substring(1);
 			}
 			String[] uriStrs = uri.split("/");
 			String matchStr = uriStrs.length > 1 ? uriStrs[1] : null;
-			LoggerEx.info(TAG, "uriStrs " + Arrays.toString(uriStrs) + " matchStr " + matchStr);
 			if(matchStr != null) {
 				GroovyServletManager servletManagerEx = groovyServletMap.get(matchStr);
 				if(servletManagerEx != null) {
@@ -57,7 +57,7 @@ public class GroovyServletDispatcher extends HttpServlet {
 				if(groovyServletManager != null) {
 					holder = groovyServletManager.parseUri(request, response, uriStrs);
 				} else {
-					LoggerEx.error(TAG, "No default groovyServletManager for parseUri " + request.getRequestURI() + " method " + request.getMethod() + " from " + request.getRemoteAddr());
+					LoggerEx.error(TAG, "No handler for uri " + request.getRequestURI() + " method " + request.getMethod() + " from " + request.getRemoteAddr());
 				}
 			}
 			if(holder == null) {

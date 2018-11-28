@@ -293,7 +293,7 @@ public class RemoteServiceDiscovery implements Runnable {
         public MethodResponse call(MethodRequest request) throws CoreException {
             touch();
             if(sortedServers.isEmpty())
-                throw new CoreException(ChatErrorCodes.ERROR_LANSERVERS_NOSERVERS, "No server is found");
+                throw new CoreException(ChatErrorCodes.ERROR_LANSERVERS_NOSERVERS, "No server is found for service " + service + " fromService " + request.getFromService() + " crc " + request.getCrc());
 
             List<Server> keptSortedServers = sortedServers;
             int count = 0;
@@ -339,7 +339,7 @@ public class RemoteServiceDiscovery implements Runnable {
                 } catch(Throwable t) {
                     if(t instanceof CoreException)
                         throw t;
-                    LoggerEx.error(TAG, "Fail to Call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount + " available size " + keptSortedServers.size() + " error " + t.getMessage());
+                    LoggerEx.error(TAG, "Fail to Call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount + " available size " + keptSortedServers.size() + " error " + t.getMessage() + " exception " + t);
                 }
             }
             throw new CoreException(ChatErrorCodes.ERROR_RPC_CALLREMOTE_FAILED, "Call request " + request + " outside failed with several retries.");

@@ -52,6 +52,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 	    this.service = service.toLowerCase();
 	    this.config = properties;
         String enableGroovyMVC = null;
+        addClassAnnotationHandler(new GroovyBeanFactory());
         if(properties != null) {
 			Object rpcServerHandler = SpringContextUtil.getBean("rpcServer");
 			if(rpcServerHandler != null && rpcServerHandler instanceof ClassAnnotationHandler)
@@ -114,7 +115,6 @@ public abstract class BaseRuntime extends GroovyRuntime {
 			}
 		}
 
-		addClassAnnotationHandler(new GroovyBeanFactory());
         if(enableGroovyMVC != null && enableGroovyMVC.trim().equals("true")) {
             GroovyServletManagerEx servletManagerEx = new GroovyServletManagerEx(this.serviceName);
             addClassAnnotationHandler(servletManagerEx);
@@ -158,16 +158,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 	public Object executeBeanMethod(Object caller, String name, Object... args) throws CoreException, InvocationTargetException, IllegalAccessException {
 		GroovyBeanFactory beanFactory = (GroovyBeanFactory) getClassAnnotationHandler(GroovyBeanFactory.class);
 		if(beanFactory != null) {
-            Method groovyClassMethod = null;
-            try {
-                groovyClassMethod = caller.getClass().getMethod("getGroovyClass");
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-
-            if(groovyClassMethod == null)
-                return null;
-            script.groovy.object.GroovyObjectEx objectEx = beanFactory.getBean((Class<?>) groovyClassMethod.invoke(caller));
+            script.groovy.object.GroovyObjectEx objectEx = beanFactory.getBean(caller.getClass());
 			Object obj = objectEx.getObject();
 			if(obj != null) {
                 Class<?>[] argClasses = null;
