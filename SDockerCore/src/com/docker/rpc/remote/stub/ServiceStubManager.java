@@ -181,8 +181,10 @@ public class ServiceStubManager {
     }
 
     public <T> T getService(String service, Class<T> adapterClass, Integer version) {
-        if(!inited)
-            throw new NullPointerException("ServiceSubManager hasn't been initialized yet, please call init method first.");
+        if(host == null)
+            throw new NullPointerException("Discovery host is null, ServiceStubManager initialize failed!");
+//        if(!inited)
+//            throw new NullPointerException("ServiceSubManager hasn't been initialized yet, please call init method first.");
         if(service == null)
             throw new NullPointerException("Service can not be nulll");
         String key = adapterClass.getSimpleName() + "#" + service + "_v" + version;
