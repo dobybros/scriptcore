@@ -42,8 +42,8 @@ public class MyBaseRuntime extends BaseRuntime {
 	public void resetServiceStubManager(Class<?> proxyClass) {
 		if(serviceStubManager != null) {
 			serviceStubManager.setServiceStubProxyClass(proxyClass);
-//			serviceStubManager.clearCache();
-//			serviceStubManager.init();
+			serviceStubManager.clearCache();
+			serviceStubManager.init();
 		}
 	}
 
@@ -51,8 +51,8 @@ public class MyBaseRuntime extends BaseRuntime {
 		Collection<ServiceStubManager> managers = stubManagerForLanIdMap.values();
 		for(ServiceStubManager manager : managers) {
 			manager.setServiceStubProxyClass(proxyClass);
-//			manager.clearCache();
-//			manager.init();
+			manager.clearCache();
+			manager.init();
 		}
 	}
 
@@ -137,12 +137,12 @@ public class MyBaseRuntime extends BaseRuntime {
                             }
                         }
                     }
-					instance.serviceNotFoundListeners = newServiceNotFoundMap;
-//					instance.serviceNotFoundLock.writeLock().lock();
-//					try {
-//                    } finally {
-//                        instance.serviceNotFoundLock.writeLock().unlock();
-//                    }
+                    instance.serviceNotFoundLock.writeLock().lock();
+                    try {
+                        instance.serviceNotFoundListeners = newServiceNotFoundMap;
+                    } finally {
+                        instance.serviceNotFoundLock.writeLock().unlock();
+                    }
                     uriLogs.append("---------------------------------------");
                     LoggerEx.info(TAG, uriLogs.toString());
                 }
@@ -167,7 +167,7 @@ public class MyBaseRuntime extends BaseRuntime {
 		if(remoteServiceHost != null) {
 			String code =
 					"package script.groovy.runtime\n" +
-//					"@script.groovy.annotation.RedeployMain\n" +
+					"@script.groovy.annotation.RedeployMain\n" +
 					"class ServiceStubProxy extends com.docker.rpc.remote.stub.Proxy implements GroovyInterceptable{\n" +
 					"    private Class<?> remoteServiceStub;\n" +
 					"    ServiceStubProxy() {\n" +
@@ -187,16 +187,16 @@ public class MyBaseRuntime extends BaseRuntime {
 					"        def theProxy = proxy.asType(proxy.remoteServiceStub)\n" +
 					"        return theProxy\n" +
 					"    }\n" +
-//					"    public void main() {\n" +
-//					"        com.docker.script.MyBaseRuntime baseRuntime = (com.docker.script.MyBaseRuntime) GroovyRuntime.getCurrentGroovyRuntime(this.getClass().getClassLoader());\n" +
-//					"        baseRuntime.resetServiceStubManagerForLans(script.groovy.runtime.ServiceStubProxy.class); " +
-//					"        baseRuntime.resetServiceStubManager(script.groovy.runtime.ServiceStubProxy.class); " +
-//// 					"        com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager = baseRuntime.getServiceStubManager();\n" +
-////					"        serviceStubManager.setServiceStubProxyClass(script.groovy.runtime.ServiceStubProxy.class)\n" +
-////					"        serviceStubManager.clearCache()\n" +
-////					"        serviceStubManager.init()\n" +
-//					"    }\n" +
-//					"    public void shutdown(){}\n" +
+					"    public void main() {\n" +
+					"        com.docker.script.MyBaseRuntime baseRuntime = (com.docker.script.MyBaseRuntime) GroovyRuntime.getCurrentGroovyRuntime(this.getClass().getClassLoader());\n" +
+					"        baseRuntime.resetServiceStubManagerForLans(script.groovy.runtime.ServiceStubProxy.class); " +
+					"        baseRuntime.resetServiceStubManager(script.groovy.runtime.ServiceStubProxy.class); " +
+// 					"        com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager = baseRuntime.getServiceStubManager();\n" +
+//					"        serviceStubManager.setServiceStubProxyClass(script.groovy.runtime.ServiceStubProxy.class)\n" +
+//					"        serviceStubManager.clearCache()\n" +
+//					"        serviceStubManager.init()\n" +
+					"    }\n" +
+					"    public void shutdown(){}\n" +
 					"}";
 			try {
 				FileUtils.writeStringToFile(new File(path + "/script/groovy/runtime/ServiceStubProxy.groovy"), code, "utf8");

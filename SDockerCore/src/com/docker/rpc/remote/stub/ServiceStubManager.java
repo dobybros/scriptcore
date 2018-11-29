@@ -4,8 +4,6 @@ import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
 import com.docker.rpc.RPCClientAdapterMap;
 import com.docker.rpc.remote.MethodMapping;
-import com.docker.script.MyBaseRuntime;
-import script.groovy.runtime.GroovyRuntime;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -104,7 +102,6 @@ public class ServiceStubManager {
         }
     }
 
-    @Deprecated
 	public synchronized void init() {
         if(inited)
             return;
@@ -196,26 +193,6 @@ public class ServiceStubManager {
             synchronized (discoveryMap) {
                 if(adapterService == null) {
                     scanClass(adapterClass, service);
-                    if(serviceStubProxyClass == null) {
-                        try {
-                            serviceStubProxyClass = Class.forName("script.groovy.runtime.ServiceStubProxy");
-                            GroovyRuntime runtime = GroovyRuntime.getCurrentGroovyRuntime(serviceStubProxyClass.getClassLoader());
-                            if(runtime != null && runtime instanceof MyBaseRuntime) {
-                                MyBaseRuntime myBaseRuntime = (MyBaseRuntime) runtime;
-                                myBaseRuntime.resetServiceStubManager(serviceStubProxyClass);
-                                myBaseRuntime.resetServiceStubManagerForLans(serviceStubProxyClass);
-                                setServiceStubProxyClass(serviceStubProxyClass);
-//                                clearCache();
-//                                init();
-                                LoggerEx.info(TAG, "Configured script.groovy.runtime.ServiceStubProxy for service " + service + " class " + adapterClass + " version " + version);
-                            } else {
-                                LoggerEx.info(TAG, "Try to configure script.groovy.runtime.ServiceStubProxy, but classloader is not MyBaseRuntime " + runtime + " for service " + service + " class " + adapterClass + " version " + version);
-                            }
-                        } catch (ClassNotFoundException e) {
-//                            e.printStackTrace();
-                            LoggerEx.info(TAG, "Try to find script.groovy.runtime.ServiceStubProxy, but not found for service " + service + " class " + adapterClass + " version " + version);
-                        }
-                    }
                     if(serviceStubProxyClass != null) {
                         try {
                             Method getProxyMethod = serviceStubProxyClass.getMethod("getProxy", RemoteServiceDiscovery.class, Class.class, ServiceStubManager.class);
