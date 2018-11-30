@@ -42,8 +42,8 @@ public class MyBaseRuntime extends BaseRuntime {
 	public void resetServiceStubManager(Class<?> proxyClass) {
 		if(serviceStubManager != null) {
 			serviceStubManager.setServiceStubProxyClass(proxyClass);
-			serviceStubManager.clearCache();
-			serviceStubManager.init();
+//			serviceStubManager.clearCache();
+//			serviceStubManager.init();
 		}
 	}
 
@@ -51,8 +51,8 @@ public class MyBaseRuntime extends BaseRuntime {
 		Collection<ServiceStubManager> managers = stubManagerForLanIdMap.values();
 		for(ServiceStubManager manager : managers) {
 			manager.setServiceStubProxyClass(proxyClass);
-			manager.clearCache();
-			manager.init();
+//			manager.clearCache();
+//			manager.init();
 		}
 	}
 
@@ -163,6 +163,16 @@ public class MyBaseRuntime extends BaseRuntime {
 			}
 		}
 	}
+	ClassHolder serviceStubProxyClass = null;
+	public void prepareServiceStubProxy() {
+		MyGroovyClassLoader classLoader = getClassLoader();
+		if(classLoader != null && serviceStubProxyClass == null) {
+			serviceStubProxyClass = classLoader.getClass("script.groovy.runtime.ServiceStubProxy");
+			resetServiceStubManagerForLans(serviceStubProxyClass.getParsedClass());
+			resetServiceStubManager(serviceStubProxyClass.getParsedClass());
+		}
+	}
+
 	public void beforeDeploy() {
 		if(remoteServiceHost != null) {
 			String code =
@@ -189,12 +199,7 @@ public class MyBaseRuntime extends BaseRuntime {
 					"    }\n" +
 					"    public void main() {\n" +
 					"        com.docker.script.MyBaseRuntime baseRuntime = (com.docker.script.MyBaseRuntime) GroovyRuntime.getCurrentGroovyRuntime(this.getClass().getClassLoader());\n" +
-					"        baseRuntime.resetServiceStubManagerForLans(script.groovy.runtime.ServiceStubProxy.class); " +
-					"        baseRuntime.resetServiceStubManager(script.groovy.runtime.ServiceStubProxy.class); " +
-// 					"        com.docker.rpc.remote.stub.ServiceStubManager serviceStubManager = baseRuntime.getServiceStubManager();\n" +
-//					"        serviceStubManager.setServiceStubProxyClass(script.groovy.runtime.ServiceStubProxy.class)\n" +
-//					"        serviceStubManager.clearCache()\n" +
-//					"        serviceStubManager.init()\n" +
+					"        baseRuntime.prepareServiceStubProxy();" +
 					"    }\n" +
 					"    public void shutdown(){}\n" +
 					"}";

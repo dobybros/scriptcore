@@ -192,6 +192,7 @@ public class ScriptManager implements ShutdownListener {
 												public void inject(ServiceBean annotation, Field field, Object obj) {
 													String serviceName = annotation.name();
 													if(!StringUtils.isBlank(serviceName)) {
+														baseRuntime.prepareServiceStubProxy();
 														Object serviceStub = baseRuntime.getServiceStubManager().getService(serviceName, field.getType());
 														if(!field.isAccessible())
 															field.setAccessible(true);
