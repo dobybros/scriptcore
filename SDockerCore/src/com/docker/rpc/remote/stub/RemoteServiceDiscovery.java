@@ -337,8 +337,16 @@ public class RemoteServiceDiscovery implements Runnable {
                         LoggerEx.info(TAG, "No ip " + ip + " or port " + port + ", fail to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount);
                     }
                 } catch(Throwable t) {
-                    if(t instanceof CoreException)
-                        throw t;
+                    if(t instanceof CoreException) {
+                        CoreException ce = (CoreException) t;
+                        switch (ce.getCode()) {
+                            case ChatErrorCodes.ERROR_RMICALL_CONNECT_FAILED:
+                            case ChatErrorCodes.ERROR_RPC_DISCONNECTED:
+                                break;
+                            default:
+                                throw t;
+                        }
+                    }
                     LoggerEx.error(TAG, "Fail to Call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount + " available size " + keptSortedServers.size() + " error " + t.getMessage() + " exception " + t);
                 }
             }
