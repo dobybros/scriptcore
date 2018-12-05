@@ -2,6 +2,7 @@ package com.docker.script;
 
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
+import com.docker.annotations.*;
 import com.docker.data.Lan;
 import com.docker.rpc.remote.skeleton.ServiceSkeletonAnnotationHandler;
 import com.docker.rpc.remote.stub.ServiceStubManager;
@@ -104,6 +105,11 @@ public class MyBaseRuntime extends BaseRuntime {
 		super.prepare(service, properties, localScriptPath);
 		ServiceSkeletonAnnotationHandler serviceSkeletonAnnotationHandler = new ServiceSkeletonAnnotationHandler();
 		serviceSkeletonAnnotationHandler.setService(getServiceName());
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionConfirm.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionTry.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionCancel.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(PeriodicInvocation.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionSummary.class);
 		addClassAnnotationHandler(serviceSkeletonAnnotationHandler);
 
         final MyBaseRuntime instance = this;

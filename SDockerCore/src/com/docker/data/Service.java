@@ -3,12 +3,17 @@ package com.docker.data;
 import com.docker.storage.mongodb.CleanDocument;
 import org.bson.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class Service {
     public static final String FIELD_SERVICE_SERVICE = "service";
     public static final String FIELD_SERVICE_VERSION = "version";
     public static final String FIELD_SERVICE_MINVERSION = "minVersion";
     public static final String FIELD_SERVICE_UPLOADTIME = "uploadTime";
     public static final String FIELD_SERVICE_TYPE = "type";
+    public static final String FIELD_SERVICE_SERVICEANNOTATION = "serviceAnnotations";
 
     public static final int FIELD_SERVER_TYPE_NORMAL = 1;
     public static final int FIELD_SERVER_TYPE_DEPLOY_FAILED = 2;
@@ -18,6 +23,8 @@ public class Service {
     private Integer minVersion;
     private Long uploadTime;
     private Integer type;
+
+    private List<ServiceAnnotation> serviceAnnotations;
 
     public String getService() {
         return service;
@@ -65,6 +72,15 @@ public class Service {
         minVersion = dbObj.getInteger(FIELD_SERVICE_MINVERSION);
         uploadTime = dbObj.getLong(FIELD_SERVICE_UPLOADTIME);
         type = dbObj.getInteger(FIELD_SERVICE_TYPE);
+        List<Document> anDocs = (List<Document>) dbObj.get(FIELD_SERVICE_SERVICEANNOTATION);
+        if(anDocs != null) {
+            serviceAnnotations = new ArrayList<>();
+            for(Document doc : anDocs) {
+                ServiceAnnotation serviceAnnotation = new ServiceAnnotation();
+                serviceAnnotation.fromDocument(doc);
+                serviceAnnotations.add(serviceAnnotation);
+            }
+        }
     }
 
     public Document toDocument() {
@@ -74,6 +90,24 @@ public class Service {
         dbObj.put(FIELD_SERVICE_VERSION, version);
         dbObj.put(FIELD_SERVICE_UPLOADTIME, uploadTime);
         dbObj.put(FIELD_SERVICE_TYPE, type);
+        if(serviceAnnotations != null) {
+            List<Document> annotationList = new ArrayList<>();
+            for(ServiceAnnotation serviceAnnotation : serviceAnnotations) {
+                Document anDoc = serviceAnnotation.toDocument();
+                annotationList.add(anDoc);
+            }
+            dbObj.put(FIELD_SERVICE_SERVICEANNOTATION, annotationList);
+        }
         return dbObj;
+    }
+
+    public List<ServiceAnnotation> getServiceAnnotations(){
+        return serviceAnnotations;
+    }
+
+    public void appendServiceAnnotation(List<ServiceAnnotation> annotations) {
+        if(serviceAnnotations == null)
+            serviceAnnotations = new ArrayList<>();
+        serviceAnnotations.addAll(annotations);
     }
 }

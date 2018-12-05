@@ -6,8 +6,7 @@ import chat.utils.TimerEx;
 import chat.utils.TimerTaskEx;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
-import com.docker.annotations.ConfigProperty;
-import com.docker.annotations.ServiceBean;
+import com.docker.annotations.*;
 import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
 import com.docker.server.OnlineServer;
@@ -22,6 +21,7 @@ import org.bson.Document;
 import script.file.FileAdapter;
 import script.file.FileAdapter.FileEntity;
 import script.file.FileAdapter.PathEx;
+import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.FieldInjectionListener;
 import script.utils.ShutdownListener;
 
@@ -264,6 +264,7 @@ public class ScriptManager implements ShutdownListener {
 									FileUtils.deleteDirectory(new File(localScriptPath));
 									unzip(localZipFile, localScriptPath);
 
+									Service theService = null;
 									if(createRuntime) {
 										String propertiesPath = localScriptPath + "/config.properties";
 										Properties properties = new Properties();
@@ -317,17 +318,16 @@ public class ScriptManager implements ShutdownListener {
 
 										runtime.prepare(service, properties, localScriptPath);
 
-										Service theService = new Service();
+										theService = new Service();
 										theService.setService(serviceName);
 										theService.setMinVersion(minVersion);
 										theService.setVersion(version);
 										theService.setUploadTime(file.getLastModificationTime());
-										theService.setType(Service.FIELD_SERVER_TYPE_NORMAL);
+//										theService.setType(Service.FIELD_SERVER_TYPE_NORMAL);
 
 										if(dockerStatusService != null) {
 											//Aplomb delete service first before add, fixed the duplicated service bug.
 											dockerStatusService.deleteService(OnlineServer.getInstance().getServer(), theService.getService(), theService.getVersion());
-											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
 										}
 
 										scriptRuntimeMap.put(service, runtime);
@@ -355,13 +355,25 @@ public class ScriptManager implements ShutdownListener {
 									try {
 										runtime.setVersion(file.getLastModificationTime());
 										runtime.redeploy();
-										if(dockerStatusService != null) {
-											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_NORMAL);
+										Collection<ClassAnnotationHandler> handlers = runtime.getAnnotationHandlers();
+										if(handlers != null && theService != null) {
+											for(ClassAnnotationHandler handler : handlers) {
+												if(handler instanceof ClassAnnotationHandlerEx)
+													((ClassAnnotationHandlerEx)handler).configService(theService);
+											}
 										}
+										theService.setType(Service.FIELD_SERVER_TYPE_NORMAL);
 									} catch (Throwable t) {
-										if(dockerStatusService != null)
-											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_DEPLOY_FAILED);
+										LoggerEx.error(TAG, "Redeploy service " + service + " failed, " + t.getMessage());
+										theService.setType(Service.FIELD_SERVER_TYPE_DEPLOY_FAILED);
+//										if(dockerStatusService != null)
+//											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_DEPLOY_FAILED);
 										throw t;
+									} finally {
+										if(dockerStatusService != null) {
+											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
+//											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_NORMAL);
+										}
 									}
 
 								}

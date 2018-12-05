@@ -4,32 +4,43 @@ import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
+import com.docker.data.ServiceAnnotation;
 import com.docker.rpc.MethodRequest;
 import com.docker.rpc.remote.MethodMapping;
 import com.docker.rpc.remote.RemoteService;
 import com.docker.rpc.MethodResponse;
+import com.docker.script.ClassAnnotationHandlerEx;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import script.groovy.object.GroovyObjectEx;
-import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
+public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
 	private static final String TAG = ServiceSkeletonAnnotationHandler.class.getSimpleName();
     private ConcurrentHashMap<Long, SkelectonMethodMapping> methodMap = new ConcurrentHashMap<>();
 
 	private String service;
+    private List<Class<? extends Annotation>> extraAnnotations;
+    private List<ServiceAnnotation> annotationList = new ArrayList<>();
+
     @Override
     public void handlerShutdown() {
         methodMap.clear();
     }
     public ServiceSkeletonAnnotationHandler() {
+        extraAnnotations = new ArrayList<>();
+    }
+
+    public void addExtraAnnotation(Class<? extends Annotation> annotationClass) {
+        if(!extraAnnotations.contains(annotationClass)) {
+            extraAnnotations.add(annotationClass);
+        }
     }
 
     @Override
@@ -202,8 +213,50 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandler{
                 returnType = ReflectionUtil.getInitiatableClass(returnType);
                 mm.setReturnClass(returnType);
                 methodMap.put(value, mm);
+
+                //TODO DTS
+                Annotation[] annotations = method.getDeclaredAnnotations();
+                for(Annotation annotation : annotations) {
+                    boolean isExists = extraAnnotations.contains(annotation.annotationType());
+                    if(isExists) {
+                        ServiceAnnotation serviceAnnotation = new ServiceAnnotation();
+                        Map<String, Object> annotationParams = new HashMap<>();
+
+                        serviceAnnotation.setType(annotation.annotationType().getSimpleName());
+                        serviceAnnotation.setMethodName(method.getName());
+                        serviceAnnotation.setClassName(method.getDeclaringClass().getName());
+                        Method[] annotationMethods = ReflectionUtil.getMethods(annotation.annotationType());
+                        for (Method annotationMethod : annotationMethods){
+                            boolean isAnnotationMethod = annotationMethod.getDeclaringClass().isAssignableFrom(Annotation.class);
+                            if(!isAnnotationMethod){
+                                try {
+                                    String key = annotationMethod.getName();
+                                    Object val = annotationMethod.invoke(annotation);
+                                    if(val != null)
+                                        annotationParams.put(key, val);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                    LoggerEx.warn(TAG, "error access service annotation method");
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                    LoggerEx.warn(TAG, "error invoke service annotation methods");
+                                }
+                            }
+                        }
+                        serviceAnnotation.setAnnotationParams(annotationParams);
+                        annotationList.add(serviceAnnotation);
+                    }else{
+                        continue;
+                    }
+                }
+
                 LoggerEx.info("SCAN", "Mapping crc " + value + " for class " + clazz.getName() + " method " + method.getName() + " for service " + service);
             }
         }
+    }
+
+    @Override
+    public void configService(com.docker.data.Service theService){
+        theService.appendServiceAnnotation(annotationList);
     }
 }
