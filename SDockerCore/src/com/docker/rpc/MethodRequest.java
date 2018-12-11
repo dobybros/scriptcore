@@ -156,13 +156,20 @@ public class MethodRequest extends RPCRequest {
                 }
 
                 MethodMapping methodMapping = serviceStubManager.getMethodMapping(crc);
-                if(methodMapping == null)
-                    throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
-                Class<?>[] parameterTypes = methodMapping.getParameterTypes();
-                if(parameterTypes != null) {
-                    argCount = parameterTypes.length;
+//                if(methodMapping == null)
+//                    throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
+                if(methodMapping != null) {
+                    Class<?>[] parameterTypes = methodMapping.getParameterTypes();
+                    if(parameterTypes != null) {
+                        argCount = parameterTypes.length;
+                    } else {
+                        argCount = 0;
+                    }
                 } else {
-                    argCount = 0;
+                    if(args != null)
+                        argCount = args.length;
+                    else
+                        argCount = 0;
                 }
                 dis.writeInt(argCount);
                 if(args != null) {

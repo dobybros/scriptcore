@@ -73,8 +73,8 @@ public class MethodResponse extends RPCResponse {
 						}
 
 						MethodMapping methodMapping = serviceStubManager.getMethodMapping(crc);
-						if(methodMapping == null)
-							throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
+//						if(methodMapping == null)
+//							throw new CoreException(ChatErrorCodes.ERROR_METHODREQUEST_METHODNOTFOUND, "Method doesn't be found by crc " + crc);
 
 						int returnLength = dis.readInt();
 						if(returnLength > 0) {
@@ -83,7 +83,7 @@ public class MethodResponse extends RPCResponse {
 							try {
 								byte[] data = GZipUtils.decompress(returnBytes);
 								String json = new String(data, "utf8");
-								if(methodMapping.getReturnClass().equals(Object.class)) {
+								if(methodMapping == null || methodMapping.getReturnClass().equals(Object.class)) {
 									returnObject = JSON.parseObject(json);
 								} else {
 									returnObject = JSON.parseObject(json, methodMapping.getGenericReturnClass());

@@ -1,7 +1,11 @@
 package com.docker.rpc.remote.stub;
 
+import chat.errors.ChatErrorCodes;
+import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
+import com.docker.rpc.MethodRequest;
+import com.docker.rpc.MethodResponse;
 import com.docker.rpc.RPCClientAdapterMap;
 import com.docker.rpc.remote.MethodMapping;
 
@@ -110,6 +114,33 @@ public class ServiceStubManager {
         }
 
         inited = true;
+    }
+
+    public Object call(String service, String className, String method, Integer version, Object... args) throws CoreException {
+        RemoteServiceDiscovery remoteServiceDiscovery = getRemoteServiceDiscovery(service, version);
+        Long crc = ReflectionUtil.getCrc(className, method, service);
+
+        MethodRequest request = new MethodRequest();
+        request.setEncode(MethodRequest.ENCODE_JAVABINARY);
+        request.setArgs(args);
+        //TODO should consider how to optimize get CRC too often.
+
+        request.setCrc(crc);
+        request.setServiceStubManager(this);
+        RemoteServiceDiscovery.RemoteServers lanServers = remoteServiceDiscovery.getRemoteServers();
+        if(lanServers == null)
+            throw new CoreException(ChatErrorCodes.ERROR_LANSERVERS_NOSERVERS, "RemoteService " + remoteServiceDiscovery.getService() + " doesn't be found while invoke method " + crc);
+        MethodResponse response = (MethodResponse) lanServers.call(request);
+        if(response != null) {
+            CoreException e = response.getException();
+            if(e != null) {
+                throw e;
+            }
+            Object returnObject = response.getReturnObject();
+            return returnObject;
+        }
+        throw new CoreException(ChatErrorCodes.ERROR_METHODRESPONSE_NULL, "Method response is null for request " + request);
+
     }
 
     private RemoteServiceDiscovery getRemoteServiceDiscovery(String service, Integer version) {
