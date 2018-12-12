@@ -159,6 +159,8 @@ public abstract class BaseRuntime extends GroovyRuntime {
 		GroovyBeanFactory beanFactory = (GroovyBeanFactory) getClassAnnotationHandler(GroovyBeanFactory.class);
 		if(beanFactory != null) {
             script.groovy.object.GroovyObjectEx objectEx = beanFactory.getBean(caller.getClass());
+            if(objectEx == null)
+            	return null;
 			Object obj = objectEx.getObject();
 			if(obj != null) {
                 Class<?>[] argClasses = null;
