@@ -14,23 +14,6 @@ public abstract class TimerTaskCaller extends TimerTaskEx{
     public abstract void call();
     @Override
     public final void execute() {
-        BaseRuntime baseRuntime = (BaseRuntime) GroovyRuntime.getCurrentGroovyRuntime(this.getClass().getClassLoader());
-        if(baseRuntime != null) {
-            try {
-                baseRuntime.executeBeanMethod(this, "call");
-            } catch (CoreException e) {
-                e.printStackTrace();
-                LoggerEx.error(TAG, "executeBeanMethod(CoreException) " + this + " failed, " + e.getMessage());
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                LoggerEx.error(TAG, "executeBeanMethod(InvocationTargetException) " + this + " failed, " + e.getMessage());
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                LoggerEx.error(TAG, "executeBeanMethod(IllegalAccessException) " + this + " failed, " + e.getMessage());
-            } catch (Throwable t) {
-                t.printStackTrace();
-                LoggerEx.error(TAG, "executeBeanMethod(Throwable) " + this + " failed, " + t.getMessage());
-            }
-        }
+        CallerUtils.callMethod(this, "call");
     }
 }
