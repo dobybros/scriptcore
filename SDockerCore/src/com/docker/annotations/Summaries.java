@@ -5,7 +5,6 @@ import java.lang.annotation.*;
 @Target(value = {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface TransactionCancel {
-	public String id();
-	public int order();
+public @interface Summaries {
+	Summary[] values() default {};
 }

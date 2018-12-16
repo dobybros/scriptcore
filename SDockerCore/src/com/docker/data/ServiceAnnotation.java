@@ -13,12 +13,10 @@ import java.util.Map;
 public class ServiceAnnotation {
     public static final String TYPE = "type";
     public static final String ANNOTATIONPARAMS = "params";
-    public static final String ANNOTATIONID = "id";
     public static final String CLASSNAME = "classname";
     public static final String METHODNAME = "methodname";
     private String type; //serviceAnnotationType, name of Annotation, like TransactionTry
     private Map<String, Object> annotationParams;
-    private String annotationId; //the id from each Annotation, like use the id from TransactionTry is the transaction type.
     private String className;
     private String methodName;
 
@@ -26,7 +24,6 @@ public class ServiceAnnotation {
     public void fromDocument(Document document) {
         type = document.getString(TYPE);
         annotationParams = document.get(ANNOTATIONPARAMS, Map.class);
-        annotationId = document.getString(ANNOTATIONID);
         className = document.getString(CLASSNAME);
         methodName = document.getString(METHODNAME);
     }
@@ -35,7 +32,6 @@ public class ServiceAnnotation {
         CleanDocument document = new CleanDocument();
         document.append(TYPE, type)
                 .append(ANNOTATIONPARAMS, annotationParams)
-                .append(ANNOTATIONID, annotationId)
                 .append(CLASSNAME, className)
                 .append(METHODNAME, methodName);
         return document;
@@ -55,14 +51,6 @@ public class ServiceAnnotation {
 
     public void setAnnotationParams(Map<String, Object> annotationParams) {
         this.annotationParams = annotationParams;
-    }
-
-    public String getAnnotationId() {
-        return annotationId;
-    }
-
-    public void setAnnotationId(String annotationId) {
-        this.annotationId = annotationId;
     }
 
     public String getClassName() {

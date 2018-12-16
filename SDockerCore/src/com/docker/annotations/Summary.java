@@ -2,10 +2,12 @@ package com.docker.annotations;
 
 import java.lang.annotation.*;
 
-@Target(value = {ElementType.TYPE, ElementType.FIELD})
+@Target(value = {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
-public @interface TransactionConfirm {
+public @interface Summary {
 	public String id();
-	public int order();
+	public int maxTry();
+	public int maxConfirm();
+	public int maxCancel();
 }

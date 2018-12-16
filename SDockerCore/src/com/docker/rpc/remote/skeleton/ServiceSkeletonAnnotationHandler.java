@@ -219,32 +219,25 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                 for(Annotation annotation : annotations) {
                     boolean isExists = extraAnnotations.contains(annotation.annotationType());
                     if(isExists) {
-                        ServiceAnnotation serviceAnnotation = new ServiceAnnotation();
-                        Map<String, Object> annotationParams = new HashMap<>();
-
-                        serviceAnnotation.setType(annotation.annotationType().getSimpleName());
-                        serviceAnnotation.setMethodName(method.getName());
-                        serviceAnnotation.setClassName(method.getDeclaringClass().getName());
-                        Method[] annotationMethods = ReflectionUtil.getMethods(annotation.annotationType());
-                        for (Method annotationMethod : annotationMethods){
-                            boolean isAnnotationMethod = annotationMethod.getDeclaringClass().isAssignableFrom(Annotation.class);
-                            if(!isAnnotationMethod){
-                                try {
-                                    String key = annotationMethod.getName();
-                                    Object val = annotationMethod.invoke(annotation);
-                                    if(val != null)
-                                        annotationParams.put(key, val);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                    LoggerEx.warn(TAG, "error access service annotation method");
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                    LoggerEx.warn(TAG, "error invoke service annotation methods");
+                        Method annotationMethodContainer = null;
+                        try {
+                            Method theMethod = annotation.annotationType().getDeclaredMethod("values");
+                            if(theMethod != null)
+                                annotationMethodContainer = theMethod;
+                        } catch (NoSuchMethodException e) {
+                        }
+                        if(annotationMethodContainer != null) {
+                            Annotation[] innerAnnotations = (Annotation[]) annotationMethodContainer.invoke(annotation);
+                            if(innerAnnotations != null) {
+                                for(Annotation innerAnnotation : innerAnnotations) {
+                                    ServiceAnnotation serviceAnnotation = getServiceAnnotationFromAnnotation(innerAnnotation, method);
+                                    annotationList.add(serviceAnnotation);
                                 }
                             }
+                        } else {
+                            ServiceAnnotation serviceAnnotation = getServiceAnnotationFromAnnotation(annotation, method);
+                            annotationList.add(serviceAnnotation);
                         }
-                        serviceAnnotation.setAnnotationParams(annotationParams);
-                        annotationList.add(serviceAnnotation);
                     }else{
                         continue;
                     }
@@ -253,6 +246,33 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                 LoggerEx.info("SCAN", "Mapping crc " + value + " for class " + clazz.getName() + " method " + method.getName() + " for service " + service);
             }
         }
+    }
+
+    private ServiceAnnotation getServiceAnnotationFromAnnotation(Annotation annotation, Method method) {
+        ServiceAnnotation serviceAnnotation = new ServiceAnnotation();
+        Map<String, Object> annotationParams = new HashMap<>();
+
+        Method[] innerAnnotationMethods = annotation.annotationType().getDeclaredMethods();
+        for(Method innerAnnotationMethod : innerAnnotationMethods) {
+            String annotationKey = innerAnnotationMethod.getName();
+            Object annotationValue = null;
+            try {
+                annotationValue = innerAnnotationMethod.invoke(annotation);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                LoggerEx.warn(TAG, "(IllegalAccessException)Try to get annotation value for key " + annotationKey + " in class " + method.getDeclaringClass()+ " method " + method.getName() + " failed, " + e.getMessage());
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+                LoggerEx.warn(TAG, "(InvocationTargetException)Try to get annotation value for key " + annotationKey + " in class " + method.getDeclaringClass()+ " method " + method.getName() + " failed, " + e.getMessage());
+            }
+            if(annotationValue != null)
+                annotationParams.put(annotationKey, annotationValue);
+        }
+        serviceAnnotation.setAnnotationParams(annotationParams);
+        serviceAnnotation.setClassName(method.getDeclaringClass().getSimpleName());
+        serviceAnnotation.setMethodName(method.getName());
+        serviceAnnotation.setType(annotation.annotationType().getSimpleName());
+        return serviceAnnotation;
     }
 
     @Override

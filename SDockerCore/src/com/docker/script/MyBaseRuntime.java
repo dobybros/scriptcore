@@ -12,13 +12,11 @@ import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.LansService;
 import com.docker.utils.SpringContextUtil;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.ClassAnnotationHandler;
 import script.groovy.runtime.GroovyRuntime;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -105,11 +103,12 @@ public class MyBaseRuntime extends BaseRuntime {
 		super.prepare(service, properties, localScriptPath);
 		ServiceSkeletonAnnotationHandler serviceSkeletonAnnotationHandler = new ServiceSkeletonAnnotationHandler();
 		serviceSkeletonAnnotationHandler.setService(getServiceName());
-		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionConfirm.class);
-		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionTry.class);
-		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionCancel.class);
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(PeriodicInvocation.class);
-		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionSummary.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(Summaries.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(Summary.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(Transactions.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(Transaction.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(TransactionResultNotify.class);
 		addClassAnnotationHandler(serviceSkeletonAnnotationHandler);
 
         final MyBaseRuntime instance = this;
