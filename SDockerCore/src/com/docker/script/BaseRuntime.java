@@ -4,6 +4,7 @@ import chat.errors.CoreException;
 import chat.logs.LoggerEx;
 import com.docker.script.i18n.I18nHandler;
 import com.docker.script.i18n.MessageProperties;
+import com.docker.script.servlet.WebServiceAnnotationHandler;
 import com.docker.storage.kafka.KafkaConfCenter;
 import com.docker.storage.kafka.KafkaProducerHandler;
 import com.docker.storage.redis.RedisHandler;
@@ -119,6 +120,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
             GroovyServletManagerEx servletManagerEx = new GroovyServletManagerEx(this.serviceName);
             addClassAnnotationHandler(servletManagerEx);
             GroovyServletDispatcher.addGroovyServletManagerEx(this.service, servletManagerEx);
+			addClassAnnotationHandler(new WebServiceAnnotationHandler());
         } else {
             GroovyServletDispatcher.removeGroovyServletManagerEx(this.service);
         }
