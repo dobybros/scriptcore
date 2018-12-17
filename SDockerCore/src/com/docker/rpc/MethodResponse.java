@@ -84,7 +84,7 @@ public class MethodResponse extends RPCResponse {
 								byte[] data = GZipUtils.decompress(returnBytes);
 								String json = new String(data, "utf8");
 								if(methodMapping == null || methodMapping.getReturnClass().equals(Object.class)) {
-									returnObject = JSON.parseObject(json);
+									returnObject = JSON.parse(json);
 								} else {
 									returnObject = JSON.parseObject(json, methodMapping.getGenericReturnClass());
 								}
