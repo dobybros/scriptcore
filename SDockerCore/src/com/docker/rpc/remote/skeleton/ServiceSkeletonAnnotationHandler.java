@@ -227,7 +227,16 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                         } catch (NoSuchMethodException e) {
                         }
                         if(annotationMethodContainer != null) {
-                            Annotation[] innerAnnotations = (Annotation[]) annotationMethodContainer.invoke(annotation);
+                            Annotation[] innerAnnotations = new Annotation[0];
+                            try {
+                                innerAnnotations = (Annotation[]) annotationMethodContainer.invoke(annotation);
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                                LoggerEx.warn(TAG, "(IllegalAccessException)Try to get annotations for key values in class " + annotationMethodContainer.getDeclaringClass()+ " method " + annotationMethodContainer.getName() + " failed, " + e.getMessage());
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                                LoggerEx.warn(TAG, "(InvocationTargetException)Try to get annotations for key values in class " + annotationMethodContainer.getDeclaringClass()+ " method " + annotationMethodContainer.getName() + " failed, " + e.getMessage());
+                            }
                             if(innerAnnotations != null) {
                                 for(Annotation innerAnnotation : innerAnnotations) {
                                     ServiceAnnotation serviceAnnotation = getServiceAnnotationFromAnnotation(innerAnnotation, method);
