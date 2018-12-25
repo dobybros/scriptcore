@@ -33,6 +33,8 @@ public class MethodRequest extends RPCRequest {
 
     private Integer argCount;
 
+    private String trackId;
+
     /**
      * 只用于内存, 不错传输序列化
      */
@@ -114,6 +116,10 @@ public class MethodRequest extends RPCRequest {
                                 LoggerEx.error(TAG, "Parse bytes failed, " + e.getMessage());
 							}
 						}
+						boolean hasTrackId = dis.readBoolean();
+						if(hasTrackId) {
+                            trackId = dis.readUTF();
+                        }
 					} catch (Throwable e) {
 						e.printStackTrace();
 						throw new CoreException(ChatErrorCodes.ERROR_RPC_DECODE_FAILED, "PB parse data failed, " + e.getMessage());
@@ -183,6 +189,13 @@ public class MethodRequest extends RPCRequest {
                         LoggerEx.error(TAG, "Generate " + json + " to bytes failed, " + e.getMessage());
                     }
                 }
+                if(trackId != null) {
+                    dis.writeBoolean(true);
+                    dis.writeUTF(trackId);
+                } else {
+                    dis.writeBoolean(false);
+                }
+
 
                 byte[] bytes = baos.toByteArray();
                 setData(bytes);
@@ -247,6 +260,14 @@ public class MethodRequest extends RPCRequest {
 
     public void setFromService(String fromService) {
         this.fromService = fromService;
+    }
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
     }
 
     public ServiceStubManager getServiceStubManager() {

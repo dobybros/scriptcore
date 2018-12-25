@@ -246,14 +246,16 @@ public class RequestHolder {
 		//TODO annotation
 		Object[] args = requestUriWrapper.getActualParameters(this);
 
-		TrackerSystem.trackIdThreadLocal.set(ObjectId.get().toString());
+		String trackId = ObjectId.get().toString();
+
+		TrackerSystem.trackIdThreadLocal.set(trackId);
 		long time = System.currentTimeMillis();
 		long invokeTokes = -1;
 		boolean error = false;
 		StringBuilder builder = new StringBuilder();
-		String remoteHost = request.getHeader("X-Real-IP");
-		builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod());
 		try {
+			String remoteHost = request.getHeader("X-Real-IP");
+			builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod() + " trackid:: " + trackId);
 			String[] permissions = requestUriWrapper.getPermissions();
 			if(permissions != null && permissions.length > 0) {
 				GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();

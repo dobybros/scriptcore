@@ -2,6 +2,7 @@ package com.docker.rpc.remote.skeleton;
 
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
+import chat.logs.AnalyticsLogger;
 import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
 import com.docker.data.ServiceAnnotation;
@@ -127,7 +128,24 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
             Object returnObj = null;
             CoreException exception = null;
             try {
-                returnObj = remoteService.invokeRootMethod(method.getName(), args);
+                StringBuilder builder = new StringBuilder();
+                builder.append("methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " trackid:: " + request.getTrackId());
+                boolean error = false;
+                long time = System.currentTimeMillis();
+                try {
+                    returnObj = remoteService.invokeRootMethod(method.getName(), args);
+                } catch(Throwable t) {
+                    error = true;
+                    builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());
+                    throw t;
+                } finally {
+                    long invokeTokes = System.currentTimeMillis() - time;
+                    builder.append(" takes:: " + invokeTokes);
+                    if(error)
+                        AnalyticsLogger.error(TAG, builder.toString());
+                    else
+                        AnalyticsLogger.info(TAG, builder.toString());
+                }
 //                returnObj = method.invoke(obj, args);
             } catch (Throwable t) {
                 if(t instanceof InvokerInvocationException) {
