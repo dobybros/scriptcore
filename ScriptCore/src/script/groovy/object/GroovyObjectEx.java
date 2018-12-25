@@ -9,6 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,78 +23,88 @@ import script.groovy.runtime.GroovyRuntime.MyGroovyClassLoader;
 import chat.errors.CoreException;
 
 public class GroovyObjectEx<T> {
-		private static final String TAG = GroovyObjectEx.class.getSimpleName();
-		private String groovyPath;
-		private Object lock = new Object();
-		private GroovyRuntime groovyRuntime;
-		private GroovyObjectListener objectListener;
-		
-		public GroovyObjectEx(String groovyPath) {
-			this.groovyPath = groovyPath;
-		}
-		
-		public Object invokeRootMethod(String method, Object... parameters) throws CoreException {
-			MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
-			try {
-				return invokeMethod(method, parameters);
-			} finally {
-				groovyRuntime.unregisterClassLoaderOnThread();
-			}
-		}
-		
-		public Object invokeMethod(String method, Object... parameters) throws CoreException {
-			T obj = getObject();
-			if(obj != null && obj instanceof GroovyObject) {
-				GroovyObject gObj = (GroovyObject) obj;
-				//TODO Bind GroovyClassLoader base on current thread. 
-				return gObj.invokeMethod(method, parameters);
-			}
-			return null;
-		}
-		
-		public Class<T> getGroovyClass() throws CoreException {
-			MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
-			if(classLoader == null) 
-				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
-			ClassHolder holder = classLoader.getClass(groovyPath);
-			if(holder == null)
-				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
-			return (Class<T>) holder.getParsedClass();
-		}
+	private static final String TAG = GroovyObjectEx.class.getSimpleName();
+	private String groovyPath;
+	private Object lock = new Object();
+	private GroovyRuntime groovyRuntime;
+	private GroovyObjectListener objectListener;
 
-        public T getObject() throws CoreException {
-		    return getObject(true);
-        }
-		public T getObject(boolean forceFill) throws CoreException {
-			MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
-			if(classLoader == null) 
-				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
-			ClassHolder holder = classLoader.getClass(groovyPath);
-			if(holder == null)
-				throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
-			
-			GroovyObject gObj = holder.getCachedObject();
-			if(gObj == null) {
-				Class<?> groovyClass = holder.getParsedClass();
-				synchronized (lock) {
-					if(groovyClass != null) {
-						try {
-							gObj = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
-							if(forceFill)
-							    GroovyObjectEx.fillGroovyObject(gObj, groovyRuntime);
-							holder.setCachedObject(gObj);
-						} catch (Throwable e) {
-							e.printStackTrace();
-							throw new CoreException(GroovyErrorCodes.ERROR_GROOY_NEWINSTANCE_FAILED, "New instance for class " + groovyClass + " failed " + e.getMessage() + " in classLoader " + classLoader);
-						}
-						if(objectListener != null) 
-							objectListener.objectPrepared(gObj);
+	public GroovyObjectEx(String groovyPath) {
+		this.groovyPath = groovyPath;
+	}
+
+	public Object invokeRootMethod(String method, Object... parameters) throws CoreException {
+		MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
+		try {
+			return invokeMethod(method, parameters);
+		} finally {
+			groovyRuntime.unregisterClassLoaderOnThread();
+		}
+	}
+
+	public Object invokeMethod(String method, Object... parameters) throws CoreException {
+		T obj = getObject();
+		if(obj != null && obj instanceof GroovyObject) {
+			GroovyObject gObj = (GroovyObject) obj;
+			//TODO Bind GroovyClassLoader base on current thread.
+			return gObj.invokeMethod(method, parameters);
+		}
+		return null;
+	}
+
+	public Class<T> getGroovyClass() throws CoreException {
+		MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
+		if(classLoader == null)
+			throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
+		ClassHolder holder = classLoader.getClass(groovyPath);
+		if(holder == null)
+			throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
+		return (Class<T>) holder.getParsedClass();
+	}
+
+	public T getObject() throws CoreException {
+		return getObject(true);
+	}
+	public T getObject(boolean forceFill) throws CoreException {
+		MyGroovyClassLoader classLoader = groovyRuntime.registerClassLoaderOnThread();
+		if(classLoader == null)
+			throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSLOADERNOTFOUND, "Classloader is null");
+		ClassHolder holder = classLoader.getClass(groovyPath);
+		if(holder == null)
+			throw new CoreException(GroovyErrorCodes.ERROR_GROOVY_CLASSNOTFOUND, "Groovy " + groovyPath + " doesn't be found in classLoader " + classLoader);
+
+		GroovyObject gObj = holder.getCachedObject();
+		if(gObj == null) {
+			Class<?> groovyClass = holder.getParsedClass();
+			synchronized (lock) {
+				if(groovyClass != null) {
+					try {
+						gObj = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+						if(forceFill)
+							GroovyObjectEx.fillGroovyObject(gObj, groovyRuntime);
+						holder.setCachedObject(gObj);
+					} catch (Throwable e) {
+						e.printStackTrace();
+						throw new CoreException(GroovyErrorCodes.ERROR_GROOY_NEWINSTANCE_FAILED, "New instance for class " + groovyClass + " failed " + e.getMessage() + " in classLoader " + classLoader);
 					}
+					if(objectListener != null)
+						objectListener.objectPrepared(gObj);
 				}
-			} 
-			return (T) gObj;
+			}
 		}
+		return (T) gObj;
+	}
 
+	public static void fillGroovyObjects(Collection<GroovyObjectEx> objs, GroovyRuntime groovyRuntime) {
+		for(GroovyObjectEx groovyObjectEx : objs) {
+			try {
+				GroovyObjectEx.fillGroovyObject((GroovyObject) groovyObjectEx.getObject(), groovyRuntime);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				LoggerEx.error(TAG, "fillGroovyObject " + groovyObjectEx.getGroovyPath() + " failed, " + e.getMessage());
+			}
+		}
+	}
 	public static void fillGroovyObject(GroovyObject gObj, GroovyRuntime groovyRuntime) throws IllegalAccessException {
 		GroovyBeanFactory beanFactory = groovyRuntime.getBeanFactory();
 		if(beanFactory != null) {

@@ -7,15 +7,17 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import chat.logs.AnalyticsLogger;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime;
 import script.groovy.servlets.GroovyServletManager.PermissionIntercepter;
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
+import script.memodb.ObjectId;
 
 public class RequestHolder {
-	private static final String TAG = null;
+	private static final String TAG = RequestHolder.class.getSimpleName();
 	private RequestURIWrapper requestUriWrapper;
 	private HttpServletRequest request;
 	private HttpServletResponse response;
@@ -244,15 +246,36 @@ public class RequestHolder {
 		//TODO annotation
 		Object[] args = requestUriWrapper.getActualParameters(this);
 
-		String[] permissions = requestUriWrapper.getPermissions();
-		if(permissions != null && permissions.length > 0) {
-			GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
-			if(permissionIntecepter != null) {
-				permissionIntecepter.getObject().invoke(permissions, requestUriWrapper.getMethod(), request, response);
+		TrackerSystem.trackIdThreadLocal.set(ObjectId.get().toString());
+		long time = System.currentTimeMillis();
+		long invokeTokes = -1;
+		boolean error = false;
+		StringBuilder builder = new StringBuilder();
+		String remoteHost = request.getHeader("X-Real-IP");
+		builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod());
+		try {
+			String[] permissions = requestUriWrapper.getPermissions();
+			if(permissions != null && permissions.length > 0) {
+				GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
+				if(permissionIntecepter != null) {
+					permissionIntecepter.getObject().invoke(permissions, requestUriWrapper.getMethod(), request, response);
+				}
+//				return servletObj.invokeMethod(groovyMethod, args);
 			}
 			return servletObj.invokeMethod(groovyMethod, args);
+		} catch(Throwable t) {
+			error = true;
+			builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());
+			throw t;
+		} finally {
+			invokeTokes = System.currentTimeMillis() - time;
+			builder.append(" takes:: " + invokeTokes);
+			TrackerSystem.trackIdThreadLocal.remove();
+			if(error)
+				AnalyticsLogger.error(TAG, builder.toString());
+			else
+				AnalyticsLogger.info(TAG, builder.toString());
 		}
-		return servletObj.invokeMethod(groovyMethod, args);
 	}
 
 	public GroovyServletManager getGroovyServletManager() {

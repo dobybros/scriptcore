@@ -57,6 +57,17 @@ public class WebServiceAnnotationHandler extends ClassAnnotationHandler {
         }
     }
 
+    public Class<?>[] getMethodParameterTypes(String className, String methodName) {
+        WebMethodMapping methodMapping = methodMap.get(className + "#" + methodName);
+        if(methodMapping != null)
+            return methodMapping.getMethod().getParameterTypes();
+        return null;
+    }
+
+    public Object getWebServiceBean(String className, String methodName) throws CoreException {
+        WebMethodMapping methodMapping = methodMap.get(className + "#" + methodName);
+        return methodMapping.getWebService().getObject();
+    }
     public Object execute(String className, String methodName, Object... args) throws CoreException {
         WebMethodMapping methodMapping = methodMap.get(className + "#" + methodName);
         try {
@@ -120,9 +131,9 @@ public class WebServiceAnnotationHandler extends ClassAnnotationHandler {
         }
     }
 
-    public WebMethodMapping getMethodMapping(String key) {
-        return methodMap.get(key);
-    }
+//    public WebMethodMapping getMethodMapping(String key) {
+//        return methodMap.get(key);
+//    }
 
     public void scanClass(Class<?> clazz, GroovyObjectEx<?> serverAdapter, ConcurrentHashMap<String, WebMethodMapping> methodMap) {
         if(clazz == null)

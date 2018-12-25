@@ -149,15 +149,7 @@ public class GroovyBeanFactory extends ClassAnnotationHandler {
 		if (oldBeanMap != null)
 			oldBeanMap.clear();
 
-		Collection<GroovyObjectEx> values = beanMap.values();
-		for(GroovyObjectEx groovyObjectEx : values) {
-			try {
-				GroovyObjectEx.fillGroovyObject((GroovyObject) groovyObjectEx.getObject(), getGroovyRuntime());
-			} catch (Throwable e) {
-				e.printStackTrace();
-				LoggerEx.info(TAG, "fillGroovyObject " + groovyObjectEx.getGroovyPath() + " failed, " + e.getMessage());
-			}
-		}
+		GroovyObjectEx.fillGroovyObjects(beanMap.values(), getGroovyRuntime());
 	}
 
 }
