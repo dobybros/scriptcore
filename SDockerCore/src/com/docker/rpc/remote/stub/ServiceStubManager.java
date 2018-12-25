@@ -8,7 +8,7 @@ import com.docker.rpc.MethodRequest;
 import com.docker.rpc.MethodResponse;
 import com.docker.rpc.RPCClientAdapterMap;
 import com.docker.rpc.remote.MethodMapping;
-import script.groovy.servlets.TrackerSystem;
+import script.groovy.servlets.Tracker;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -127,7 +127,8 @@ public class ServiceStubManager {
         //TODO should consider how to optimize get CRC too often.
 
         request.setCrc(crc);
-        request.setTrackId(TrackerSystem.trackIdThreadLocal.get());
+        Tracker tracker = Tracker.trackerThreadLocal.get();
+        request.setTrackId(tracker == null ? null : tracker.getTrackId());
         request.setServiceStubManager(this);
         RemoteServiceDiscovery.RemoteServers lanServers = remoteServiceDiscovery.getRemoteServers();
         if(lanServers == null)

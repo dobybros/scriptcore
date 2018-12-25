@@ -2,10 +2,9 @@ package com.docker.rpc.remote.stub;
 
 import chat.errors.ChatErrorCodes;
 import chat.errors.CoreException;
-import chat.logs.LoggerEx;
 import com.docker.rpc.MethodRequest;
 import com.docker.rpc.MethodResponse;
-import script.groovy.servlets.TrackerSystem;
+import script.groovy.servlets.Tracker;
 
 public class Proxy  {
     private static final String TAG = Proxy.class.getSimpleName();
@@ -23,7 +22,8 @@ public class Proxy  {
         request.setEncode(MethodRequest.ENCODE_JAVABINARY);
         request.setArgs(args);
         //TODO should consider how to optimize get CRC too often.
-        request.setTrackId(TrackerSystem.trackIdThreadLocal.get());
+        Tracker tracker = Tracker.trackerThreadLocal.get();
+        request.setTrackId(tracker == null ? null : tracker.getTrackId());
         request.setCrc(crc);
         request.setServiceStubManager(serviceStubManager);
         RemoteServiceDiscovery.RemoteServers lanServers = remoteServiceDiscovery.getRemoteServers();

@@ -245,17 +245,17 @@ public class RequestHolder {
 			GroovyObjectEx<GroovyServlet> servletObj) throws CoreException {
 		//TODO annotation
 		Object[] args = requestUriWrapper.getActualParameters(this);
-
+		String parentTrackId = request.getHeader("X-Track-Id");
 		String trackId = ObjectId.get().toString();
-
-		TrackerSystem.trackIdThreadLocal.set(trackId);
+		Tracker tracker = new Tracker(trackId, parentTrackId);
+		Tracker.trackerThreadLocal.set(tracker);
 		long time = System.currentTimeMillis();
 		long invokeTokes = -1;
 		boolean error = false;
 		StringBuilder builder = new StringBuilder();
 		try {
 			String remoteHost = request.getHeader("X-Real-IP");
-			builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod() + " trackid:: " + trackId);
+			builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod() + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + trackId);
 			String[] permissions = requestUriWrapper.getPermissions();
 			if(permissions != null && permissions.length > 0) {
 				GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
@@ -272,7 +272,7 @@ public class RequestHolder {
 		} finally {
 			invokeTokes = System.currentTimeMillis() - time;
 			builder.append(" takes:: " + invokeTokes);
-			TrackerSystem.trackIdThreadLocal.remove();
+			Tracker.trackerThreadLocal.remove();
 			if(error)
 				AnalyticsLogger.error(TAG, builder.toString());
 			else

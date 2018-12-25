@@ -14,6 +14,8 @@ import com.docker.script.ClassAnnotationHandlerEx;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime;
+import script.groovy.servlets.Tracker;
+import script.memodb.ObjectId;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -127,9 +129,17 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
 //            }
             Object returnObj = null;
             CoreException exception = null;
+            String parentTrackId = request.getTrackId();
+            String currentTrackId = null;
+            if(parentTrackId != null) {
+                currentTrackId = ObjectId.get().toString();
+                Tracker tracker = new Tracker(currentTrackId, parentTrackId);
+                Tracker.trackerThreadLocal.set(tracker);
+            }
             try {
                 StringBuilder builder = new StringBuilder();
-                builder.append("methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " trackid:: " + request.getTrackId());
+                builder.append("methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " service:: " + service + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + currentTrackId);
+
                 boolean error = false;
                 long time = System.currentTimeMillis();
                 try {
@@ -157,6 +167,8 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                     exception = (CoreException) t;
                 else
                     exception = new CoreException(ChatErrorCodes.ERROR_METHODMAPPING_INVOKE_UNKNOWNERROR, t.getMessage());
+            } finally {
+                Tracker.trackerThreadLocal.remove();
             }
             MethodResponse response = new MethodResponse(returnObj, exception);
 //            response.setService(service);
