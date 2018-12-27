@@ -22,6 +22,8 @@ public class MethodResponse extends RPCResponse {
 	private Object returnObject;
 	private CoreException exception;
 
+	private String returnTmpStr;
+
 	public static final String FIELD_RETURN = "return";
 	public static final String FIELD_ERROR = "error";
 
@@ -83,6 +85,7 @@ public class MethodResponse extends RPCResponse {
 							try {
 								byte[] data = GZipUtils.decompress(returnBytes);
 								String json = new String(data, "utf8");
+								returnTmpStr = json;
 								if(methodMapping == null || methodMapping.getReturnClass().equals(Object.class)) {
 									returnObject = JSON.parse(json);
 								} else {
@@ -139,7 +142,11 @@ public class MethodResponse extends RPCResponse {
 
 				byte[] returnBytes = null;
 				if(returnObject != null) {
-					String returnStr = JSON.toJSONString(returnObject);
+					String returnStr = null;
+					if(returnTmpStr == null)
+						returnStr = JSON.toJSONString(returnObject);
+					else
+						returnStr = returnTmpStr;
 					try {
 						returnBytes = GZipUtils.compress(returnStr.getBytes("utf8"));
 					} catch (IOException e) {
@@ -223,4 +230,11 @@ public class MethodResponse extends RPCResponse {
 		this.version = version;
 	}
 
+	public String getReturnTmpStr() {
+		return returnTmpStr;
+	}
+
+	public void setReturnTmpStr(String returnTmpStr) {
+		this.returnTmpStr = returnTmpStr;
+	}
 }

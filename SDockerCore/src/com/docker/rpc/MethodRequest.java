@@ -39,6 +39,7 @@ public class MethodRequest extends RPCRequest {
      * 只用于内存, 不错传输序列化
      */
     private String fromService;
+    private String argsTmpStr; //Only use for logging
 
     private ServiceStubManager serviceStubManager;
 
@@ -107,6 +108,7 @@ public class MethodRequest extends RPCRequest {
                                 if(rawData.length > 0) {
                                     byte[] data = GZipUtils.decompress(rawData);
                                     String json = new String(data, "utf8");
+                                    argsTmpStr = json;
                                     List<Object> array = JSON.parseArray(json, parameterTypes);
                                     if(array != null)
                                         args = array.toArray();
@@ -179,7 +181,11 @@ public class MethodRequest extends RPCRequest {
                 }
                 dis.writeInt(argCount);
                 if(args != null) {
-                    String json = JSON.toJSONString(args);
+                    String json = null;
+                    if(argsTmpStr == null)
+                        json = JSON.toJSONString(args);
+                    else
+                        json = argsTmpStr;
                     try {
                         byte[] data = GZipUtils.compress(json.getBytes("utf8"));
                         dis.writeInt(data.length);
@@ -268,6 +274,14 @@ public class MethodRequest extends RPCRequest {
 
     public void setTrackId(String trackId) {
         this.trackId = trackId;
+    }
+
+    public String getArgsTmpStr() {
+        return argsTmpStr;
+    }
+
+    public void setArgsTmpStr(String argsTmpStr) {
+        this.argsTmpStr = argsTmpStr;
     }
 
     public ServiceStubManager getServiceStubManager() {

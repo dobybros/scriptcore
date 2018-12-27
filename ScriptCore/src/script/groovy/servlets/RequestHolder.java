@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import chat.logs.AnalyticsLogger;
+import com.alibaba.fastjson.JSON;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime;
 import script.groovy.servlets.GroovyServletManager.PermissionIntercepter;
@@ -256,6 +257,7 @@ public class RequestHolder {
 		try {
 			String remoteHost = request.getHeader("X-Real-IP");
 			builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod() + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + trackId);
+//			builder.append(" args:: " + JSON.toJSONString(args));
 			String[] permissions = requestUriWrapper.getPermissions();
 			if(permissions != null && permissions.length > 0) {
 				GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
@@ -264,7 +266,9 @@ public class RequestHolder {
 				}
 //				return servletObj.invokeMethod(groovyMethod, args);
 			}
-			return servletObj.invokeMethod(groovyMethod, args);
+			Object returnObj = servletObj.invokeMethod(groovyMethod, args);
+			builder.append(" return:: " + (returnObj != null ? JSON.toJSONString(returnObj) : returnObj));
+			return returnObj;
 		} catch(Throwable t) {
 			error = true;
 			builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());

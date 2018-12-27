@@ -5,6 +5,7 @@ import chat.errors.CoreException;
 import chat.logs.AnalyticsLogger;
 import chat.logs.LoggerEx;
 import chat.utils.ReflectionUtil;
+import com.alibaba.fastjson.JSON;
 import com.docker.data.ServiceAnnotation;
 import com.docker.rpc.MethodRequest;
 import com.docker.rpc.remote.MethodMapping;
@@ -136,45 +137,45 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                 Tracker tracker = new Tracker(currentTrackId, parentTrackId);
                 Tracker.trackerThreadLocal.set(tracker);
             }
+            StringBuilder builder = new StringBuilder();
+            boolean error = false;
+            long time = System.currentTimeMillis();
             try {
-                StringBuilder builder = new StringBuilder();
-                builder.append("methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " service:: " + service + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + currentTrackId);
+                builder.append("methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " service:: " + service + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + currentTrackId + " args:: " + request.getArgsTmpStr());
 
-                boolean error = false;
-                long time = System.currentTimeMillis();
-                try {
-                    returnObj = remoteService.invokeRootMethod(method.getName(), args);
-                } catch(Throwable t) {
-                    error = true;
-                    builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());
-                    throw t;
-                } finally {
-                    long invokeTokes = System.currentTimeMillis() - time;
-                    builder.append(" takes:: " + invokeTokes);
-                    if(error)
-                        AnalyticsLogger.error(TAG, builder.toString());
-                    else
-                        AnalyticsLogger.info(TAG, builder.toString());
-                }
-//                returnObj = method.invoke(obj, args);
+                returnObj = remoteService.invokeRootMethod(method.getName(), args);
             } catch (Throwable t) {
+                error = true;
+                builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());
                 if(t instanceof InvokerInvocationException) {
                     Throwable theT = ((InvokerInvocationException) t).getCause();
-                    if(theT != null)
+                    if(theT != null) {
                         t = theT;
+                    }
                 }
-                if(t instanceof CoreException)
+                if(t instanceof CoreException) {
                     exception = (CoreException) t;
-                else
+                }
+                else {
                     exception = new CoreException(ChatErrorCodes.ERROR_METHODMAPPING_INVOKE_UNKNOWNERROR, t.getMessage());
+                }
             } finally {
                 Tracker.trackerThreadLocal.remove();
+                long invokeTokes = System.currentTimeMillis() - time;
+                builder.append(" takes:: " + invokeTokes);
             }
             MethodResponse response = new MethodResponse(returnObj, exception);
 //            response.setService(service);
             response.setRequest(request);
             response.setEncode(MethodResponse.ENCODE_JAVABINARY);
             response.setCrc(crc);
+            if(returnObj != null)
+                response.setReturnTmpStr(JSON.toJSONString(returnObj));
+            builder.append(" return:: " + response.getReturnTmpStr());
+            if(error)
+                AnalyticsLogger.error(TAG, builder.toString());
+            else
+                AnalyticsLogger.info(TAG, builder.toString());
             return response;
         }
 
