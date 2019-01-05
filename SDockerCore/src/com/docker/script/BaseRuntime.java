@@ -117,7 +117,7 @@ public abstract class BaseRuntime extends GroovyRuntime {
 		}
 
         if(enableGroovyMVC != null && enableGroovyMVC.trim().equals("true")) {
-            GroovyServletManagerEx servletManagerEx = new GroovyServletManagerEx(this.serviceName);
+            GroovyServletManagerEx servletManagerEx = new GroovyServletManagerEx(this.serviceName, this.serviceVersion);
             addClassAnnotationHandler(servletManagerEx);
             GroovyServletDispatcher.addGroovyServletManagerEx(this.service, servletManagerEx);
 			addClassAnnotationHandler(new WebServiceAnnotationHandler());

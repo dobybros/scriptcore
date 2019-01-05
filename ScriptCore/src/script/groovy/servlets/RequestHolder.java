@@ -256,7 +256,8 @@ public class RequestHolder {
 		StringBuilder builder = new StringBuilder();
 		try {
 			String remoteHost = request.getHeader("X-Real-IP");
-			builder.append("url:: " + request.getRequestURI() + " host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " method:: " + request.getMethod() + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + trackId);
+			builder.append("$$url:: " + request.getRequestURI() + " $$host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " $$method:: " + request.getMethod() + " $$parenttrackid:: " + parentTrackId + " $$currenttrackid:: " + trackId);
+			builder.append(" $$service:: " + groovyServletManager.getService() + " $$serviceversion:: " + groovyServletManager.getServiceVersion());
 //			builder.append(" args:: " + JSON.toJSONString(args));
 			String[] permissions = requestUriWrapper.getPermissions();
 			if(permissions != null && permissions.length > 0) {
@@ -267,15 +268,15 @@ public class RequestHolder {
 //				return servletObj.invokeMethod(groovyMethod, args);
 			}
 			Object returnObj = servletObj.invokeMethod(groovyMethod, args);
-			builder.append(" return:: " + (returnObj != null ? JSON.toJSONString(returnObj) : returnObj));
+			builder.append(" $$returnobj:: " + (returnObj != null ? JSON.toJSONString(returnObj) : returnObj));
 			return returnObj;
 		} catch(Throwable t) {
 			error = true;
-			builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());
+			builder.append(" $$error:: " + t.getClass() + " $$errorMsg:: " + t.getMessage());
 			throw t;
 		} finally {
 			invokeTokes = System.currentTimeMillis() - time;
-			builder.append(" takes:: " + invokeTokes);
+			builder.append(" $$takes:: " + invokeTokes);
 			Tracker.trackerThreadLocal.remove();
 			if(error)
 				AnalyticsLogger.error(TAG, builder.toString());

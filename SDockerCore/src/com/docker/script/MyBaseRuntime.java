@@ -103,6 +103,7 @@ public class MyBaseRuntime extends BaseRuntime {
 		super.prepare(service, properties, localScriptPath);
 		ServiceSkeletonAnnotationHandler serviceSkeletonAnnotationHandler = new ServiceSkeletonAnnotationHandler();
 		serviceSkeletonAnnotationHandler.setService(getServiceName());
+		serviceSkeletonAnnotationHandler.setServiceVersion(getServiceVersion());
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(PeriodicInvocation.class);
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(Summaries.class);
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(Summary.class);

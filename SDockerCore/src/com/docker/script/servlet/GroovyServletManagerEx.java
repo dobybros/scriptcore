@@ -19,10 +19,18 @@ public class GroovyServletManagerEx extends GroovyServletManager {
     private static final String FORCEPREFIX = "@PREFIX";
     private static final String FORCEPREFIXSLASH = FORCEPREFIX + "/";
     private String service;
-    public GroovyServletManagerEx(String service) {
+    private Integer serviceVersion;
+    public GroovyServletManagerEx(String service, Integer serviceVersion) {
         this.service = service;
+        this.serviceVersion = serviceVersion;
+    }
+    public String getService() {
+        return this.service;
     }
 
+    public Integer getServiceVersion() {
+        return this.serviceVersion;
+    }
     @Override
     public String handleUri(String uri, GroovyObjectEx<GroovyServlet> groovyServlet, Method method) {
         uri = super.handleUri(uri, groovyServlet, method);

@@ -29,6 +29,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
 	private static final String TAG = ServiceSkeletonAnnotationHandler.class.getSimpleName();
     private ConcurrentHashMap<Long, SkelectonMethodMapping> methodMap = new ConcurrentHashMap<>();
 
+    private Integer serviceVersion;
 	private String service;
     private List<Class<? extends Annotation>> extraAnnotations;
     private List<ServiceAnnotation> annotationList = new ArrayList<>();
@@ -89,6 +90,14 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
         this.service = service;
     }
 
+    public Integer getServiceVersion() {
+        return serviceVersion;
+    }
+
+    public void setServiceVersion(Integer serviceVersion) {
+        this.serviceVersion = serviceVersion;
+    }
+
     public class SkelectonMethodMapping extends MethodMapping {
         private GroovyObjectEx<RemoteService> remoteService;
 
@@ -141,12 +150,12 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
             boolean error = false;
             long time = System.currentTimeMillis();
             try {
-                builder.append("methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " service:: " + service + " parenttrackid:: " + parentTrackId + " currenttrackid:: " + currentTrackId + " args:: " + request.getArgsTmpStr());
+                builder.append("$$methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " $$service:: " + service + " $$serviceversion:: " + serviceVersion + " $$parenttrackid:: " + parentTrackId + " $$currenttrackid:: " + currentTrackId + " $$args:: " + request.getArgsTmpStr());
 
                 returnObj = remoteService.invokeRootMethod(method.getName(), args);
             } catch (Throwable t) {
                 error = true;
-                builder.append(" error:: " + t.getClass() + " errorMsg:: " + t.getMessage());
+                builder.append(" $$error:: " + t.getClass() + " $$errormsg:: " + t.getMessage());
                 if(t instanceof InvokerInvocationException) {
                     Throwable theT = ((InvokerInvocationException) t).getCause();
                     if(theT != null) {
@@ -162,7 +171,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
             } finally {
                 Tracker.trackerThreadLocal.remove();
                 long invokeTokes = System.currentTimeMillis() - time;
-                builder.append(" takes:: " + invokeTokes);
+                builder.append(" $$takes:: " + invokeTokes);
             }
             MethodResponse response = new MethodResponse(returnObj, exception);
 //            response.setService(service);
@@ -171,7 +180,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
             response.setCrc(crc);
             if(returnObj != null)
                 response.setReturnTmpStr(JSON.toJSONString(returnObj));
-            builder.append(" return:: " + response.getReturnTmpStr());
+            builder.append(" $$returnobj:: " + response.getReturnTmpStr());
             if(error)
                 AnalyticsLogger.error(TAG, builder.toString());
             else
