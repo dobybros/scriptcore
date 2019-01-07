@@ -13,6 +13,8 @@ import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.adapters.ServersService;
 import com.docker.utils.SpringContextUtil;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -32,8 +34,11 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipException;
+
+
 
 public class ScriptManager implements ShutdownListener {
 	private static final String TAG = ScriptManager.class.getSimpleName();
@@ -262,7 +267,11 @@ public class ScriptManager implements ShutdownListener {
 									n = n.substring(0, n.length() - ".zip".length());
 									localScriptPath = localPath + serverTypePath + service + "/" + n;
 									FileUtils.deleteDirectory(new File(localScriptPath));
-									unzip(localZipFile, localScriptPath);
+									CRC32 crc = new CRC32();
+									String str = "groovy.zip";
+									crc.update(str.getBytes());
+									long valuePwd = crc.getValue();
+									unzip(localZipFile, localScriptPath, String.valueOf(valuePwd));
 
 									Service theService = null;
 									if(createRuntime) {
@@ -374,6 +383,11 @@ public class ScriptManager implements ShutdownListener {
 											dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
 //											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_NORMAL);
 										}
+										String servicePathex = abPath.split("groovy.zip")[0];
+										String servicePath = servicePathex.split("/scripts")[1];
+										File localFile = new File(localPath + servicePath);
+										FileUtils.deleteQuietly(localFile);
+										LoggerEx.info(TAG, "delete localFile: " + localFile + " success");
 									}
 
 								}
@@ -421,33 +435,31 @@ public class ScriptManager implements ShutdownListener {
 		}
 	}
 
-	private void unzip(File file, String dir) throws CoreException {
+	private void unzip(File zipFile, String dir, String passwd) throws CoreException {
+		ZipFile zFile = null;
 		try {
-			FileUtils.forceMkdir(new File(dir));
-			
-			ZipFile zipFile = new ZipFile(file);
-			try {
-			  Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			  while (entries.hasMoreElements()) {
-			    ZipEntry entry = entries.nextElement();
-			    File entryDestination = new File(dir,  entry.getName());
-			    if (entry.isDirectory()) {
-			        entryDestination.mkdirs();
-			    } else {
-			        entryDestination.getParentFile().mkdirs();
-			        InputStream in = zipFile.getInputStream(entry);
-			        OutputStream out = new FileOutputStream(entryDestination);
-			        IOUtils.copy(in, out);
-			        IOUtils.closeQuietly(in);
-					IOUtils.closeQuietly(out);
-			    }
-			  }
-			} finally {
-			  zipFile.close();
+			zFile = new ZipFile(zipFile);
+			File destDir = new File(dir);
+			if (destDir.isDirectory() && !destDir.exists()) {
+				destDir.mkdir();
 			}
-		} catch (Exception e) {
+			if (zFile.isEncrypted()) {
+				zFile.setPassword(passwd.toCharArray());
+			}
+			zFile.extractAll(dir);
+
+			List<FileHeader> headerList = zFile.getFileHeaders();
+			List<File> extractedFileList = new ArrayList<File>();
+			for(FileHeader fileHeader : headerList) {
+				if (!fileHeader.isDirectory()) {
+					extractedFileList.add(new File(destDir,fileHeader.getFileName()));
+				}
+			}
+			File [] extractedFiles = new File[extractedFileList.size()];
+			extractedFileList.toArray(extractedFiles);
+		} catch (net.lingala.zip4j.exception.ZipException e) {
 			e.printStackTrace();
-			throw new CoreException(CoreErrorCodes.ERROR_SCRIPT_UNZIP_FAILED, "Groovy zip " + FilenameUtils.separatorsToUnix(file.getAbsolutePath()) + " unzip failed, " + e.getMessage());
+			LoggerEx.error(TAG, "password is error,destFile:" + dir);
 		}
 	}
 
