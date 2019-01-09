@@ -1,18 +1,16 @@
 package chat.utils;
 
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import chat.logs.LoggerEx;
 
 public class TimerEx {
 	private static final String TAG = TimerEx.class.getSimpleName();
-	private static ScheduledExecutorService scheduledExecutorService;
+	private static ScheduledThreadPoolExecutor scheduledExecutorService;
 	static {
-		scheduledExecutorService = Executors.newScheduledThreadPool(3);
+		scheduledExecutorService = new ScheduledThreadPoolExecutor(3);
+		scheduledExecutorService.setRemoveOnCancelPolicy(true);
 	}
 	
 	public static void schedule(TimerTask task, long delay) {
@@ -20,6 +18,7 @@ public class TimerEx {
             ScheduledFuture future = scheduledExecutorService.schedule(task, delay, TimeUnit.MILLISECONDS);
             if(task instanceof TimerTaskEx) {
                 ((TimerTaskEx)task).setFuture(future);
+				((TimerTaskEx)task).setScheduledExecutorService(scheduledExecutorService);
             } else {
                 LoggerEx.warn(TAG, "There still a TimerTask " + task + " delay " + delay + " not using TimerTaskEx, the cancel method will not be available");
             }
@@ -33,6 +32,7 @@ public class TimerEx {
             ScheduledFuture future = scheduledExecutorService.scheduleAtFixedRate(task, delay, period, TimeUnit.MILLISECONDS);
             if(task instanceof TimerTaskEx) {
                 ((TimerTaskEx)task).setFuture(future);
+				((TimerTaskEx)task).setScheduledExecutorService(scheduledExecutorService);
             } else {
                 LoggerEx.warn(TAG, "There still a  periodic TimerTask " + task + " delay " + delay + " not using TimerTaskEx, the cancel method will not be available");
             }
@@ -61,18 +61,37 @@ public class TimerEx {
 				System.out.println("done1");
 			}
 		}, 2000);
-		TimerEx.schedule(new TimerTaskEx() {
+		TimerTaskEx timerTask = new TimerTaskEx() {
 			@Override
 			public void execute() {
+				try {
+					Thread.sleep(100L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				System.out.println("123");
 			}
-		}, 2000, 2000);
+		};
+		TimerEx.schedule(timerTask, 2000, 1);
 		TimerEx.schedule(new TimerTaskEx() {
 			@Override
 			public void execute() {
 				System.out.println("negetive");
 			}
 		}, -123);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(4000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				boolean bool = timerTask.cancel();
+				System.out.println("canceled " + bool);
+			}
+		}).start();
 	}
 
 }
