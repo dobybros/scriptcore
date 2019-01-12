@@ -388,8 +388,10 @@ public class ScriptManager implements ShutdownListener {
                                             dockerStatusService.addService(OnlineServer.getInstance().getServer(), theService);
 //											dockerStatusService.updateServiceType(OnlineServer.getInstance().getServer(), serviceName, version, Service.FIELD_SERVER_TYPE_NORMAL);
                                         }
-                                        String servicePathex = abPath.split("groovy.zip")[0];
-                                        String servicePath = servicePathex.split("/scripts")[1];
+//                                        String servicePathex = abPath.split("groovy.zip")[0];
+//                                        String servicePath = servicePathex.split("/scripts")[1];
+
+                                        String servicePath = serverTypePath + service;
                                         File localFile = new File(localPath + servicePath);
                                         File temp = null;
                                         Collection<File> filelist = FileUtils.listFiles(localFile, new String[]{"groovy", "zip"}, true);
