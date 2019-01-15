@@ -170,6 +170,11 @@ public class ScriptManager implements ShutdownListener {
                                     needRedeploy = true;
                                     try {
                                         runtime.close();
+                                        scriptRuntimeMap.remove(service);
+                                        List<BaseRuntime> runtimes = serviceVersionMap.get(runtime.getServiceName());
+                                        if(runtimes != null && !runtimes.isEmpty()) {
+                                            runtimes.remove(runtime);
+                                        }
                                         LoggerEx.error(TAG, "Runtime " + runtime + " service " + service + " closed because of deployment");
                                     } catch (Throwable t) {
                                         t.printStackTrace();
@@ -353,9 +358,9 @@ public class ScriptManager implements ShutdownListener {
                                         } else {
                                             newVersionList = new ArrayList<>(versionList);
                                         }
-                                        if (newVersionList.contains(runtime)) {
-                                            newVersionList.remove(runtime);
-                                        }
+//                                        if (newVersionList.contains(runtime)) {
+//                                            newVersionList.remove(runtime);
+//                                        }
                                         newVersionList.add(runtime);
                                         serviceVersionMap.put(serviceName, newVersionList);
                                     } else {

@@ -245,7 +245,6 @@ public class RequestHolder {
 	public Object invokeMethod(String groovyMethod,
 			GroovyObjectEx<GroovyServlet> servletObj) throws CoreException {
 		//TODO annotation
-		Object[] args = requestUriWrapper.getActualParameters(this);
 		String parentTrackId = request.getHeader("X-Track-Id");
 		String trackId = ObjectId.get().toString();
 		Tracker tracker = new Tracker(trackId, parentTrackId);
@@ -259,6 +258,7 @@ public class RequestHolder {
 			builder.append("$$url:: " + request.getRequestURI() + " $$host:: " + (remoteHost != null ? remoteHost : request.getRemoteHost()) + " $$method:: " + request.getMethod() + " $$parenttrackid:: " + parentTrackId + " $$currenttrackid:: " + trackId);
 			builder.append(" $$service:: " + groovyServletManager.getService() + " $$serviceversion:: " + groovyServletManager.getServiceVersion());
 //			builder.append(" args:: " + JSON.toJSONString(args));
+			Object[] args = requestUriWrapper.getActualParameters(this);
 			String[] permissions = requestUriWrapper.getPermissions();
 			if(permissions != null && permissions.length > 0) {
 				GroovyObjectEx<PermissionIntercepter> permissionIntecepter = groovyServletManager.getPermissionIntercepter();
@@ -275,6 +275,7 @@ public class RequestHolder {
 			builder.append(" $$error:: " + t.getClass() + " $$errorMsg:: " + t.getMessage());
 			throw t;
 		} finally {
+			builder.append(" $$sdockerip:: " + groovyServletManager.getIp());
 			invokeTokes = System.currentTimeMillis() - time;
 			builder.append(" $$takes:: " + invokeTokes);
 			Tracker.trackerThreadLocal.remove();

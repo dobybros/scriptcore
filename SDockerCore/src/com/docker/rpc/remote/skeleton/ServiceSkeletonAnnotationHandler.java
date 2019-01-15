@@ -12,6 +12,7 @@ import com.docker.rpc.remote.MethodMapping;
 import com.docker.rpc.remote.RemoteService;
 import com.docker.rpc.MethodResponse;
 import com.docker.script.ClassAnnotationHandlerEx;
+import com.docker.server.OnlineServer;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.runtime.GroovyRuntime;
@@ -137,6 +138,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
 //                    }
 //                }
 //            }
+
             Object returnObj = null;
             CoreException exception = null;
             String parentTrackId = request.getTrackId();
@@ -150,12 +152,13 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
             boolean error = false;
             long time = System.currentTimeMillis();
             try {
-                builder.append("$$methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " $$service:: " + service + " $$serviceversion:: " + serviceVersion + " $$parenttrackid:: " + parentTrackId + " $$currenttrackid:: " + currentTrackId + " $$args:: " + request.getArgsTmpStr());
+                builder.append("$$methodrequest:: " + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " $$service:: " + service + " $$serviceversion:: " + serviceVersion + " $$parenttrackid:: " + parentTrackId + " $$currenttrackid:: " + currentTrackId + " $$args:: " + request.getArgsTmpStr() );
 
                 returnObj = remoteService.invokeRootMethod(method.getName(), args);
             } catch (Throwable t) {
                 error = true;
-                builder.append(" $$error:: " + t.getClass() + " $$errormsg:: " + t.getMessage());
+                builder.append(" $$error" +
+                        ":: " + t.getClass() + " $$errormsg:: " + t.getMessage());
                 if(t instanceof InvokerInvocationException) {
                     Throwable theT = ((InvokerInvocationException) t).getCause();
                     if(theT != null) {
@@ -169,9 +172,11 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                     exception = new CoreException(ChatErrorCodes.ERROR_METHODMAPPING_INVOKE_UNKNOWNERROR, t.getMessage());
                 }
             } finally {
+               String ip = OnlineServer.getInstance().getIpHolder().getIp();
                 Tracker.trackerThreadLocal.remove();
                 long invokeTokes = System.currentTimeMillis() - time;
                 builder.append(" $$takes:: " + invokeTokes);
+                builder.append(" $$sdockerip:: " + ip);
             }
             MethodResponse response = new MethodResponse(returnObj, exception);
 //            response.setService(service);

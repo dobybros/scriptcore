@@ -36,7 +36,13 @@ public class AnalyticsLogger {
     }
 
     private static String getLogMsg(String tag, String msg) {
-        return new StringBuilder("[").append(ChatUtils.dateString()).append("|").append(tag).append("] ").append(msg).toString();
+//        returnnew StringBuilder("[").append(ChatUtils.dateString()).append("|").append(tag).append("] ").append(msg).toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("$$time:: " + ChatUtils.dateString()).
+                append("$$tag:: " + tag).
+                append(" ").
+                append(msg);
+        return builder.toString();
     }
 }
 

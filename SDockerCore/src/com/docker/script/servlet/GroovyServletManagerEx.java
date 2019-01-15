@@ -2,6 +2,7 @@ package com.docker.script.servlet;
 
 import chat.errors.CoreException;
 import chat.logs.LoggerEx;
+import com.docker.server.OnlineServer;
 import com.google.common.collect.Lists;
 import script.groovy.object.GroovyObjectEx;
 import script.groovy.servlets.GroovyServlet;
@@ -24,13 +25,20 @@ public class GroovyServletManagerEx extends GroovyServletManager {
         this.service = service;
         this.serviceVersion = serviceVersion;
     }
+    @Override
     public String getService() {
         return this.service;
     }
-
+    @Override
     public Integer getServiceVersion() {
         return this.serviceVersion;
     }
+
+    @Override
+    public String getIp() {
+        return OnlineServer.getInstance().getIpHolder().getIp();
+    }
+
     @Override
     public String handleUri(String uri, GroovyObjectEx<GroovyServlet> groovyServlet, Method method) {
         uri = super.handleUri(uri, groovyServlet, method);

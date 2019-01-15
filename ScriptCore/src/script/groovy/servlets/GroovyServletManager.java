@@ -39,6 +39,10 @@ public class GroovyServletManager extends ClassAnnotationHandler {
 	
 	private GroovyObjectEx<PermissionIntercepter> permissionIntercepter;
 
+	public String getIp() {
+		return null;
+	}
+
 	public String getService() {
 		return null;
 	}
