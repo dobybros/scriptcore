@@ -39,7 +39,7 @@ public class AnalyticsLogger {
 //        returnnew StringBuilder("[").append(ChatUtils.dateString()).append("|").append(tag).append("] ").append(msg).toString();
         StringBuilder builder = new StringBuilder();
         builder.append("$$time:: " + ChatUtils.dateString()).
-                append("$$tag:: " + tag).
+                append(" $$tag:: " + tag).
                 append(" ").
                 append(msg);
         return builder.toString();
