@@ -36,7 +36,7 @@ public class GroovyServletManagerEx extends GroovyServletManager {
 
     @Override
     public String getIp() {
-        return OnlineServer.getInstance().getIpHolder().getIp();
+        return OnlineServer.getInstance().getIp();
     }
 
     @Override

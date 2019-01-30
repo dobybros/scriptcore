@@ -84,6 +84,12 @@ public class OnlineServer {
     public void prepare() {
     }
 
+    public String getIp() {
+        if(ipHolder != null)
+            return ipHolder.getIp();
+        return null;
+    }
+
     protected DockerStatus generateDockerStatus(Integer port) {
         DockerStatus dockerStatus = new DockerStatus();
         dockerStatus.setServer(server);
