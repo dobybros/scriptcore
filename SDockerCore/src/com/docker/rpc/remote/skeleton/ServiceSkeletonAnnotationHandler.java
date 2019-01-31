@@ -172,7 +172,7 @@ public class ServiceSkeletonAnnotationHandler extends ClassAnnotationHandlerEx {
                     exception = new CoreException(ChatErrorCodes.ERROR_METHODMAPPING_INVOKE_UNKNOWNERROR, t.getMessage());
                 }
             } finally {
-               String ip = OnlineServer.getInstance().getIpHolder().getIp();
+                String ip = OnlineServer.getInstance().getIp();
                 Tracker.trackerThreadLocal.remove();
                 long invokeTokes = System.currentTimeMillis() - time;
                 builder.append(" $$takes:: " + invokeTokes);
