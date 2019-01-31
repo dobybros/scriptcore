@@ -78,7 +78,7 @@ public class ScriptManager implements ShutdownListener {
         if (runtime == null) {
             List<BaseRuntime> runtimes = serviceVersionMap.get(service);
             if (runtimes != null && !runtimes.isEmpty()) {
-                runtime = runtimes.get(runtimes.size() - 1);
+                runtime = runtimes.get(runtimes.size() - 1 );
             }
         }
         if (runtime == null) {
@@ -362,6 +362,12 @@ public class ScriptManager implements ShutdownListener {
 //                                            newVersionList.remove(runtime);
 //                                        }
                                         newVersionList.add(runtime);
+                                        Collections.sort(newVersionList, new Comparator<BaseRuntime>() {
+                                            @Override
+                                            public int compare(BaseRuntime o1, BaseRuntime o2) {
+                                                return o1.getServiceVersion().compareTo(o2.getServiceVersion());
+                                            }
+                                        });
                                         serviceVersionMap.put(serviceName, newVersionList);
                                     } else {
                                         Integer version = getServiceVersion(service);
