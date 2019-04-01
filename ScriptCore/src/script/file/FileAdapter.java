@@ -196,7 +196,7 @@ public abstract class FileAdapter {
 			FileReplaceStrategy strategy, SaveFileCachedListener listener) throws IOException;
 	
 	public abstract boolean deleteFile(PathEx path) throws IOException;
-	
+
 	public abstract boolean moveFile(PathEx sourcePath, PathEx destPath) throws IOException;
 
 	public abstract boolean readFile(PathEx path, OutputStream os) throws IOException;

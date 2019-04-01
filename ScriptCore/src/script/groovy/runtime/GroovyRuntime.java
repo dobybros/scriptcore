@@ -278,7 +278,7 @@ public class GroovyRuntime extends ScriptRuntime{
             for(File jar : jars) {
                 String path = "jar:file://" + jar.getAbsolutePath() + "!/";
                 try {
-                    urls.add(new URL(path));
+                    urls.add(jar.toURI().toURL());
                     LoggerEx.info(TAG, "Loaded jar " + jar.getAbsolutePath());
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
