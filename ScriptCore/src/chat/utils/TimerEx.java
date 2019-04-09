@@ -49,42 +49,43 @@ public class TimerEx {
 
 	public static void main(String args[]) {
 		System.out.println("start");
-		TimerEx.schedule(new TimerTaskEx() {
-			@Override
-			public void execute() {
-				System.out.println("done");
-			}
-		}, -1234);
-		TimerEx.schedule(new TimerTaskEx() {
-			@Override
-			public void execute() {
-				System.out.println("done1");
-			}
-		}, 2000);
+//		TimerEx.schedule(new TimerTaskEx() {
+//			@Override
+//			public void execute() {
+//				System.out.println("done");
+//			}
+//		}, -1234);
+//		TimerEx.schedule(new TimerTaskEx() {
+//			@Override
+//			public void execute() {
+//				System.out.println("done1");
+//			}
+//		}, 2000);
 		TimerTaskEx timerTask = new TimerTaskEx() {
 			@Override
 			public void execute() {
 				try {
-					Thread.sleep(100L);
+					System.out.println("将要执行");
+					Thread.sleep(2000L);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				System.out.println("123");
+				System.out.println("执行结果:123");
 			}
 		};
 		TimerEx.schedule(timerTask, 2000, 1);
-		TimerEx.schedule(new TimerTaskEx() {
-			@Override
-			public void execute() {
-				System.out.println("negetive");
-			}
-		}, -123);
+//		TimerEx.schedule(new TimerTaskEx() {
+//			@Override
+//			public void execute() {
+//				System.out.println("negetive");
+//			}
+//		}, -123);
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(4000L);
+					Thread.sleep(2100L);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
