@@ -175,6 +175,8 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 						Object value = document.get(key);
 						FieldEx fieldEx = fieldMap.get(key);
 						Field field = fieldEx.getField();
+						if(value == null)
+							continue;
 						if(BaseObject.class.isAssignableFrom(field.getType()) && value.getClass().equals(Document.class)) {
 							BaseObject valueObj = BaseObjectCodec.convert((Document) value, field.getType(), mongoDBHandler);
 							holder.assignField(dataObj, key, valueObj);
@@ -300,8 +302,11 @@ public class BaseObjectCodec implements Codec<BaseObject> {
         writer.writeStartDocument();
 
         for (final Map.Entry<String, Object> entry : map.entrySet()) {
-            writer.writeName(entry.getKey());
-            writeValue(writer, encoderContext, entry.getValue(), fieldEx);
+        	Object value = entry.getValue();
+        	if(value != null) {
+				writer.writeName(entry.getKey());
+				writeValue(writer, encoderContext, value, fieldEx);
+			}
         }
         writer.writeEndDocument();
     }
@@ -315,7 +320,6 @@ public class BaseObjectCodec implements Codec<BaseObject> {
     		HashMap<String, FieldEx> fields = fieldHolder.getFieldMap();
     		if(fields != null) {
     			for (final Map.Entry<String, FieldEx> entry : fields.entrySet()) {
-    	            writer.writeName(entry.getKey());
     	            FieldEx fieldEx = entry.getValue();
     	            Field field = fieldEx.getField();
     	            Object value = null;
@@ -327,7 +331,10 @@ public class BaseObjectCodec implements Codec<BaseObject> {
 							| IllegalAccessException e) {
 						e.printStackTrace();
 					}
-    	            writeValue(writer, encoderContext, value, fieldEx);
+					if(value != null) {
+						writer.writeName(entry.getKey());
+						writeValue(writer, encoderContext, value, fieldEx);
+					}
     	        }
     		}
     	}

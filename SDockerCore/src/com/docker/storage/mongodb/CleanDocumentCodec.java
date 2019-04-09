@@ -172,8 +172,11 @@ public class CleanDocumentCodec implements CollectibleCodec<CleanDocument> {
             if (skipField(encoderContext, entry.getKey())) {
                 continue;
             }
-            writer.writeName(entry.getKey());
-            writeValue(writer, encoderContext, entry.getValue());
+            Object value = entry.getValue();
+            if(value != null) {
+                writer.writeName(entry.getKey());
+                writeValue(writer, encoderContext, value);
+            }
         }
         writer.writeEndDocument();
     }

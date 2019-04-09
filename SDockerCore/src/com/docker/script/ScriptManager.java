@@ -59,6 +59,7 @@ public class ScriptManager implements ShutdownListener {
     boolean isShutdown = false;
 
     public static final String SERVICE_NOTFOUND = "servicenotfound";
+    public static final Boolean DELETELOCAL = false;
 
     public void init() {
 //		dslFileAdapter.getFilesInDirectory(arg0)
@@ -78,7 +79,7 @@ public class ScriptManager implements ShutdownListener {
         if (runtime == null) {
             List<BaseRuntime> runtimes = serviceVersionMap.get(service);
             if (runtimes != null && !runtimes.isEmpty()) {
-                runtime = runtimes.get(runtimes.size() - 1 );
+                runtime = runtimes.get(runtimes.size() - 1);
             }
         }
         if (runtime == null) {
@@ -172,7 +173,7 @@ public class ScriptManager implements ShutdownListener {
                                         runtime.close();
                                         scriptRuntimeMap.remove(service);
                                         List<BaseRuntime> runtimes = serviceVersionMap.get(runtime.getServiceName());
-                                        if(runtimes != null && !runtimes.isEmpty()) {
+                                        if (runtimes != null && !runtimes.isEmpty()) {
                                             runtimes.remove(runtime);
                                         }
                                         LoggerEx.error(TAG, "Runtime " + runtime + " service " + service + " closed because of deployment");
@@ -401,22 +402,23 @@ public class ScriptManager implements ShutdownListener {
                                         }
 //                                        String servicePathex = abPath.split("groovy.zip")[0];
 //                                        String servicePath = servicePathex.split("/scripts")[1];
+                                        if (DELETELOCAL) {
+                                            String servicePath = serverTypePath + service;
+                                            File localFile = new File(localPath + servicePath);
+                                            File temp = null;
+                                            Collection<File> filelist = FileUtils.listFiles(localFile, new String[]{"groovy", "zip"}, true);
+                                            try {
 
-                                        String servicePath = serverTypePath + service;
-                                        File localFile = new File(localPath + servicePath);
-                                        File temp = null;
-                                        Collection<File> filelist = FileUtils.listFiles(localFile, new String[]{"groovy", "zip"}, true);
-                                        try {
-                                            if(filelist != null){
-                                                for(File file1 : filelist){
-                                                    file1.delete();
+                                                if (filelist != null) {
+                                                    for (File file1 : filelist) {
+                                                        file1.delete();
+                                                    }
                                                 }
+                                                LoggerEx.info(TAG, "delete localFile: " + localFile + " success");
+                                            } catch (Exception e) {
+                                                LoggerEx.error(TAG, "delete file failed");
+                                                throw e;
                                             }
-//
-                                            LoggerEx.info(TAG, "delete localFile: " + localFile + " success");
-                                        } catch (Exception e) {
-                                            LoggerEx.error(TAG , "delete file failed");
-                                            throw e;
                                         }
                                     }
 

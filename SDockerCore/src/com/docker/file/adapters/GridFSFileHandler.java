@@ -63,6 +63,7 @@ public class GridFSFileHandler extends FileAdapter {
 	}
 	
 	public static void main(String[] args) throws IOException, DBException {
+
 		MongoHelper helper = new MongoHelper();
 		helper.setHost("mongodb://localhost:7900");
 		helper.setDbName("gridfiles");
@@ -88,7 +89,6 @@ public class GridFSFileHandler extends FileAdapter {
 
 				PathEx path = new PathEx(thePath);
 				fileHandler.saveFile(FileUtils.openInputStream(new File(filePath)), path, FileReplaceStrategy.REPLACE);
-
 				System.out.println("File " + thePath + " saved!");
 			}
 		}
@@ -134,7 +134,10 @@ public class GridFSFileHandler extends FileAdapter {
 		gridFs.remove(new BasicDBObject("filename",path.getPath()));
 		return true;
 	}
-
+	public boolean deleteFileRegix(BasicDBObject basicDBObject){
+		gridFs.remove(basicDBObject);
+		return true;
+	}
 	@Override
 	public boolean isFileExist(PathEx path) throws IOException {
 		GridFSDBFile inputFile = gridFs.findOne(new BasicDBObject("filename",

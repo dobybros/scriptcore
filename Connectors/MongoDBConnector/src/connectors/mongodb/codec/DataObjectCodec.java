@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.BsonDocument;
@@ -164,7 +165,6 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
     public DataObject decode(final BsonReader reader, final DecoderContext decoderContext) {
     	Document document = documentCodec.decode(reader, decoderContext);
 //		System.out.println("document " + document);
-		
 		HashMap<Class<?>, CollectionHolder> map = mongoDBHandler.getCollectionMap();
 		if(map != null) {
 			CollectionHolder holder = map.get(collectionClass);
@@ -373,8 +373,11 @@ public class DataObjectCodec implements CollectibleCodec<DataObject> {
             if (skipField(encoderContext, entry.getKey())) {
                 continue;
             }
-            writer.writeName(entry.getKey());
-            writeValue(writer, encoderContext, entry.getValue(), fieldEx);
+            Object value = entry.getValue();
+            if(value != null) {
+				writer.writeName(entry.getKey());
+				writeValue(writer, encoderContext, value, fieldEx);
+			}
         }
         writer.writeEndDocument();
     }
