@@ -9,6 +9,7 @@ import com.alibaba.fastjson.util.TypeUtils;
 import com.docker.annotations.*;
 import com.docker.data.Service;
 import com.docker.errors.CoreErrorCodes;
+import com.docker.script.i18n.I18nHandler;
 import com.docker.server.OnlineServer;
 import com.docker.storage.adapters.DockerStatusService;
 import com.docker.storage.adapters.ServersService;
@@ -218,6 +219,10 @@ public class ScriptManager implements ShutdownListener {
                                                         }
                                                     }
                                                 });
+
+
+
+
                                                 runtime.addFieldInjectionListener(new FieldInjectionListener<ConfigProperty>() {
                                                     public Class<ConfigProperty> annotationClass() {
                                                         return ConfigProperty.class;
@@ -244,6 +249,25 @@ public class ScriptManager implements ShutdownListener {
                                                         }
                                                     }
                                                 });
+
+                                                runtime.addFieldInjectionListener(new FieldInjectionListener<I18nBean>() {
+                                                    public Class<I18nBean> annotationClass(){
+                                                        return I18nBean.class;
+                                                    }
+                                                    @Override
+                                                    public void inject(I18nBean annotation, Field field, Object obj) {
+                                                        I18nHandler i18nHandler = baseRuntime.getI18nHandler();
+                                                        if (!field.isAccessible())
+                                                            field.setAccessible(true);
+                                                        try {
+                                                            field.set(obj, TypeUtils.cast(i18nHandler, field.getType(), ParserConfig.getGlobalInstance()));
+                                                        } catch (Throwable e) {
+                                                            e.printStackTrace();
+                                                            LoggerEx.error(TAG, "Set field " + field.getName() + " for i18nhandler key "+ i18nHandler + " class " + field.getType() + " in class " + obj.getClass());
+                                                        }
+                                                    }
+                                                });
+
                                             }
 
 //										switch(serverType) {
