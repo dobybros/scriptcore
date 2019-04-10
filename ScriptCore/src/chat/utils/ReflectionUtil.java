@@ -30,11 +30,16 @@ public class ReflectionUtil {
 
 	public static Class<?> getInitiatableClass(Class<?> clazz) {
 		Class<?> theClass = null;
-		if(Collection.class.isAssignableFrom(clazz)) {
-			theClass = ArrayList.class;
-		} else if(Map.class.isAssignableFrom(clazz)) {
-			theClass = HashMap.class;
+		if(!ReflectionUtil.canBeInitiated(clazz)) {
+			if(Collection.class.isAssignableFrom(clazz)) {
+				theClass = ArrayList.class;
+			} else if(Map.class.isAssignableFrom(clazz)) {
+				theClass = HashMap.class;
+			}
+		} else {
+			theClass = clazz;
 		}
+
 		if(theClass != null) {
 			LoggerEx.debug("getInitiatableClass", "Convert class from " + clazz + " to " + theClass);
 			return theClass;
