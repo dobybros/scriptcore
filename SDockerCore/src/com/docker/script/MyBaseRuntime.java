@@ -104,7 +104,8 @@ public class MyBaseRuntime extends BaseRuntime {
 		ServiceSkeletonAnnotationHandler serviceSkeletonAnnotationHandler = new ServiceSkeletonAnnotationHandler();
 		serviceSkeletonAnnotationHandler.setService(getServiceName());
 		serviceSkeletonAnnotationHandler.setServiceVersion(getServiceVersion());
-		serviceSkeletonAnnotationHandler.addExtraAnnotation(PeriodicInvocation.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(PeriodicTask.class);
+		serviceSkeletonAnnotationHandler.addExtraAnnotation(OneTimeTask.class);
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(Summaries.class);
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(Summary.class);
 		serviceSkeletonAnnotationHandler.addExtraAnnotation(Transactions.class);
