@@ -1,11 +1,11 @@
 package com.docker.script.i18n;
 
-import com.docker.utils.AutoReloadProperties;
+import java.util.Properties;
 
 /**
  * Created by zhanjing on 2017/7/17.
  */
-public class MessageProperties extends AutoReloadProperties {
+public class MessageProperties extends Properties {
     public String getMessage(String key) {
         return getMessage(key, null, null);
     }

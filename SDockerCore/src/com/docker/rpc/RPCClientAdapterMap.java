@@ -69,9 +69,9 @@ public class RPCClientAdapterMap {
 				@Override
 				public boolean expired(RPCClientAdapter handler, long touch, long expireTime) {
 					RPCClientAdapter removedHandler = RPCClientAdapterMap.this.unregisterServer(serverName);
-					if(removedHandler == null) {
-						handler.clientDestroy();
-					}
+//					if(removedHandler == null) {
+//						handler.clientDestroy();
+//					}
 					return true;
 				}
 			});

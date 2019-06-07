@@ -15,6 +15,7 @@ import connectors.mongodb.annotations.handlers.MongoCollectionAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDBHandler;
 import connectors.mongodb.annotations.handlers.MongoDatabaseAnnotationHolder;
 import connectors.mongodb.annotations.handlers.MongoDocumentAnnotationHolder;
+import org.apache.commons.io.FileUtils;
 import script.filter.JsonFilterFactory;
 import script.groovy.runtime.*;
 import script.groovy.servlets.GroovyServletDispatcher;
@@ -103,9 +104,10 @@ public abstract class BaseRuntime extends GroovyRuntime {
 							fileName = fileName.replace(name + "_", "");
 							fileName = fileName.replace(".properties", "");
 							MessageProperties messageProperties = new MessageProperties();
-							messageProperties.setAbsolutePath(file.getAbsolutePath());
+//							messageProperties.setAbsolutePath(file.getAbsolutePath());
 							try {
-								messageProperties.init();
+								messageProperties.load(FileUtils.openInputStream(file));
+//								messageProperties.init();
 							} catch (IOException e) {
 								e.printStackTrace();
 							}

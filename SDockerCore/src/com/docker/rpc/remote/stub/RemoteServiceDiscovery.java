@@ -161,7 +161,7 @@ public class RemoteServiceDiscovery implements Runnable {
                             server = serverElement;
                             servers.putIfAbsent(serverName, server);
                             if(newOnline)
-                                LoggerEx.info(TAG, "New server " + server + " is online ");
+                                LoggerEx.info(TAG, "New server " + server.server + " " + server.ip + " is online ");
                         } else {
                             server.setHttpPort(serverElement.getHttpPort());
                             server.setHealth(serverElement.getHealth());
@@ -184,7 +184,8 @@ public class RemoteServiceDiscovery implements Runnable {
 //                            if(clientAdapter != null) {
 //                                clientAdapter.clientDestroy();
 //                            }
-                            LoggerEx.info(TAG, "Server " + deletedServer + " is offline");
+                            if(deletedServer != null)
+                                LoggerEx.info(TAG, "Server " + deletedServer.server + " " + deletedServer.ip + " is offline");
                         }
                     }
                 }
@@ -328,13 +329,13 @@ public class RemoteServiceDiscovery implements Runnable {
                         RPCClientAdapter clientAdapter = rpcClientAdapterMap.registerServer(ip, port, server.getServer());
                         MethodResponse response = (MethodResponse) clientAdapter.call(request);
                         if(response.getException() != null) {
-                            LoggerEx.info(TAG, "Failed to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException() + " on server " + server + " " + count + "/" + maxCount);
+                            LoggerEx.info(TAG, "Failed to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException() + " on server " + server.server + " " + server.ip + " " + count + "/" + maxCount);
                              throw response.getException();
                         }
-                        LoggerEx.info(TAG, "Successfully call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException() + " on server " + server + " " + count + "/" + maxCount);
+                        LoggerEx.info(TAG, "Successfully call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " return " + response.getReturnObject() + " exception " + response.getException() + " on server " + server.server + " " + server.ip + " " + count + "/" + maxCount);
                         return response;
                     } else {
-                        LoggerEx.info(TAG, "No ip " + ip + " or port " + port + ", fail to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount);
+                        LoggerEx.info(TAG, "No ip " + ip + " or port " + port + ", fail to call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server.server + " " + server.ip + " " + count + "/" + maxCount);
                     }
                 } catch(Throwable t) {
                     if(t instanceof CoreException) {
@@ -347,7 +348,7 @@ public class RemoteServiceDiscovery implements Runnable {
                                 throw t;
                         }
                     }
-                    LoggerEx.error(TAG, "Fail to Call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server + " " + count + "/" + maxCount + " available size " + keptSortedServers.size() + " error " + t.getMessage() + " exception " + t);
+                    LoggerEx.error(TAG, "Fail to Call Method " + request.getCrc() + "#" + request.getService() + " args " + Arrays.toString(request.getArgs()) + " on server " + server.server + " " + server.ip + " " + count + "/" + maxCount + " available size " + keptSortedServers.size() + " error " + t.getMessage() + " exception " + t);
                 }
             }
             throw new CoreException(ChatErrorCodes.ERROR_RPC_CALLREMOTE_FAILED, "Call request " + request + " outside failed with several retries.");

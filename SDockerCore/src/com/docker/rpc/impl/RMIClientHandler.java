@@ -52,7 +52,7 @@ public class RMIClientHandler extends RPCClientAdapter {
 
     //Client
     private String serverHost;
-    private AverageCounter averageCounter;
+//    private AverageCounter averageCounter;
 
     private Long touch;
     private Long idleCheckPeriod = TimeUnit.SECONDS.toMillis(10);
@@ -74,7 +74,7 @@ public class RMIClientHandler extends RPCClientAdapter {
         builder.append("rmiPort: " + rmiPort + " ");
         builder.append("server: " + server + " ");
         builder.append("isStarted: " + isStarted + " ");
-        builder.append("averageCounter: " + averageCounter + " ");
+//        builder.append("averageCounter: " + averageCounter + " ");
         return builder.toString();
     }
 
@@ -213,7 +213,7 @@ public class RMIClientHandler extends RPCClientAdapter {
 
     @Override
     public synchronized void clientStart() {
-        averageCounter = new AverageCounter();
+//        averageCounter = new AverageCounter();
         if(enableSsl && !rmiId.endsWith(RMIID_SSL_SUFFIX))
             rmiId = rmiId + RMIID_SSL_SUFFIX;
         for(ClientAdapterStatusListener statusListener : statusListeners) {
@@ -324,7 +324,6 @@ public class RMIClientHandler extends RPCClientAdapter {
     }
 
     private RPCResponse callPrivate(RPCRequest request) throws CoreException {
-        touch();
         if(!clientMonitorThread.connected.get())
             throw new CoreException(ChatErrorCodes.ERROR_RPC_DISCONNECTED, "RPC (" + serverHost + ":" + rmiPort + ") is disconnected for " + request.getType() + ": " + request.toString());
         try {
@@ -346,8 +345,9 @@ public class RMIClientHandler extends RPCClientAdapter {
             }
             long time = System.currentTimeMillis();
             byte[] data = server.call(request.getData(), requestType, request.getEncode());
-            if(averageCounter != null)
-                averageCounter.add((int) (System.currentTimeMillis() - time));
+            touch();
+//            if(averageCounter != null)
+//                averageCounter.add((int) (System.currentTimeMillis() - time));
             if(data == null) {
                 LoggerEx.error(TAG, "Server call return null for reuqest " + requestType);
                 return null;
@@ -527,8 +527,8 @@ public class RMIClientHandler extends RPCClientAdapter {
 
     @Override
     public Integer getAverageLatency() {
-        if(averageCounter != null)
-            return averageCounter.getAverage();
+//        if(averageCounter != null)
+//            return averageCounter.getAverage();
         return null;
     }
 
